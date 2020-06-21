@@ -1,0 +1,25 @@
+.SideNav {
+  width: 250px;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: #fff;
+  z-index: 200;
+  border: 1px solid #eee;
+  box-shadow: 2px 0px 2px #ccc;
+  transition: transform 0.3s ease-out;
+}
+.SideNavOpen {
+  transform: translateX(0);
+}
+.SideNavClose {
+  transform: translateX(-75%);
+}
+
+.ToggleNav {
+  float: right;
+  font-size: 150%;
+  color: #adaeaf;
+  margin: 15px;
+}
