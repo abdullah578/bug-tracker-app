@@ -1,0 +1,17 @@
+.Table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.Table th,
+td {
+  text-align: left;
+  padding: 15px;
+  border: none;
+  font-size: 80%;
+}
+.Table tr {
+  border-bottom: 1px solid #ebedee;
+}
+.Table tr:first-of-type {
+  border-bottom: 3px solid #000;
+}
