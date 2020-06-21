@@ -1,0 +1,11 @@
+.NavItem {
+  padding: 15px;
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  font-size:90%;
+}
+.NavItem span{
+    margin-left:50px;
+}

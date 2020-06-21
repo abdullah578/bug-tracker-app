@@ -16,6 +16,9 @@
 .SideNavClose {
   transform: translateX(-75%);
 }
+.SideNavClose .Items {
+  display: none;
+}
 
 .ToggleNav {
   float: right;
