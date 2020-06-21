@@ -1,0 +1,11 @@
+.Content {
+  margin-top: 58px;
+  padding: 15px;
+  transition: margin-left 0.3s ease-out;
+}
+.ContentOpen {
+  margin-left: 250px;
+}
+.ContentClose {
+  margin-left: 62.5px;
+}

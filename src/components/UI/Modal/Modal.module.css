@@ -1,0 +1,24 @@
+.Modal {
+  background-color: #fff;
+  padding: 10px;
+  margin-top: 50px;
+  border: 1px solid #eee;
+  box-shadow: 0px 2px 2px #ccc;
+  position: relative;
+}
+
+.Header {
+  height: 50px;
+  width: 98%;
+  background-color: #e67e22;
+  position: absolute;
+  top: -15%;
+  left: 1%;
+  z-index: 200;
+  border-radius: 5px;
+  border: 1px solid #de7519;
+
+}
+.Section{
+  margin-top:30px;
+}

@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import Toolbar from "../../components/Toolbar/Toolbar";
 import SideNavigation from "../../components/SideNavigation/SideNavigation";
+import classes from "./Layout.module.css";
 
 class Layout extends Component {
   state = { drawerOpen: true };
@@ -9,6 +10,10 @@ class Layout extends Component {
       drawerOpen: !prevState.drawerOpen,
     }));
   render() {
+    const styles = [classes.Content];
+    styles.push(
+      this.state.drawerOpen ? classes.ContentOpen : classes.ContentClose
+    );
     return (
       <React.Fragment>
         <Toolbar />
@@ -16,7 +21,13 @@ class Layout extends Component {
           open={this.state.drawerOpen}
           clickIcon={this.handleToggleSideDrawer}
         />
-        <main>{this.props.chidren}</main>
+        <main
+          className={
+            styles.join(" ")
+          }
+        >
+          {this.props.children}
+        </main>
       </React.Fragment>
     );
   }
