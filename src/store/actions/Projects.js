@@ -1,7 +1,11 @@
 import * as actionTypes from "./actionTypes";
 import axios from "../../axiosInstance/AxiosInstance";
 
-export const fetchOrdersCreator = () => (dispatch) =>
+const fetchOrdersInit = () => ({
+  type: actionTypes.FETCH_PROJECTS_INIT,
+});
+export const fetchOrdersCreator = () => (dispatch) => {
+  dispatch(fetchOrdersInit());
   axios
     .get("/projects.json")
     .then((resp) => {
@@ -15,7 +19,7 @@ export const fetchOrdersCreator = () => (dispatch) =>
       });
     })
     .catch((err) => console.log(err));
-
+};
 export const postOrderCreator = (obj) => (dispatch) =>
   axios
     .post("/projects.json", obj)

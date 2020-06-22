@@ -5,6 +5,7 @@ import { formConfig, checkValidation } from "../../Utilities/Utilities";
 import Modal from "../../components/UI/Modal/Modal";
 import Table from "../../components/UI/Table/Table";
 import Button from "../../components/UI/Button/Add/Add";
+import Spinner from "../../components/UI/Spinner/Spinner";
 import NewProject from "../../components/NewProject/NewProject";
 
 class ProjectList extends Component {
@@ -108,7 +109,9 @@ class ProjectList extends Component {
     return isValid;
   };
   render() {
-    return (
+    return this.props.dispSpinner ? (
+      <Spinner />
+    ) : (
       <div>
         <NewProject
           open={this.state.newProj}
@@ -130,6 +133,7 @@ class ProjectList extends Component {
 }
 const mapStateToProps = (state) => ({
   projects: state.project.projects,
+  dispSpinner: state.project.dispSpinner,
 });
 
 const mapDispatchToProps = (dispatch) => ({
