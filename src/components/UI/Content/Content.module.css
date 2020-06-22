@@ -1,0 +1,19 @@
+.Content {
+  position: fixed;
+  top: 20%;
+  left: 20%;
+  padding: 20px;
+  width: 70%;
+  z-index:5000;
+  margin: auto;
+  border: 1px solid #eee;
+  box-shadow: 0px 2px 2px #ccc;
+  background-color: #fff;
+  transition: all 0.3s ease-out;
+}
+.ContentOpen {
+  transform: translateY(0);
+}
+.ContentClose {
+  transform: translateY(-100vh);
+}

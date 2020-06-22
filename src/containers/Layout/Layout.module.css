@@ -9,3 +9,8 @@
 .ContentClose {
   margin-left: 62.5px;
 }
+@media (max-width: 700px) {
+  .ContentOpen {
+    margin-left: 62.5px;
+  }
+}

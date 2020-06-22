@@ -14,11 +14,12 @@
   position: absolute;
   top: -20px;
   left: 1%;
+  color: #fff;
+  padding: 10px;
   z-index: 200;
   border-radius: 5px;
   border: 1px solid #de7519;
-
 }
-.Section{
-  margin-top:30px;
+.Section {
+  margin-top: 30px;
 }

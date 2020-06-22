@@ -1,16 +1,16 @@
 import React from "react";
+import { Switch, Route } from "react-router-dom";
 import Layout from "../src/containers/Layout/Layout";
-import Modal from "./components/UI/Modal/Modal";
-import Table from "./components/UI/Table/Table";
+import ProjectList from "./containers/ProjectList/ProjectList";
 import "./App.css";
 
 function App() {
   return (
     <div className="App">
       <Layout>
-        <Modal>
-          <Table />
-        </Modal>
+        <Switch>
+          <Route to="/projects" component={ProjectList} />
+        </Switch>
       </Layout>
     </div>
   );

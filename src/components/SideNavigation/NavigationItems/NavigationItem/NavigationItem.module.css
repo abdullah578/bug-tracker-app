@@ -1,11 +1,25 @@
 .NavItem {
-  padding: 15px;
   width: 100%;
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  font-size:90%;
+  font-size: 75%;
 }
-.NavItem span{
-    margin-left:50px;
+.NavItem span {
+  margin-left: 50px;
+}
+.NavItem a {
+  text-decoration: none;
+  display: block;
+  color: inherit;
+  padding: 15px;
+  width: 100%;
+  height: 100%;
+  transition: all 0.3s ease-out;
+}
+.NavItem a:hover,
+.NavItem a:active,
+.NavItem .active {
+  color: #fff;
+  background-color: #00abd9;
 }
