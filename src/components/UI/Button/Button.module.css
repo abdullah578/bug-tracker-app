@@ -1,9 +1,17 @@
-.Button {
-  color: #fff;
-  display: block;
-  background-color: #00abd9;
-  padding: 10px 15px;
-  border: none;
-  border-radius: 10px;
+.Button{
+    background-color: inherit;
+    font-weight: bold;
+    font-size:100%;
+    padding:20px;
+}
+.Success {
+  color: #27ae60;
   outline: none;
+  border: none;
+}
+
+.Danger {
+  color: #e74c3c;
+  outline: none;
+  border: none;
 }

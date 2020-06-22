@@ -1,7 +1,9 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
+import * as actionCreators from "../../store/actions/Projects";
 import Modal from "../../components/UI/Modal/Modal";
 import Table from "../../components/UI/Table/Table";
-import Button from "../../components/UI/Button/Button";
+import Button from "../../components/UI/Button/Add/Add";
 import NewProject from "../../components/NewProject/NewProject";
 
 class ProjectList extends Component {
@@ -28,6 +30,9 @@ class ProjectList extends Component {
       },
     },
   };
+  componentDidMount() {
+    this.props.fetchProjects();
+  }
   inputHandler = (e, type) => {
     let formCopy = { ...this.state.form };
     formCopy = {
@@ -41,7 +46,28 @@ class ProjectList extends Component {
   };
   formCancelHandler = () => {
     this.setState({ newProj: false });
+    this.resetForm();
   };
+  formSubmitHandler = () => {
+    this.props.submitProject({
+      name: this.state.form.name.value,
+      description: this.state.form.description.value,
+    });
+    this.resetForm();
+    this.setState({ newProj: false });
+  };
+  resetForm() {
+    const formCopy = {
+      ...this.state.form,
+    };
+    Object.keys(formCopy).forEach((curr) => {
+      formCopy[curr] = {
+        ...formCopy[curr],
+        value: "",
+      };
+    });
+    this.setState({ form: formCopy });
+  }
 
   createTableHeader() {
     return (
@@ -52,6 +78,15 @@ class ProjectList extends Component {
       </tr>
     );
   }
+  createTableBody() {
+    return this.props.projects.map((curr) => (
+      <tr key={curr.key}>
+        <td>{curr.name}</td>
+        <td>{curr.description}</td>
+        <td>{"\u00A0"}</td>
+      </tr>
+    ));
+  }
   addProjectHandler = () => this.setState({ newProj: true });
   render() {
     return (
@@ -61,14 +96,25 @@ class ProjectList extends Component {
           form={this.state.form}
           inputHandler={this.inputHandler}
           cancelForm={this.formCancelHandler}
+          submitForm={this.formSubmitHandler}
         />
         <Button clicked={this.addProjectHandler}>Add New Project</Button>
         <Modal header={<p> My projects</p>}>
-          <Table header={this.createTableHeader()}></Table>
+          <Table header={this.createTableHeader()}>
+            {this.createTableBody()}
+          </Table>
         </Modal>
       </div>
     );
   }
 }
+const mapStateToProps = (state) => ({
+  projects: state.project.projects,
+});
 
-export default ProjectList;
+const mapDispatchToProps = (dispatch) => ({
+  fetchProjects: () => dispatch(actionCreators.fetchOrdersCreator()),
+  submitProject: (obj) => dispatch(actionCreators.postOrderCreator(obj)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(ProjectList);

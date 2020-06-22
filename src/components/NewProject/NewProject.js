@@ -2,6 +2,8 @@ import React from "react";
 import Content from "../UI/Content/Content";
 import Input from "../UI/Input/Input";
 import BackDrop from "../UI/BackDrop/BackDrop";
+import Button from "../UI/Button/Button";
+import classes from "./NewProject.module.css";
 
 const NewProject = (props) => (
   <React.Fragment>
@@ -15,6 +17,16 @@ const NewProject = (props) => (
             inputHandler={(e) => props.inputHandler(e, curr)}
           />
         ))}
+        <div className={classes.Buttons}>
+          <Button type="Success" clicked={props.submitForm}>
+            {" "}
+            Continue
+          </Button>
+          <Button type="Danger" clicked={props.cancelForm}>
+            {" "}
+            Cancel
+          </Button>
+        </div>
       </form>
     </Content>
   </React.Fragment>

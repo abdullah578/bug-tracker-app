@@ -5,8 +5,9 @@ const initialState = {
 };
 
 const projectReducer = (state = initialState, action) => {
-  switch (action) {
+  switch (action.type) {
     case actionTypes.FETCH_PROJECTS_SUCCESS: {
+      console.log(action.projects);
       return {
         ...state,
         projects: action.projects,
