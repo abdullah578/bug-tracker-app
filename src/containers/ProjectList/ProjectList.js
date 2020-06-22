@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import * as actionCreators from "../../store/actions/Projects";
+import { formConfig, checkValidation } from "../../Utilities/Utilities";
 import Modal from "../../components/UI/Modal/Modal";
 import Table from "../../components/UI/Table/Table";
 import Button from "../../components/UI/Button/Add/Add";
@@ -10,24 +11,26 @@ class ProjectList extends Component {
   state = {
     newProj: false,
     form: {
-      name: {
-        elementConfig: {
-          name: "Project Name",
-          placeholder: "Name ...",
-          type: "text",
-        },
-        value: "",
-        type: "input",
-      },
-      description: {
-        elementConfig: {
-          name: "Project Description ...",
-          placeholder: "Description ...",
-          type: "text",
-        },
-        value: "",
-        type: "textArea",
-      },
+      name: formConfig(
+        "Project Name",
+        "Name ...",
+        "text",
+        "",
+        "input",
+        { isRequired: true },
+        false,
+        false
+      ),
+      description: formConfig(
+        "Project Description",
+        "Description ...",
+        "text",
+        "",
+        "textArea",
+        { isRequired: true },
+        false,
+        false
+      ),
     },
   };
   componentDidMount() {
@@ -40,6 +43,11 @@ class ProjectList extends Component {
       [type]: {
         ...this.state.form[type],
         value: e.target.value,
+        touch: true,
+        isValid: checkValidation(
+          e.target.value,
+          this.state.form[type].validationRequirement
+        ),
       },
     };
     this.setState({ form: formCopy });
@@ -64,6 +72,8 @@ class ProjectList extends Component {
       formCopy[curr] = {
         ...formCopy[curr],
         value: "",
+        isValid: false,
+        touch: false,
       };
     });
     this.setState({ form: formCopy });
@@ -88,6 +98,15 @@ class ProjectList extends Component {
     ));
   }
   addProjectHandler = () => this.setState({ newProj: true });
+  checkFormValidity = () => {
+    const formCopy = { ...this.state.form };
+    let isValid = true;
+    Object.keys(formCopy).forEach(
+      (curr) => (isValid = formCopy[curr].isValid && isValid)
+    );
+    console.log(isValid);
+    return isValid;
+  };
   render() {
     return (
       <div>
@@ -97,6 +116,7 @@ class ProjectList extends Component {
           inputHandler={this.inputHandler}
           cancelForm={this.formCancelHandler}
           submitForm={this.formSubmitHandler}
+          disabled={!this.checkFormValidity()}
         />
         <Button clicked={this.addProjectHandler}>Add New Project</Button>
         <Modal header={<p> My projects</p>}>

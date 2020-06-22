@@ -2,10 +2,13 @@ import React from "react";
 import classes from "./Button.module.css";
 
 const Button = (props) => {
+  const styles = [classes[props.type], classes["Button"]];
+  if (props.disabled) styles.push(classes.Disabled);
   return (
     <button
       onClick={props.clicked}
-      className={classes[props.type] + " " + classes["Button"]}
+      className={styles.join(" ")}
+      disabled={props.disabled}
     >
       {props.children}
     </button>

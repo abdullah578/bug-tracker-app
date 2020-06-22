@@ -11,3 +11,7 @@
   outline: none;
   border: 1px solid #ccc;
 }
+.InputInvalid {
+  border: 1px solid #c0392b;
+  background-color: #f6bbb5;
+}

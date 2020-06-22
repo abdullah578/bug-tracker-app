@@ -2,14 +2,16 @@ import React from "react";
 import classes from "./Input.module.css";
 
 const Input = (props) => {
+  const styles = [classes.Input];
+  if (!props.isValid && props.touch) styles.push(classes.InputInvalid);
   const field =
-    props.type === "textArea" ? (
+    props.fieldType === "textArea" ? (
       <textarea
         {...props.elementConfig}
         value={props.value}
         onChange={props.inputHandler}
         id={props.name}
-        className={classes.Input}
+        className={styles.join(" ")}
       />
     ) : (
       <input
@@ -17,7 +19,7 @@ const Input = (props) => {
         value={props.value}
         onChange={props.inputHandler}
         id={props.elementConfig.name}
-        className={classes.Input}
+        className={styles.join(" ")}
       />
     );
   return (

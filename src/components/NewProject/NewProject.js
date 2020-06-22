@@ -18,7 +18,11 @@ const NewProject = (props) => (
           />
         ))}
         <div className={classes.Buttons}>
-          <Button type="Success" clicked={props.submitForm}>
+          <Button
+            type="Success"
+            clicked={props.submitForm}
+            disabled={props.disabled}
+          >
             {" "}
             Continue
           </Button>

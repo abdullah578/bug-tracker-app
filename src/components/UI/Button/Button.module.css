@@ -1,8 +1,9 @@
-.Button{
-    background-color: inherit;
-    font-weight: bold;
-    font-size:100%;
-    padding:20px;
+.Button {
+  background-color: inherit;
+  font-weight: bold;
+  font-size: 100%;
+  padding: 20px;
+  cursor: pointer;
 }
 .Success {
   color: #27ae60;
@@ -14,4 +15,8 @@
   color: #e74c3c;
   outline: none;
   border: none;
+}
+.Disabled {
+  cursor: not-allowed;
+  color: #888;
 }
