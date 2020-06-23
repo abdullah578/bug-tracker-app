@@ -3,9 +3,9 @@ import Content from "../UI/Content/Content";
 import Input from "../UI/Input/Input";
 import BackDrop from "../UI/BackDrop/BackDrop";
 import Button from "../UI/Button/Button";
-import classes from "./NewProject.module.css";
+import classes from "./NewItem.module.css";
 
-const NewProject = (props) => (
+const NewItem = (props) => (
   <React.Fragment>
     <BackDrop show={props.open} clicked={props.cancelForm} />
     <Content open={props.open}>
@@ -36,4 +36,4 @@ const NewProject = (props) => (
   </React.Fragment>
 );
 
-export default NewProject;
+export default NewItem;

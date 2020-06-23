@@ -9,16 +9,18 @@ export const fetchOrdersCreator = () => (dispatch) => {
   axios
     .get("/projects.json")
     .then((resp) => {
-      const projArray = Object.keys(resp.data).map((key) => ({
-        key,
-        ...resp.data[key],
-      }));
+      const projArray = resp.data
+        ? Object.keys(resp.data).map((key) => ({
+            key,
+            ...resp.data[key],
+          }))
+        : [];
       dispatch({
         type: actionTypes.FETCH_PROJECTS_SUCCESS,
         projects: projArray,
       });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => dispatch({ type: actionTypes.FETCH_PROJECTS_FAILURE }));
 };
 export const postOrderCreator = (obj) => (dispatch) =>
   axios

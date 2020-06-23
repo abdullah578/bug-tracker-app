@@ -6,6 +6,7 @@ const Modal = (props) => {
     <div className={classes.Modal}>
       <header className={classes.Header}>{props.header}</header>
       <section className={classes.Section}>{props.children}</section>
+      <footer className={classes.Footer}>{props.footer}</footer>
     </div>
   );
 };

@@ -1,0 +1,32 @@
+.Pagination {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
+  padding: 0 15px;
+  align-items: center;
+}
+.Pagination p {
+  font-weight: 400;
+  font-size: 60%;
+}
+.Pagination button {
+  color: #555;
+  background-color: inherit;
+  border: none;
+  outline: none;
+  display: inline-block;
+  margin: 0 20px;
+  cursor: pointer;
+}
+.Pagination button:disabled {
+  cursor: not-allowed;
+  color:#aaa;
+}
+.Pagination span {
+  display: inline-block;
+  background-color: #ccc;
+  padding: 8px;
+  border-radius: 7px;
+  font-weight: 400;
+  font-size: 70%;
+}

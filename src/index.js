@@ -5,12 +5,14 @@ import { Provider } from "react-redux";
 import { createStore, applyMiddleware, compose, combineReducers } from "redux";
 import thunk from "redux-thunk";
 import projectReducer from "../src/store/reducers/Projects";
+import userReducer from "../src/store/reducers/Users";
 import "./index.css";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 
 const reducer = combineReducers({
   project: projectReducer,
+  user: userReducer,
 });
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const store = createStore(reducer, composeEnhancers(applyMiddleware(thunk)));

@@ -2,6 +2,7 @@ import React from "react";
 import { Switch, Route } from "react-router-dom";
 import Layout from "../src/containers/Layout/Layout";
 import ProjectList from "./containers/ProjectList/ProjectList";
+import UserList from "./containers/UserList/UserList";
 import "./App.css";
 
 function App() {
@@ -9,7 +10,8 @@ function App() {
     <div className="App">
       <Layout>
         <Switch>
-          <Route to="/projects" component={ProjectList} />
+          <Route path="/users/:id/:name" component={UserList} />
+          <Route path="/projects" component={ProjectList} />
         </Switch>
       </Layout>
     </div>

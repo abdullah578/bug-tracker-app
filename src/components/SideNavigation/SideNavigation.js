@@ -11,9 +11,9 @@ const SideNavigation = (props) => {
           name={`chevron-${props.open ? "back" : "forward"}-outline`}
         ></ion-icon>
       </div>
-      <div className={classes.Items}>
+      <nav className={classes.Items}>
         <NavigationItems />
-      </div>
+      </nav>
     </div>
   );
 };

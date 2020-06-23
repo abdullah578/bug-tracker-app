@@ -1,24 +1,23 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import * as actionCreators from "../../store/actions/Projects";
-import { NavLink } from "react-router-dom";
+import * as actionCreators from "../../store/actions/Users";
 import { formConfig, checkValidation } from "../../Utilities/Utilities";
 import Modal from "../../components/UI/Modal/Modal";
 import Table from "../../components/UI/Table/Table";
 import Button from "../../components/UI/Button/Add/Add";
 import Spinner from "../../components/UI/Spinner/Spinner";
 import Pagination from "../../components/UI/Pagination/Pagination";
-import NewProject from "../../components/NewUser/NewItem";
+import NewUser from "../../components/NewUser/NewItem";
 
-class ProjectList extends Component {
+class UserList extends Component {
   state = {
-    newProj: false,
+    newUser: false,
     currentPage: 1,
     numPerPage: 5,
     form: {
-      name: formConfig(
-        "Project Name",
-        "Name ...",
+      userName: formConfig(
+        "Username",
+        "Username ...",
         "text",
         "",
         "input",
@@ -26,20 +25,27 @@ class ProjectList extends Component {
         false,
         false
       ),
-      description: formConfig(
-        "Project Description",
-        "Description ...",
-        "text",
+      email: formConfig(
+        "Email",
+        "Email ...",
+        "email",
         "",
-        "textArea",
+        "input",
         { isRequired: true },
         false,
         false
       ),
+      userRole: {
+        elementConfig: [{ value: "Admin" }, { value: "Developer" }],
+        value: "Admin",
+        name: "User Role",
+        isValid: true,
+        fieldType: "select",
+      },
     },
   };
   componentDidMount() {
-    this.props.fetchProjects();
+    this.props.fetchUsers(this.props.match.params.id);
   }
   inputHandler = (e, type) => {
     let formCopy = { ...this.state.form };
@@ -58,28 +64,36 @@ class ProjectList extends Component {
     this.setState({ form: formCopy });
   };
   formCancelHandler = () => {
-    this.setState({ newProj: false });
+    this.setState({ newUser: false });
     this.resetForm();
   };
   formSubmitHandler = () => {
-    this.props.submitProject({
-      name: this.state.form.name.value,
-      description: this.state.form.description.value,
+    this.props.submitUser(this.props.match.params.id, {
+      userName: this.state.form.userName.value,
+      email: this.state.form.email.value,
+      role: this.state.form.userRole.value,
     });
     this.resetForm();
-    this.setState({ newProj: false });
+    this.setState({ newUser: false });
   };
   resetForm() {
     const formCopy = {
       ...this.state.form,
     };
     Object.keys(formCopy).forEach((curr) => {
-      formCopy[curr] = {
-        ...formCopy[curr],
-        value: "",
-        isValid: false,
-        touch: false,
-      };
+      formCopy[curr] =
+        curr.fieldType === "select"
+          ? {
+              ...formCopy[curr],
+              value: "admin",
+              isValid: true,
+            }
+          : {
+              ...formCopy[curr],
+              value: "",
+              isValid: false,
+              touch: false,
+            };
     });
     this.setState({ form: formCopy });
   }
@@ -87,36 +101,20 @@ class ProjectList extends Component {
   createTableHeader() {
     return (
       <tr>
-        <th>Project Name</th>
-        <th>Description</th>
-        <th>{"\u00A0"}</th>
+        <th>User Name</th>
+        <th>Email</th>
+        <th>Role</th>
       </tr>
     );
   }
   createTableBody() {
     const startIndex = (this.state.currentPage - 1) * this.state.numPerPage;
     const endIndex = startIndex + this.state.numPerPage;
-    const styles = { textDecoration: "none", color: "#551A8B" };
-    return this.props.projects.slice(startIndex, endIndex).map((curr) => (
+    return this.props.users.slice(startIndex, endIndex).map((curr) => (
       <tr key={curr.key}>
-        <td>{curr.name}</td>
-        <td>{curr.description}</td>
-        <td>
-          <ul>
-            <li>
-              <NavLink to={`/users/${curr.key}/${curr.name}`} style={styles}>
-                {" "}
-                Manage Users
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to={`/ncdkcnkdnc`} style={styles}>
-                {" "}
-                Details
-              </NavLink>
-            </li>
-          </ul>
-        </td>
+        <td>{curr.userName}</td>
+        <td>{curr.email}</td>
+        <td>{curr.role}</td>
       </tr>
     ));
   }
@@ -125,7 +123,7 @@ class ProjectList extends Component {
   prevPage = () =>
     this.setState((prevState) => ({ currentPage: prevState.currentPage - 1 }));
 
-  addProjectHandler = () => this.setState({ newProj: true });
+  addUserHandler = () => this.setState({ newUser: true });
   checkFormValidity = () => {
     const formCopy = { ...this.state.form };
     let isValid = true;
@@ -140,22 +138,22 @@ class ProjectList extends Component {
       <Spinner />
     ) : (
       <div>
-        <NewProject
-          open={this.state.newProj}
+        <NewUser
+          open={this.state.newUser}
           form={this.state.form}
           inputHandler={this.inputHandler}
           cancelForm={this.formCancelHandler}
           submitForm={this.formSubmitHandler}
           disabled={!this.checkFormValidity()}
         />
-        <Button clicked={this.addProjectHandler}>Add New Project</Button>
+        <Button clicked={this.addUserHandler}>Add New User</Button>
         <Modal
-          header={<p> My projects</p>}
+          header={<p> {`${this.props.match.params.name} Users`}</p>}
           footer={
             <Pagination
               currPage={this.state.currentPage}
               numPerPage={this.state.numPerPage}
-              items={this.props.projects.length}
+              items={this.props.users.length}
               prev={this.prevPage}
               next={this.nextPage}
             />
@@ -170,13 +168,13 @@ class ProjectList extends Component {
   }
 }
 const mapStateToProps = (state) => ({
-  projects: state.project.projects,
-  dispSpinner: state.project.dispSpinner,
+  users: state.user.users,
+  dispSpinner: state.user.dispSpinner,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  fetchProjects: () => dispatch(actionCreators.fetchOrdersCreator()),
-  submitProject: (obj) => dispatch(actionCreators.postOrderCreator(obj)),
+  fetchUsers: (id) => dispatch(actionCreators.fetchUsersCreator(id)),
+  submitUser: (id, obj) => dispatch(actionCreators.postUserCreator(id, obj)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(ProjectList);
+export default connect(mapStateToProps, mapDispatchToProps)(UserList);
