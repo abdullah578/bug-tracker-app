@@ -10,6 +10,7 @@ const projectReducer = (state = initialState, action) => {
       return {
         ...state,
         dispSpinner: true,
+        users: [],
       };
     }
     case actionTypes.FETCH_USERS_SUCCESS: {

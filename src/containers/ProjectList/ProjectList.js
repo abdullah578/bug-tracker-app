@@ -8,7 +8,7 @@ import Table from "../../components/UI/Table/Table";
 import Button from "../../components/UI/Button/Add/Add";
 import Spinner from "../../components/UI/Spinner/Spinner";
 import Pagination from "../../components/UI/Pagination/Pagination";
-import NewProject from "../../components/NewUser/NewItem";
+import NewProject from "../../components/NewItem/NewItem";
 
 class ProjectList extends Component {
   state = {

@@ -1,0 +1,40 @@
+.Para {
+  font-size: 150%;
+  font-weight: 300;
+  margin-left:15px;
+  color: #000;
+}
+.RoleDiv {
+  display: flex;
+  height: 70vh;
+  margin-top: 25px;
+}
+
+.Users {
+  flex: 1 1 70%;
+  height: 100%;
+  padding:15px;
+}
+.Roles {
+  flex: 1 1 30%;
+  height: 100%;
+  padding: 15px;
+}
+.ListContainer {
+  height: 30%;
+  margin-bottom:80px;
+}
+.UserList {
+  list-style: none;
+  font-size: 80%;
+  margin-top:3px;
+  background-color: #fff;
+  height: 100%;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  width: 100%;
+}
+.UserList li {
+  font-size: 80%;
+  padding:5px;
+}

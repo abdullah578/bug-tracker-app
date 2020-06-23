@@ -12,6 +12,17 @@ body {
   background-color: #ebedee;
 }
 
+@media (max-width: 610px) {
+  body {
+    font-size: 15px;
+  }
+}
+@media (max-width: 500px) {
+  body {
+    font-size: 12px;
+  }
+}
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;

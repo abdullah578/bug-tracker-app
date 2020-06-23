@@ -7,7 +7,7 @@ import Table from "../../components/UI/Table/Table";
 import Button from "../../components/UI/Button/Add/Add";
 import Spinner from "../../components/UI/Spinner/Spinner";
 import Pagination from "../../components/UI/Pagination/Pagination";
-import NewUser from "../../components/NewUser/NewItem";
+import NewUser from "../../components/NewItem/NewItem";
 
 class UserList extends Component {
   state = {
