@@ -26,3 +26,11 @@ export const checkValidation = (inputVal, validationRequirement) => {
     isValid = inputVal.trim().length > 0 && isValid;
   return isValid;
 };
+export const checkFormValidity = (form) => {
+  const formCopy = { ...form };
+  let isValid = true;
+  Object.keys(formCopy).forEach(
+    (curr) => (isValid = formCopy[curr].isValid && isValid)
+  );
+  return isValid;
+};

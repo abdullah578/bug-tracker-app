@@ -6,4 +6,8 @@
   border: none;
   border-radius: 10px;
   outline: none;
+  cursor: pointer;
+}
+.Button:disabled {
+  cursor: not-allowed;
 }

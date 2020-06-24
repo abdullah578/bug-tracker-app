@@ -1,0 +1,26 @@
+.Login {
+  width: 30%;
+  margin: auto;
+  background-color: #fff;
+  padding: 15px;
+  border: 1px solid #eee;
+  box-shadow: 0px 2px 2px #ccc;
+  margin-top: 100px;
+}
+.Login p{
+  text-align: center;
+}
+
+.Button {
+  border: none;
+  outline: none;
+  background-color: inherit;
+  display: block;
+  margin: auto;
+  color: #444;
+  margin-top: 20px;
+  cursor: pointer;
+}
+.Button:hover {
+  color: #000;
+}

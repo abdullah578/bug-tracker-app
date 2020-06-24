@@ -1,7 +1,11 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import * as actionCreators from "../../store/actions/Users";
-import { formConfig, checkValidation } from "../../Utilities/Utilities";
+import {
+  formConfig,
+  checkValidation,
+  checkFormValidity,
+} from "../../Utilities/Utilities";
 import Modal from "../../components/UI/Modal/Modal";
 import Table from "../../components/UI/Table/Table";
 import Button from "../../components/UI/Button/Add/Add";
@@ -124,15 +128,6 @@ class UserList extends Component {
     this.setState((prevState) => ({ currentPage: prevState.currentPage - 1 }));
 
   addUserHandler = () => this.setState({ newUser: true });
-  checkFormValidity = () => {
-    const formCopy = { ...this.state.form };
-    let isValid = true;
-    Object.keys(formCopy).forEach(
-      (curr) => (isValid = formCopy[curr].isValid && isValid)
-    );
-    console.log(isValid);
-    return isValid;
-  };
   render() {
     return this.props.dispSpinner ? (
       <Spinner />
@@ -144,7 +139,7 @@ class UserList extends Component {
           inputHandler={this.inputHandler}
           cancelForm={this.formCancelHandler}
           submitForm={this.formSubmitHandler}
-          disabled={!this.checkFormValidity()}
+          disabled={!checkFormValidity(this.state.form)}
         />
         <Button clicked={this.addUserHandler}>Add New User</Button>
         <Modal
