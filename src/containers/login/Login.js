@@ -46,6 +46,10 @@ class Login extends Component {
     },
     isSignUp: true,
   };
+  constructor(props) {
+    super(props);
+    this.props.history.push("/");
+  }
   inputHandler = (e, type) => {
     let formCopy = { ...this.state.form };
     formCopy = {
@@ -63,15 +67,39 @@ class Login extends Component {
     this.setState({ form: formCopy });
   };
   formSubmitHandler = () => {
+    const name = this.state.isSignUp ? this.state.form.name.value : null;
     this.props.authenticate(
       this.state.form.email.value,
       this.state.form.password.value,
       this.state.isSignUp,
-      this.state.form.name.value
+      name
     );
   };
   switchSignUp = () =>
-    this.setState((prevState) => ({ isSignUp: !prevState.isSignUp }));
+    this.setState((prevState) => {
+      let form;
+      if (prevState.isSignUp)
+        form = {
+          email: prevState.form.email,
+          password: prevState.form.password,
+        };
+      else {
+        form = {
+          ...this.state.form,
+          name: formConfig(
+            "Name",
+            "Name ...",
+            "name",
+            "",
+            "input",
+            { isRequired: true },
+            false,
+            false
+          ),
+        };
+      }
+      return { isSignUp: !prevState.isSignUp, form };
+    });
   render() {
     return (
       <div className={classes.Login}>
@@ -79,6 +107,7 @@ class Login extends Component {
         {Object.keys(this.state.form).map((curr) => (
           <Input
             {...this.state.form[curr]}
+            key={curr}
             inputHandler={(e) => this.inputHandler(e, curr)}
           />
         ))}

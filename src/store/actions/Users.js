@@ -25,27 +25,31 @@ export const fetchUsersCreator = (id) => (dispatch) => {
 export const fetchAllUsersCreator = () => (dispatch) => {
   dispatch(fetchUsersInit());
   axios
-    .get(`/users.json`)
+    .get(`/allUsers.json`)
     .then((resp) => {
       console.log(resp);
       const usersArray = [];
+      const allUsersArray = [];
       if (resp.data) {
-        for (let projKey in resp.data) {
-          for (let userKey in resp.data[projKey])
-            if (
-              usersArray.findIndex(
-                (curr) => curr.email === resp.data[projKey][userKey].email
-              ) === -1
-            )
-              usersArray.push({ key: userKey, ...resp.data[projKey][userKey] });
-        }
+        Object.keys(resp.data).forEach((curr) => {
+          allUsersArray.push({ ...resp.data[curr], key: curr });
+          if (resp.data[curr].role !== "N/A")
+            usersArray.push({ ...resp.data[curr], key: curr });
+        });
       }
       dispatch({
         type: actionTypes.FETCH_USERS_SUCCESS,
         users: usersArray,
+        allUsers: allUsersArray,
       });
     })
     .catch((err) => dispatch({ type: actionTypes.FETCH_USERS_FAILURE }));
+};
+export const updateUsersCreator = (key, obj) => (dispatch) => {
+  axios
+    .put(`/allUsers/${key}.json`, obj)
+    .then((resp) => dispatch(fetchAllUsersCreator()))
+    .catch((err) => null);
 };
 export const postUserCreator = (id, obj) => (dispatch) =>
   axios

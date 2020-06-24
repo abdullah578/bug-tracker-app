@@ -11,8 +11,8 @@ const authLogout = (expirationTime) => (dispatch) => {
 export const authenticate = (email, password, isSignUp, name) => (dispatch) => {
   const url = isSignUp
     ? `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=
-    AIzaSyC8T4yAVKkHJe_vp5GcVDBD_3zsmqoIPSg`
-    : `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyC8T4yAVKkHJe_vp5GcVDBD_3zsmqoIPSg`;
+    ${process.env.REACT_APP_API_KEY}`
+    : `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${process.env.REACT_APP_API_KEY}`;
   axios
     .post(url, { email, password, returnSecureToken: true })
     .then((resp) => {
@@ -22,14 +22,14 @@ export const authenticate = (email, password, isSignUp, name) => (dispatch) => {
         userid: resp.data.localId,
       });
       dispatch(authLogout(resp.data.expiresIn));
-      postUsers(email, name);
+      if (isSignUp) postUsers(email, name);
     })
-    .catch((err) =>
+    .catch((err) => {
       dispatch({
         type: actionTypes.AUTH_FAILURE,
         error: err.response.data.error.message,
-      })
-    );
+      });
+    });
 };
 
 const postUsers = (email, name) => {

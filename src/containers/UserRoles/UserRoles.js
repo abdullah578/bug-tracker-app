@@ -7,6 +7,7 @@ import Table from "../../components/UI/Table/Table";
 import Button from "../../components/UI/Button/Add/Add";
 import Spinner from "../../components/UI/Spinner/Spinner";
 import Pagination from "../../components/UI/Pagination/Pagination";
+import Users from "../../components/UserList/UserList";
 import classes from "./UserRoles.module.css";
 
 class UserRoles extends Component {
@@ -20,6 +21,7 @@ class UserRoles extends Component {
     },
     currentPage: 1,
     numPerPage: 5,
+    selectedUser: null,
   };
   componentDidMount() {
     this.props.fetchAllUsers();
@@ -28,6 +30,11 @@ class UserRoles extends Component {
     const userRoleCopy = { ...this.state.userRole };
     userRoleCopy.value = e.target.value;
     this.setState({ userRole: userRoleCopy });
+  };
+  selectUser = (key) => {
+    console.log("p");
+    console.log(key);
+    this.setState({ selectedUser: key });
   };
   createTableHeader() {
     return (
@@ -43,7 +50,7 @@ class UserRoles extends Component {
     const endIndex = startIndex + this.state.numPerPage;
     return this.props.users.slice(startIndex, endIndex).map((curr) => (
       <tr key={curr.key}>
-        <td>{curr.userName}</td>
+        <td>{curr.name}</td>
         <td>{curr.email}</td>
         <td>{curr.role}</td>
       </tr>
@@ -53,6 +60,19 @@ class UserRoles extends Component {
     this.setState((prevState) => ({ currentPage: prevState.currentPage + 1 }));
   prevPage = () =>
     this.setState((prevState) => ({ currentPage: prevState.currentPage - 1 }));
+
+  formSubmit = () => {
+    if (!this.state.selectedUser) return null;
+    const index = this.props.allUsers.findIndex(
+      (curr) => curr.key === this.state.selectedUser
+    );
+    const obj = {
+      ...this.props.allUsers[index],
+      role: this.state.userRole.value,
+    };
+    console.log(obj);
+    this.props.updateUser(this.state.selectedUser, obj);
+  };
   createHeader() {
     const BigStyles = {
       fontSize: "70%",
@@ -80,19 +100,12 @@ class UserRoles extends Component {
         <p className={classes.Para}>Manage User Roles</p>
         <div className={classes.RoleDiv}>
           <div className={classes.Roles}>
-            <div className={classes.ListContainer}>
-              <p>Select a User </p>
-              <ul className={classes.UserList}>
-                <li>Abdullah Mohammed</li>
-                <li>Abdullah Mohammed</li>
-                <li>Abdullah Mohammed</li>
-                <li>Abdullah Mohammed</li>
-                <li>Abdullah Mohammed</li>
-                <li>Abdullah Mohammed</li>
-              </ul>
-            </div>
+            <Users all={this.props.allUsers} select={this.selectUser} />
             <Input {...this.state.userRole} inputHandler={this.roleHandler} />
-            <Button style={{ width: "100%" }}> Submit</Button>
+            <Button style={{ width: "100%" }} clicked={this.formSubmit}>
+              {" "}
+              Submit
+            </Button>
           </div>
           <div className={classes.Users}>
             <Modal
@@ -119,11 +132,14 @@ class UserRoles extends Component {
 }
 const mapStateToProps = (state) => ({
   users: state.user.users,
+  allUsers: state.user.allUsers,
   dispSpinner: state.user.dispSpinner,
 });
 
 const mapDispatchToProps = (dispatch) => ({
   fetchAllUsers: () => dispatch(actionCreators.fetchAllUsersCreator()),
+  updateUser: (key, obj) =>
+    dispatch(actionCreators.updateUsersCreator(key, obj)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(UserRoles);

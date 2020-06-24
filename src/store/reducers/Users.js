@@ -1,16 +1,18 @@
 import * as actionTypes from "../actions/actionTypes";
 const initialState = {
   users: [],
+  allUsers: [],
   dispSpinner: false,
 };
 
-const projectReducer = (state = initialState, action) => {
+const userReducer = (state = initialState, action) => {
   switch (action.type) {
     case actionTypes.FETCH_USERS_INIT: {
       return {
         ...state,
         dispSpinner: true,
         users: [],
+        allUsers: [],
       };
     }
     case actionTypes.FETCH_USERS_SUCCESS: {
@@ -18,6 +20,7 @@ const projectReducer = (state = initialState, action) => {
         ...state,
         users: action.users,
         dispSpinner: false,
+        allUsers: action.allUsers,
       };
     }
     case actionTypes.FETCH_USERS_FAILURE: {
@@ -31,4 +34,4 @@ const projectReducer = (state = initialState, action) => {
   }
 };
 
-export default projectReducer;
+export default userReducer;

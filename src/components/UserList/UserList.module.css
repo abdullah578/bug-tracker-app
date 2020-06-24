@@ -15,4 +15,5 @@
 .UserList li {
   font-size: 80%;
   padding: 5px;
+  cursor: pointer;
 }
