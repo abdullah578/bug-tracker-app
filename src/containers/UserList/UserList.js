@@ -19,37 +19,21 @@ class UserList extends Component {
     currentPage: 1,
     numPerPage: 5,
     form: {
-      userName: formConfig(
-        "Username",
-        "Username ...",
-        "text",
-        "",
-        "input",
-        { isRequired: true },
-        false,
-        false
-      ),
       email: formConfig(
         "Email",
         "Email ...",
         "email",
         "",
         "input",
-        { isRequired: true },
+        { isRequired: true, isArrayPresent: true },
         false,
         false
       ),
-      userRole: {
-        elementConfig: [{ value: "Admin" }, { value: "Developer" }],
-        value: "Admin",
-        name: "User Role",
-        isValid: true,
-        fieldType: "select",
-      },
     },
   };
   componentDidMount() {
-    this.props.fetchUsers(this.props.match.params.id);
+    this.props.fetchProjUsers(this.props.match.params.id);
+    this.props.fetchAllUsers();
   }
   inputHandler = (e, type) => {
     let formCopy = { ...this.state.form };
@@ -61,7 +45,8 @@ class UserList extends Component {
         touch: true,
         isValid: checkValidation(
           e.target.value,
-          this.state.form[type].validationRequirement
+          this.state.form[type].validationRequirement,
+          this.props.users
         ),
       },
     };
@@ -72,11 +57,10 @@ class UserList extends Component {
     this.resetForm();
   };
   formSubmitHandler = () => {
-    this.props.submitUser(this.props.match.params.id, {
-      userName: this.state.form.userName.value,
-      email: this.state.form.email.value,
-      role: this.state.form.userRole.value,
-    });
+    const index = this.props.users.findIndex(
+      (curr) => curr.email === this.state.form.email.value.trim()
+    );
+    this.props.submitUser(this.props.match.params.id, this.props.users[index]);
     this.resetForm();
     this.setState({ newUser: false });
   };
@@ -114,9 +98,9 @@ class UserList extends Component {
   createTableBody() {
     const startIndex = (this.state.currentPage - 1) * this.state.numPerPage;
     const endIndex = startIndex + this.state.numPerPage;
-    return this.props.users.slice(startIndex, endIndex).map((curr) => (
+    return this.props.projUsers.slice(startIndex, endIndex).map((curr) => (
       <tr key={curr.key}>
-        <td>{curr.userName}</td>
+        <td>{curr.name}</td>
         <td>{curr.email}</td>
         <td>{curr.role}</td>
       </tr>
@@ -164,11 +148,13 @@ class UserList extends Component {
 }
 const mapStateToProps = (state) => ({
   users: state.user.users,
+  projUsers: state.user.projUsers,
   dispSpinner: state.user.dispSpinner,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  fetchUsers: (id) => dispatch(actionCreators.fetchUsersCreator(id)),
+  fetchProjUsers: (id) => dispatch(actionCreators.fetchProjUsersCreator(id)),
+  fetchAllUsers: () => dispatch(actionCreators.fetchAllUsersCreator()),
   submitUser: (id, obj) => dispatch(actionCreators.postUserCreator(id, obj)),
 });
 

@@ -54,8 +54,6 @@ const postUsers = (email, name) => {
     name,
     email,
     role: "N/A",
-    projects: [],
-    tickets: [],
   });
 };
 

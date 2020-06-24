@@ -92,8 +92,6 @@ class UserRoles extends Component {
     );
   }
   render() {
-    console.log("e");
-    console.log(this.createTableBody());
     return this.props.dispSpinner ? (
       <Spinner />
     ) : (

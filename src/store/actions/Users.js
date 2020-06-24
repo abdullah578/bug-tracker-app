@@ -4,8 +4,11 @@ import axios from "../../axiosInstance/AxiosInstance";
 const fetchUsersInit = () => ({
   type: actionTypes.FETCH_USERS_INIT,
 });
-export const fetchUsersCreator = (id) => (dispatch) => {
-  dispatch(fetchUsersInit());
+const fetchProjUsersInit = () => ({
+  type: actionTypes.FETCH_PROJ_USERS_INIT,
+});
+export const fetchProjUsersCreator = (id) => (dispatch) => {
+  dispatch(fetchProjUsersInit());
   axios
     .get(`/users/${id}.json`)
     .then((resp) => {
@@ -16,11 +19,11 @@ export const fetchUsersCreator = (id) => (dispatch) => {
           }))
         : [];
       dispatch({
-        type: actionTypes.FETCH_USERS_SUCCESS,
+        type: actionTypes.FETCH_PROJ_USERS_SUCCESS,
         users: usersArray,
       });
     })
-    .catch((err) => dispatch({ type: actionTypes.FETCH_USERS_FAILURE }));
+    .catch((err) => dispatch({ type: actionTypes.FETCH_PROJ_USERS_FAILURE }));
 };
 export const fetchAllUsersCreator = () => (dispatch) => {
   dispatch(fetchUsersInit());
@@ -51,7 +54,15 @@ export const updateUsersCreator = (key, obj) => (dispatch) => {
     .then((resp) => dispatch(fetchAllUsersCreator()))
     .catch((err) => null);
 };
-export const postUserCreator = (id, obj) => (dispatch) =>
+export const postUserCreator = (id, obj) => (dispatch) => {
   axios
-    .post(`/users/${id}.json`, obj)
-    .then((resp) => dispatch(fetchUsersCreator()));
+    .put(`/users/${id}/${obj.key}.json`, obj)
+    .then((resp) => dispatch(fetchProjUsersCreator(id)));
+  /*axios.put(`/allUsers/${obj.key}.json`, {
+    name: obj.name,
+    email: obj.email,
+    role: obj.role,
+    projects: obj.projects,
+    tickets: obj.tickets,
+  })*/
+};
