@@ -72,6 +72,7 @@ class UserRoles extends Component {
     };
     console.log(obj);
     this.props.updateUser(this.state.selectedUser, obj);
+    this.setState({ selectedUser: null });
   };
   createHeader() {
     const BigStyles = {
@@ -100,7 +101,11 @@ class UserRoles extends Component {
         <p className={classes.Para}>Manage User Roles</p>
         <div className={classes.RoleDiv}>
           <div className={classes.Roles}>
-            <Users all={this.props.allUsers} select={this.selectUser} />
+            <Users
+              all={this.props.allUsers}
+              select={this.selectUser}
+              selected={this.state.selectedUser}
+            />
             <Input {...this.state.userRole} inputHandler={this.roleHandler} />
             <Button style={{ width: "100%" }} clicked={this.formSubmit}>
               {" "}

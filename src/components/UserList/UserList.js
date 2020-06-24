@@ -8,7 +8,15 @@ const UserList = (props) => {
       <p>Select a User </p>
       <ul className={classes.UserList}>
         {props.all.map((curr) => (
-          <li key={curr.key} onClick={() => props.select(curr.key)}>
+          <li
+            style={
+              props.selected === curr.key
+                ? { backgroundColor: "#00abd9" }
+                : null
+            }
+            key={curr.key}
+            onClick={() => props.select(curr.key)}
+          >
             {curr.email}
           </li>
         ))}
