@@ -4,6 +4,7 @@ const initialState = {
   allUsers: [],
   projUsers: [],
   dispSpinner: false,
+  error: false,
 };
 
 const userReducer = (state = initialState, action) => {
@@ -12,6 +13,7 @@ const userReducer = (state = initialState, action) => {
       return {
         ...state,
         dispSpinner: true,
+        error: false,
         allUsers: [],
         users: [],
       };
@@ -20,6 +22,7 @@ const userReducer = (state = initialState, action) => {
       return {
         ...state,
         dispSpinner: true,
+        error: false,
         projUsers: [],
       };
     }
@@ -28,6 +31,7 @@ const userReducer = (state = initialState, action) => {
         ...state,
         users: action.users,
         dispSpinner: false,
+        error: false,
         allUsers: action.allUsers,
       };
     }
@@ -35,6 +39,7 @@ const userReducer = (state = initialState, action) => {
       return {
         ...state,
         dispSpinner: false,
+        error: true,
       };
     }
     case actionTypes.FETCH_PROJ_USERS_SUCCESS: {
@@ -42,12 +47,14 @@ const userReducer = (state = initialState, action) => {
         ...state,
         projUsers: action.users,
         dispSpinner: false,
+        error: false,
       };
     }
     case actionTypes.FETCH_PROJ_USERS_FAILURE: {
       return {
         ...state,
         dispSpinner: false,
+        error: true,
       };
     }
     default:

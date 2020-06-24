@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import * as actionCreators from "../../store/actions/Users";
+import WithErrorHandle from "../../hoc/WithErrorHandle";
+import axios from "../../axiosInstance/AxiosInstance";
 import Input from "../../components/UI/Input/Input";
 import Modal from "../../components/UI/Modal/Modal";
 import Table from "../../components/UI/Table/Table";
@@ -122,6 +124,8 @@ class UserRoles extends Component {
                   next={this.nextPage}
                 />
               }
+              err={this.props.err || this.props.users.length === 0}
+              type="Users"
             >
               <Table header={this.createTableHeader()}>
                 {this.createTableBody()}
@@ -137,6 +141,7 @@ const mapStateToProps = (state) => ({
   users: state.user.users,
   allUsers: state.user.allUsers,
   dispSpinner: state.user.dispSpinner,
+  error: state.user.error,
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -145,4 +150,7 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(actionCreators.updateUsersCreator(key, obj)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(UserRoles);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(WithErrorHandle(UserRoles, axios));

@@ -3,6 +3,8 @@ import { connect } from "react-redux";
 import * as actionCreators from "../../store/actions/Projects";
 import { NavLink } from "react-router-dom";
 import { formConfig, checkValidation } from "../../Utilities/Utilities";
+import WithErrorHandle from "../../hoc/WithErrorHandle";
+import axios from "../../axiosInstance/AxiosInstance";
 import Modal from "../../components/UI/Modal/Modal";
 import Table from "../../components/UI/Table/Table";
 import Button from "../../components/UI/Button/Add/Add";
@@ -160,6 +162,8 @@ class ProjectList extends Component {
               next={this.nextPage}
             />
           }
+          err={this.props.err || this.props.projects === 0}
+          type="Projects"
         >
           <Table header={this.createTableHeader()}>
             {this.createTableBody()}
@@ -172,11 +176,12 @@ class ProjectList extends Component {
 const mapStateToProps = (state) => ({
   projects: state.project.projects,
   dispSpinner: state.project.dispSpinner,
+  err: state.project.error,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  fetchProjects: () => dispatch(actionCreators.fetchOrdersCreator()),
-  submitProject: (obj) => dispatch(actionCreators.postOrderCreator(obj)),
+  fetchProjects: () => dispatch(actionCreators.fetchProjectsCreator()),
+  submitProject: (obj) => dispatch(actionCreators.postProjectCreator(obj)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(ProjectList);
+export default connect(mapStateToProps, mapDispatchToProps)(WithErrorHandle(ProjectList,axios));

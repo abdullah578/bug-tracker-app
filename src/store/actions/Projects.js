@@ -1,13 +1,13 @@
 import * as actionTypes from "./actionTypes";
 import axios from "../../axiosInstance/AxiosInstance";
 
-const fetchOrdersInit = () => ({
+const fetchProjectsInit = () => ({
   type: actionTypes.FETCH_PROJECTS_INIT,
 });
-export const fetchOrdersCreator = () => (dispatch) => {
-  dispatch(fetchOrdersInit());
+export const fetchProjectsCreator = () => (dispatch) => {
+  dispatch(fetchProjectsInit());
   axios
-    .get("/projects.json")
+    .get("/projects.jsohn")
     .then((resp) => {
       const projArray = resp.data
         ? Object.keys(resp.data).map((key) => ({
@@ -22,7 +22,7 @@ export const fetchOrdersCreator = () => (dispatch) => {
     })
     .catch((err) => dispatch({ type: actionTypes.FETCH_PROJECTS_FAILURE }));
 };
-export const postOrderCreator = (obj) => (dispatch) =>
+export const postProjectCreator = (obj) => (dispatch) =>
   axios
     .post("/projects.json", obj)
-    .then((resp) => dispatch(fetchOrdersCreator()));
+    .then((resp) => dispatch(fetchProjectsCreator()));

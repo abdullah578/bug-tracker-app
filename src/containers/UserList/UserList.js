@@ -6,6 +6,8 @@ import {
   checkValidation,
   checkFormValidity,
 } from "../../Utilities/Utilities";
+import WithErrorHandle from "../../hoc/WithErrorHandle";
+import axios from "../../axiosInstance/AxiosInstance";
 import Modal from "../../components/UI/Modal/Modal";
 import Table from "../../components/UI/Table/Table";
 import Button from "../../components/UI/Button/Add/Add";
@@ -125,7 +127,7 @@ class UserList extends Component {
           submitForm={this.formSubmitHandler}
           disabled={!checkFormValidity(this.state.form)}
         />
-        <Button clicked={this.addUserHandler}>Add New User</Button>
+        <Button clicked={this.addUserHandler}>Add New User</Button>(
         <Modal
           header={<p> {`${this.props.match.params.name} Users`}</p>}
           footer={
@@ -137,11 +139,14 @@ class UserList extends Component {
               next={this.nextPage}
             />
           }
+          err={this.props.error || this.props.projUsers.length === 0}
+          type="Users"
         >
           <Table header={this.createTableHeader()}>
             {this.createTableBody()}
           </Table>
         </Modal>
+        )
       </div>
     );
   }
@@ -150,6 +155,7 @@ const mapStateToProps = (state) => ({
   users: state.user.users,
   projUsers: state.user.projUsers,
   dispSpinner: state.user.dispSpinner,
+  error: state.user.error,
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -158,4 +164,7 @@ const mapDispatchToProps = (dispatch) => ({
   submitUser: (id, obj) => dispatch(actionCreators.postUserCreator(id, obj)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(UserList);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(WithErrorHandle(UserList, axios));

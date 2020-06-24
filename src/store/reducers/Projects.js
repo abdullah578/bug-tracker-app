@@ -2,6 +2,7 @@ import * as actionTypes from "../actions/actionTypes";
 const initialState = {
   projects: [],
   dispSpinner: false,
+  error: false,
 };
 
 const projectReducer = (state = initialState, action) => {
@@ -10,6 +11,7 @@ const projectReducer = (state = initialState, action) => {
       return {
         ...state,
         dispSpinner: true,
+        error: false,
       };
     }
     case actionTypes.FETCH_PROJECTS_SUCCESS: {
@@ -17,12 +19,14 @@ const projectReducer = (state = initialState, action) => {
         ...state,
         projects: action.projects,
         dispSpinner: false,
+        error: false,
       };
     }
     case actionTypes.FETCH_PROJECTS_FAILURE: {
       return {
         ...state,
         dispSpinner: false,
+        error: true,
       };
     }
     default:
