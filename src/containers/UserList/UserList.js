@@ -165,7 +165,7 @@ class UserList extends Component {
             <Pagination
               currPage={this.state.currentPage}
               numPerPage={this.state.numPerPage}
-              items={this.props.users.length}
+              items={this.props.projUsers.length}
               prev={this.prevPage}
               next={this.nextPage}
             />
