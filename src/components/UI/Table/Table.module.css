@@ -9,7 +9,7 @@ td {
   border: none;
   font-size: 80%;
 }
-.Table tr {
+.Table tbody tr {
   border-bottom: 1px solid #ebedee;
 }
 .Table thead tr {

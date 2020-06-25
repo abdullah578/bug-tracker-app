@@ -2,10 +2,42 @@
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
   height: 10%;
+  padding: 0 40px;
   background-color: #fff;
   z-index: 100;
   border: 1px solid #eee;
   box-shadow: 0px 2px 2px #ccc;
+  width: 100%;
+}
+.UserInfo {
+  transition: margin-left 0.3s ease-out;
+  float: left;
+  color: #333;
+  font-size: 80%;
+  margin-top: 1.5%;
+}
+.UserInfoOpen {
+  margin-left: 250px;
+}
+.UserInfoClose {
+  margin-left: 62.5px;
+}
+.UserActions {
+  cursor: pointer;
+  float: right;
+  height: 100%;
+}
+.Toolbar ion-icon {
+  margin-left: 8px;
+  display: inline-block;
+  cursor: pointer;
+  font-size: 80%;
+  vertical-align: middle;
+}
+.Logout {
+  display:inline-block;
+  font-size: 80%;
+  margin-top:15px;
+  color: #333;
 }

@@ -9,7 +9,7 @@ const authLogout = (expirationTime) => (dispatch) => {
   );
 };
 
-const authLogoutCreator = () => {
+export const authLogoutCreator = () => {
   localStorage.removeItem("token");
   localStorage.removeItem("userid");
   localStorage.removeItem("expiryTime");

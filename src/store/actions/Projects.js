@@ -7,7 +7,7 @@ const fetchProjectsInit = () => ({
 export const fetchProjectsCreator = () => (dispatch) => {
   dispatch(fetchProjectsInit());
   axios
-    .get("/projects.jsohn")
+    .get("/projects.json")
     .then((resp) => {
       const projArray = resp.data
         ? Object.keys(resp.data).map((key) => ({

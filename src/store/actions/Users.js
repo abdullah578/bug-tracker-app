@@ -57,7 +57,8 @@ export const updateUsersCreator = (key, obj) => (dispatch) => {
 export const postUserCreator = (id, obj) => (dispatch) => {
   axios
     .put(`/users/${id}/${obj.key}.json`, obj)
-    .then((resp) => dispatch(fetchProjUsersCreator(id)));
+    .then((resp) => dispatch(fetchProjUsersCreator(id)))
+    .catch((err) => console.log(err));
   /*axios.put(`/allUsers/${obj.key}.json`, {
     name: obj.name,
     email: obj.email,
@@ -65,4 +66,10 @@ export const postUserCreator = (id, obj) => (dispatch) => {
     projects: obj.projects,
     tickets: obj.tickets,
   })*/
+};
+export const deleteUserCreator = (projectID, userKey) => (dispatch) => {
+  axios
+    .delete(`users/${projectID}/${userKey}.json`)
+    .then((resp) => dispatch(fetchProjUsersCreator(projectID)))
+    .catch((err) => console.log(err));
 };

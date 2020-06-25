@@ -14,10 +14,15 @@ import Button from "../../components/UI/Button/Add/Add";
 import Spinner from "../../components/UI/Spinner/Spinner";
 import Pagination from "../../components/UI/Pagination/Pagination";
 import NewUser from "../../components/NewItem/NewItem";
+import DeleteUser from "../../components/DeleteItem/DeleteItem";
 
 class UserList extends Component {
   state = {
     newUser: false,
+    deleteUser: {
+      continue: false,
+      key: null,
+    },
     currentPage: 1,
     numPerPage: 5,
     form: {
@@ -97,11 +102,31 @@ class UserList extends Component {
       </tr>
     );
   }
+  removeUserContinue = () => {
+    this.props.deleteUser(
+      this.props.match.params.id,
+      this.state.deleteUser.key
+    );
+    this.setState({
+      deleteUser: {
+        key: null,
+        continue: false,
+      },
+    });
+  };
+  removeUserCancel = () =>
+    this.setState({ deleteUser: { key: null, continue: false } });
+
+  clickUser = (key) => this.setState({ deleteUser: { key, continue: true } });
   createTableBody() {
     const startIndex = (this.state.currentPage - 1) * this.state.numPerPage;
     const endIndex = startIndex + this.state.numPerPage;
     return this.props.projUsers.slice(startIndex, endIndex).map((curr) => (
-      <tr key={curr.key}>
+      <tr
+        key={curr.key}
+        onClick={() => this.clickUser(curr.key)}
+        style={{ cursor: "pointer" }}
+      >
         <td>{curr.name}</td>
         <td>{curr.email}</td>
         <td>{curr.role}</td>
@@ -127,7 +152,13 @@ class UserList extends Component {
           submitForm={this.formSubmitHandler}
           disabled={!checkFormValidity(this.state.form)}
         />
-        <Button clicked={this.addUserHandler}>Add New User</Button>(
+        <DeleteUser
+          type="User"
+          removeItemCancel={this.removeUserCancel}
+          removeItemContinue={this.removeUserContinue}
+          show={this.state.deleteUser.continue}
+        />
+        <Button clicked={this.addUserHandler}>Add New User</Button>
         <Modal
           header={<p> {`${this.props.match.params.name} Users`}</p>}
           footer={
@@ -146,7 +177,6 @@ class UserList extends Component {
             {this.createTableBody()}
           </Table>
         </Modal>
-        )
       </div>
     );
   }
@@ -162,6 +192,8 @@ const mapDispatchToProps = (dispatch) => ({
   fetchProjUsers: (id) => dispatch(actionCreators.fetchProjUsersCreator(id)),
   fetchAllUsers: () => dispatch(actionCreators.fetchAllUsersCreator()),
   submitUser: (id, obj) => dispatch(actionCreators.postUserCreator(id, obj)),
+  deleteUser: (projectId, userKey) =>
+    dispatch(actionCreators.deleteUserCreator(projectId, userKey)),
 });
 
 export default connect(

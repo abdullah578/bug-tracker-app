@@ -15,8 +15,13 @@ import classes from "./UserRoles.module.css";
 class UserRoles extends Component {
   state = {
     userRole: {
-      elementConfig: [{ value: "Admin" }, { value: "Developer" }],
-      value: "Admin",
+      elementConfig: [
+        { value: "Admin" },
+        { value: "Developer" },
+        { value: "Submitter" },
+        { value: "N/A" },
+      ],
+      value: "Developer",
       name: "User Role",
       isValid: true,
       fieldType: "select",
