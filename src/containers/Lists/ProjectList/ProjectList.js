@@ -1,20 +1,21 @@
-import React, { Component } from "react";
+import React from "react";
 import { connect } from "react-redux";
-import * as actionCreators from "../../store/actions/Projects";
+import * as actionCreators from "../../../store/actions/Projects";
 import { NavLink } from "react-router-dom";
-import { formConfig, checkValidation } from "../../Utilities/Utilities";
-import WithErrorHandle from "../../hoc/WithErrorHandle";
-import axios from "../../axiosInstance/AxiosInstance";
-import Modal from "../../components/UI/Modal/Modal";
-import Table from "../../components/UI/Table/Table";
-import Button from "../../components/UI/Button/Add/Add";
-import Spinner from "../../components/UI/Spinner/Spinner";
-import Pagination from "../../components/UI/Pagination/Pagination";
-import NewProject from "../../components/NewItem/NewItem";
+import { formConfig } from "../../../Utilities/Utilities";
+import WithErrorHandle from "../../../hoc/WithErrorHandle";
+import Lists from "../Lists";
+import axios from "../../../axiosInstance/AxiosInstance";
+import Modal from "../../../components/UI/Modal/Modal";
+import Table from "../../../components/UI/Table/Table";
+import Button from "../../../components/UI/Button/Add/Add";
+import Spinner from "../../../components/UI/Spinner/Spinner";
+import Pagination from "../../../components/UI/Pagination/Pagination";
+import NewProject from "../../../components/NewItem/NewItem";
 
-class ProjectList extends Component {
+class ProjectList extends Lists {
   state = {
-    newProj: false,
+    newItem: false,
     currentPage: 1,
     numPerPage: 5,
     form: {
@@ -43,48 +44,14 @@ class ProjectList extends Component {
   componentDidMount() {
     this.props.fetchProjects();
   }
-  inputHandler = (e, type) => {
-    let formCopy = { ...this.state.form };
-    formCopy = {
-      ...formCopy,
-      [type]: {
-        ...this.state.form[type],
-        value: e.target.value,
-        touch: true,
-        isValid: checkValidation(
-          e.target.value,
-          this.state.form[type].validationRequirement
-        ),
-      },
-    };
-    this.setState({ form: formCopy });
-  };
-  formCancelHandler = () => {
-    this.setState({ newProj: false });
-    this.resetForm();
-  };
   formSubmitHandler = () => {
     this.props.submitProject({
       name: this.state.form.name.value,
       description: this.state.form.description.value,
     });
     this.resetForm();
-    this.setState({ newProj: false });
+    this.setState({ newItem: false });
   };
-  resetForm() {
-    const formCopy = {
-      ...this.state.form,
-    };
-    Object.keys(formCopy).forEach((curr) => {
-      formCopy[curr] = {
-        ...formCopy[curr],
-        value: "",
-        isValid: false,
-        touch: false,
-      };
-    });
-    this.setState({ form: formCopy });
-  }
 
   createTableHeader() {
     return (
@@ -122,35 +89,20 @@ class ProjectList extends Component {
       </tr>
     ));
   }
-  nextPage = () =>
-    this.setState((prevState) => ({ currentPage: prevState.currentPage + 1 }));
-  prevPage = () =>
-    this.setState((prevState) => ({ currentPage: prevState.currentPage - 1 }));
-
-  addProjectHandler = () => this.setState({ newProj: true });
-  checkFormValidity = () => {
-    const formCopy = { ...this.state.form };
-    let isValid = true;
-    Object.keys(formCopy).forEach(
-      (curr) => (isValid = formCopy[curr].isValid && isValid)
-    );
-    console.log(isValid);
-    return isValid;
-  };
   render() {
     return this.props.dispSpinner ? (
       <Spinner />
     ) : (
       <div>
         <NewProject
-          open={this.state.newProj}
+          open={this.state.newItem}
           form={this.state.form}
           inputHandler={this.inputHandler}
           cancelForm={this.formCancelHandler}
           submitForm={this.formSubmitHandler}
           disabled={!this.checkFormValidity()}
         />
-        <Button clicked={this.addProjectHandler}>Add New Project</Button>
+        <Button clicked={this.addItemHandler}>Add New Project</Button>
         <Modal
           header={<p> My projects</p>}
           footer={

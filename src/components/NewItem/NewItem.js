@@ -14,7 +14,7 @@ const NewItem = (props) => (
           <Input
             {...props.form[curr]}
             key={curr}
-            inputHandler={(e) => props.inputHandler(e, curr)}
+            inputHandler={(e) => props.inputHandler(e, curr,props.array)}
           />
         ))}
         <div className={classes.Buttons}>

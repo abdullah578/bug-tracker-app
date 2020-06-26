@@ -1,25 +1,22 @@
-import React, { Component } from "react";
+import React from "react";
 import { connect } from "react-redux";
-import * as actionCreators from "../../store/actions/Users";
-import {
-  formConfig,
-  checkValidation,
-  checkFormValidity,
-} from "../../Utilities/Utilities";
-import WithErrorHandle from "../../hoc/WithErrorHandle";
-import axios from "../../axiosInstance/AxiosInstance";
-import Modal from "../../components/UI/Modal/Modal";
-import Table from "../../components/UI/Table/Table";
-import Button from "../../components/UI/Button/Add/Add";
-import Spinner from "../../components/UI/Spinner/Spinner";
-import Pagination from "../../components/UI/Pagination/Pagination";
-import NewUser from "../../components/NewItem/NewItem";
-import DeleteUser from "../../components/DeleteItem/DeleteItem";
+import * as actionCreators from "../../../store/actions/Users";
+import { formConfig } from "../../../Utilities/Utilities";
+import WithErrorHandle from "../../../hoc/WithErrorHandle";
+import Lists from "../Lists";
+import axios from "../../../axiosInstance/AxiosInstance";
+import Modal from "../../../components/UI/Modal/Modal";
+import Table from "../../../components/UI/Table/Table";
+import Button from "../../../components/UI/Button/Add/Add";
+import Spinner from "../../../components/UI/Spinner/Spinner";
+import Pagination from "../../../components/UI/Pagination/Pagination";
+import NewUser from "../../../components/NewItem/NewItem";
+import DeleteUser from "../../../components/DeleteItem/DeleteItem";
 
-class UserList extends Component {
+class UserList extends Lists {
   state = {
-    newUser: false,
-    deleteUser: {
+    newItem: false,
+    deleteItem: {
       continue: false,
       key: null,
     },
@@ -42,56 +39,15 @@ class UserList extends Component {
     this.props.fetchProjUsers(this.props.match.params.id);
     this.props.fetchAllUsers();
   }
-  inputHandler = (e, type) => {
-    let formCopy = { ...this.state.form };
-    formCopy = {
-      ...formCopy,
-      [type]: {
-        ...this.state.form[type],
-        value: e.target.value,
-        touch: true,
-        isValid: checkValidation(
-          e.target.value,
-          this.state.form[type].validationRequirement,
-          this.props.users
-        ),
-      },
-    };
-    this.setState({ form: formCopy });
-  };
-  formCancelHandler = () => {
-    this.setState({ newUser: false });
-    this.resetForm();
-  };
+
   formSubmitHandler = () => {
     const index = this.props.users.findIndex(
       (curr) => curr.email === this.state.form.email.value.trim()
     );
     this.props.submitUser(this.props.match.params.id, this.props.users[index]);
     this.resetForm();
-    this.setState({ newUser: false });
+    this.setState({ newItem: false });
   };
-  resetForm() {
-    const formCopy = {
-      ...this.state.form,
-    };
-    Object.keys(formCopy).forEach((curr) => {
-      formCopy[curr] =
-        curr.fieldType === "select"
-          ? {
-              ...formCopy[curr],
-              value: "admin",
-              isValid: true,
-            }
-          : {
-              ...formCopy[curr],
-              value: "",
-              isValid: false,
-              touch: false,
-            };
-    });
-    this.setState({ form: formCopy });
-  }
 
   createTableHeader() {
     return (
@@ -102,22 +58,6 @@ class UserList extends Component {
       </tr>
     );
   }
-  removeUserContinue = () => {
-    this.props.deleteUser(
-      this.props.match.params.id,
-      this.state.deleteUser.key
-    );
-    this.setState({
-      deleteUser: {
-        key: null,
-        continue: false,
-      },
-    });
-  };
-  removeUserCancel = () =>
-    this.setState({ deleteUser: { key: null, continue: false } });
-
-  clickUser = (key) => this.setState({ deleteUser: { key, continue: true } });
   createTableBody() {
     const startIndex = (this.state.currentPage - 1) * this.state.numPerPage;
     const endIndex = startIndex + this.state.numPerPage;
@@ -133,32 +73,39 @@ class UserList extends Component {
       </tr>
     ));
   }
-  nextPage = () =>
-    this.setState((prevState) => ({ currentPage: prevState.currentPage + 1 }));
-  prevPage = () =>
-    this.setState((prevState) => ({ currentPage: prevState.currentPage - 1 }));
-
-  addUserHandler = () => this.setState({ newUser: true });
+  removeUserContinue = () => {
+    this.props.deleteUser(
+      this.props.match.params.id,
+      this.state.deleteUser.key
+    );
+    this.setState({
+      deleteUser: {
+        key: null,
+        continue: false,
+      },
+    });
+  };
   render() {
     return this.props.dispSpinner ? (
       <Spinner />
     ) : (
       <div>
         <NewUser
-          open={this.state.newUser}
+          open={this.state.newItem}
           form={this.state.form}
+          array={this.props.users}
           inputHandler={this.inputHandler}
           cancelForm={this.formCancelHandler}
           submitForm={this.formSubmitHandler}
-          disabled={!checkFormValidity(this.state.form)}
+          disabled={!this.checkFormValidity(this.state.form)}
         />
         <DeleteUser
           type="User"
-          removeItemCancel={this.removeUserCancel}
+          removeItemCancel={this.removeItemCancel}
           removeItemContinue={this.removeUserContinue}
-          show={this.state.deleteUser.continue}
+          show={this.state.deleteItem.continue}
         />
-        <Button clicked={this.addUserHandler}>Add New User</Button>
+        <Button clicked={this.addItemHandler}>Add New User</Button>
         <Modal
           header={<p> {`${this.props.match.params.name} Users`}</p>}
           footer={

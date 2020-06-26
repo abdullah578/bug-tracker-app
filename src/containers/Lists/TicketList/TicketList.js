@@ -1,25 +1,22 @@
-import React, { Component } from "react";
+import React from "react";
 import { connect } from "react-redux";
-import * as userActionCreators from "../../store/actions/Users";
-import * as ticketActionCreators from "../../store/actions/Tickets";
-import {
-  formConfig,
-  checkValidation,
-  checkFormValidity,
-} from "../../Utilities/Utilities";
-import WithErrorHandle from "../../hoc/WithErrorHandle";
-import axios from "../../axiosInstance/AxiosInstance";
-import Modal from "../../components/UI/Modal/Modal";
-import Table from "../../components/UI/Table/Table";
-import Button from "../../components/UI/Button/Add/Add";
-import Spinner from "../../components/UI/Spinner/Spinner";
-import Pagination from "../../components/UI/Pagination/Pagination";
-import NewTicket from "../../components/NewItem/NewItem";
+import * as userActionCreators from "../../../store/actions/Users";
+import * as ticketActionCreators from "../../../store/actions/Tickets";
+import { formConfig } from "../../../Utilities/Utilities";
+import WithErrorHandle from "../../../hoc/WithErrorHandle";
+import Lists from "../Lists";
+import axios from "../../../axiosInstance/AxiosInstance";
+import Modal from "../../../components/UI/Modal/Modal";
+import Table from "../../../components/UI/Table/Table";
+import Button from "../../../components/UI/Button/Add/Add";
+import Spinner from "../../../components/UI/Spinner/Spinner";
+import Pagination from "../../../components/UI/Pagination/Pagination";
+import NewTicket from "../../../components/NewItem/NewItem";
 
-class UserList extends Component {
+class UserList extends Lists {
   state = {
-    newTicket: false,
-    deleteTicket: {
+    newItem: false,
+    deleteItem: {
       continue: false,
       key: null,
     },
@@ -52,27 +49,6 @@ class UserList extends Component {
     this.props.fetchProjTickets(this.props.match.params.id);
     this.props.fetchProjUsers(this.props.match.params.id);
   }
-  inputHandler = (e, type) => {
-    let formCopy = { ...this.state.form };
-    formCopy = {
-      ...formCopy,
-      [type]: {
-        ...this.state.form[type],
-        value: e.target.value,
-        touch: true,
-        isValid: checkValidation(
-          e.target.value,
-          this.state.form[type].validationRequirement,
-          this.props.projUsers
-        ),
-      },
-    };
-    this.setState({ form: formCopy });
-  };
-  formCancelHandler = () => {
-    this.setState({ newTicket: false });
-    this.resetForm();
-  };
   formSubmitHandler = () => {
     const devIndex = this.props.projUsers.findIndex(
       (curr) => curr.email === this.state.form.assigned.value
@@ -87,22 +63,8 @@ class UserList extends Component {
     };
     this.props.submitTicket(this.props.match.params.id, ticketObj);
     this.resetForm();
-    this.setState({ newTicket: false });
+    this.setState({ newItem: false });
   };
-  resetForm() {
-    const formCopy = {
-      ...this.state.form,
-    };
-    Object.keys(formCopy).forEach((curr) => {
-      formCopy[curr] = {
-        ...formCopy[curr],
-        value: "",
-        isValid: false,
-        touch: false,
-      };
-    });
-    this.setState({ form: formCopy });
-  }
 
   createTableHeader() {
     return (
@@ -116,22 +78,6 @@ class UserList extends Component {
       </tr>
     );
   }
-  removeTicketContinue = () => {
-    this.props.deleteUser(
-      this.props.match.params.id,
-      this.state.deleteTicket.key
-    );
-    this.setState({
-      deleteUser: {
-        key: null,
-        continue: false,
-      },
-    });
-  };
-  removeTicketCancel = () =>
-    this.setState({ deleteUser: { key: null, continue: false } });
-
-  clickUser = (key) => this.setState({ deleteUser: { key, continue: true } });
   createTableBody() {
     const startIndex = (this.state.currentPage - 1) * this.state.numPerPage;
     const endIndex = startIndex + this.state.numPerPage;
@@ -149,27 +95,34 @@ class UserList extends Component {
       </tr>
     ));
   }
-  nextPage = () =>
-    this.setState((prevState) => ({ currentPage: prevState.currentPage + 1 }));
-  prevPage = () =>
-    this.setState((prevState) => ({ currentPage: prevState.currentPage - 1 }));
-
-  addTicketHandler = () => this.setState({ newTicket: true });
+  removeTicketContinue = () => {
+    this.props.deleteUser(
+      this.props.match.params.id,
+      this.state.deleteTicket.key
+    );
+    this.setState({
+      deleteUser: {
+        key: null,
+        continue: false,
+      },
+    });
+  };
   render() {
     return this.props.dispSpinner ? (
       <Spinner />
     ) : (
       <div>
         <NewTicket
-          open={this.state.newTicket}
+          open={this.state.newItem}
           form={this.state.form}
+          array={this.props.projUsers}
           inputHandler={this.inputHandler}
           cancelForm={this.formCancelHandler}
           submitForm={this.formSubmitHandler}
-          disabled={!checkFormValidity(this.state.form)}
+          disabled={!this.checkFormValidity(this.state.form)}
         />
 
-        <Button clicked={this.addTicketHandler}>Add New Ticket</Button>
+        <Button clicked={this.addItemHandler}>Add New Ticket</Button>
         <Modal
           header={<p> {`${this.props.match.params.name} Tickets`}</p>}
           footer={
