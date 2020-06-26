@@ -38,10 +38,8 @@ export const authenticate = (email, password, isSignUp, name) => (dispatch) => {
     .then((resp) => {
       localStorage.setItem("token", resp.data.idToken);
       localStorage.setItem("userid", resp.data.localId);
-      if (isSignUp) {
-        localStorage.setItem("name", name);
-        localStorage.setItem("email", email);
-      }
+      localStorage.setItem("name", name);
+      localStorage.setItem("email", email);
       localStorage.setItem(
         "expiryTime",
         new Date(new Date().getTime() + resp.data.expiresIn * 1000)

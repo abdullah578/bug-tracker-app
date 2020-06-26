@@ -21,6 +21,12 @@ class App extends Component {
         <Layout>
           <Switch>
             <Route path="/tickets/:id/:name" component={TicketList} />
+            <Route
+              path="/tickets"
+              render={(props) => {
+                return <TicketList {...props} type="User" />;
+              }}
+            />
             <Route path="/users/:id/:name" component={UserList} />
             <Route path="/users" component={UserRoles} />
             <Route path="/projects" component={ProjectList} />

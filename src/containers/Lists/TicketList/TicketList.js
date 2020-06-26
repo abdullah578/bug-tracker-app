@@ -89,7 +89,9 @@ class UserList extends Lists {
     },
   };
   componentDidMount() {
-    this.props.fetchProjTickets(this.props.match.params.id);
+    this.props.type === "User"
+      ? this.props.fetchUserTickets()
+      : this.props.fetchProjTickets(this.props.match.params.id);
     this.props.fetchProjUsers(this.props.match.params.id);
   }
   formSubmitHandler = () => {
@@ -127,7 +129,9 @@ class UserList extends Lists {
   createTableBody() {
     const startIndex = (this.state.currentPage - 1) * this.state.numPerPage;
     const endIndex = startIndex + this.state.numPerPage;
-    return this.props.tickets.slice(startIndex, endIndex).map((curr) => (
+    const tickets =
+      this.props.type === "User" ? this.props.userTickets : this.props.tickets;
+    return tickets.slice(startIndex, endIndex).map((curr) => (
       <tr
         key={curr.key}
         onClick={() => this.clickUser(curr.key)}
@@ -154,6 +158,8 @@ class UserList extends Lists {
     });
   };
   render() {
+    const tickets =
+      this.props.type === "User" ? this.props.userTickets : this.props.tickets;
     return this.props.dispSpinner ? (
       <Spinner />
     ) : (
@@ -180,7 +186,7 @@ class UserList extends Lists {
               next={this.nextPage}
             />
           }
-          err={this.props.error || this.props.tickets.length === 0}
+          err={this.props.error || tickets.length === 0}
           type="Users"
         >
           <Table header={this.createTableHeader()}>
@@ -197,6 +203,7 @@ const mapStateToProps = (state) => ({
   projUsers: state.user.projUsers,
   dispSpinner: state.ticket.dispSpinner,
   tickets: state.ticket.tickets,
+  userTickets: state.ticket.userTickets,
   error: state.ticket.error,
 });
 
@@ -205,6 +212,8 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(userActionCreators.fetchProjUsersCreator(id)),
   fetchProjTickets: (id) =>
     dispatch(ticketActionCreators.fetchProjTicketsCreator(id)),
+  fetchUserTickets: (id) =>
+    dispatch(ticketActionCreators.fetchUserTicketsCreator()),
   submitTicket: (id, ticket) =>
     dispatch(ticketActionCreators.submitProjTicketsCreator(id, ticket)),
 });

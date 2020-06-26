@@ -13,10 +13,12 @@ export const fetchProjUsersCreator = (id) => (dispatch) => {
     .get(`/users/${id}.json`)
     .then((resp) => {
       const usersArray = resp.data
-        ? Object.keys(resp.data).map((key) => ({
-            key,
-            ...resp.data[key],
-          }))
+        ? Object.keys(resp.data)
+            .map((key) => ({
+              key,
+              ...resp.data[key],
+            }))
+            .filter((curr) => curr.role !== "N/A")
         : [];
       dispatch({
         type: actionTypes.FETCH_PROJ_USERS_SUCCESS,
