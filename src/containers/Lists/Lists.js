@@ -50,7 +50,7 @@ class Lists extends Component {
     };
     Object.keys(formCopy).forEach((curr) => {
       console.log(curr);
-      if (formCopy[curr].fieldType === "input")
+      if (formCopy[curr].fieldType !== "select")
         formCopy[curr] = {
           ...formCopy[curr],
           value: "",

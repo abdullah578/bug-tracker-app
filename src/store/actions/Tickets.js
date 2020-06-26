@@ -48,3 +48,11 @@ export const submitProjTicketsCreator = (id, ticket) => (dispatch) => {
     .then((resp) => dispatch(fetchProjTicketsCreator(id)))
     .catch((err) => console.log(err));
 };
+
+export const deleteTicketCreator = (projectID, ticketKey) => (dispatch) => {
+console.log("hellooo")
+  axios
+    .delete(`/tickets/${ticketKey}.json`)
+    .then((resp) => dispatch(fetchProjTicketsCreator(projectID)))
+    .catch((err) => console.log(err));
+};

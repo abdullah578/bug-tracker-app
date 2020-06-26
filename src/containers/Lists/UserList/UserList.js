@@ -64,7 +64,7 @@ class UserList extends Lists {
     return this.props.projUsers.slice(startIndex, endIndex).map((curr) => (
       <tr
         key={curr.key}
-        onClick={() => this.clickUser(curr.key)}
+        onClick={() => this.clickItem(curr.key)}
         style={{ cursor: "pointer" }}
       >
         <td>{curr.name}</td>
@@ -76,10 +76,10 @@ class UserList extends Lists {
   removeUserContinue = () => {
     this.props.deleteUser(
       this.props.match.params.id,
-      this.state.deleteUser.key
+      this.state.deleteItem.key
     );
     this.setState({
-      deleteUser: {
+      deleteItem: {
         key: null,
         continue: false,
       },

@@ -12,6 +12,7 @@ import Button from "../../../components/UI/Button/Add/Add";
 import Spinner from "../../../components/UI/Spinner/Spinner";
 import Pagination from "../../../components/UI/Pagination/Pagination";
 import NewTicket from "../../../components/NewItem/NewItem";
+import DeleteTicket from "../../../components/DeleteItem/DeleteItem";
 
 class TicketList extends Lists {
   state = {
@@ -135,7 +136,7 @@ class TicketList extends Lists {
     return tickets.slice(startIndex, endIndex).map((curr) => (
       <tr
         key={curr.key}
-        onClick={() => this.clickUser(curr.key)}
+        onClick={() => this.clickItem(curr.key, curr.projid)}
         style={{ cursor: "pointer" }}
       >
         <td>{curr.title}</td>
@@ -147,12 +148,12 @@ class TicketList extends Lists {
     ));
   }
   removeTicketContinue = () => {
-    this.props.deleteUser(
+    this.props.deleteTicket(
       this.props.match.params.id,
-      this.state.deleteTicket.key
+      this.state.deleteItem.key
     );
     this.setState({
-      deleteUser: {
+      deleteItem: {
         key: null,
         continue: false,
       },
@@ -173,6 +174,12 @@ class TicketList extends Lists {
           cancelForm={this.formCancelHandler}
           submitForm={this.formSubmitHandler}
           disabled={!this.checkFormValidity(this.state.form)}
+        />
+        <DeleteTicket
+          type="Ticket"
+          removeItemCancel={this.removeItemCancel}
+          removeItemContinue={this.removeTicketContinue}
+          show={this.state.deleteItem.continue}
         />
 
         <Button clicked={this.addItemHandler}>Add New Ticket</Button>
@@ -215,6 +222,8 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(ticketActionCreators.fetchProjTicketsCreator(id)),
   fetchUserTickets: (id) =>
     dispatch(ticketActionCreators.fetchUserTicketsCreator()),
+  deleteTicket: (id, key) =>
+    dispatch(ticketActionCreators.deleteTicketCreator(id, key)),
   submitTicket: (id, ticket) =>
     dispatch(ticketActionCreators.submitProjTicketsCreator(id, ticket)),
 });
