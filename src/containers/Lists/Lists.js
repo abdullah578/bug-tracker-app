@@ -25,6 +25,7 @@ class Lists extends Component {
   };
   checkValidation = (inputVal, validationRequirement, inputArr) => {
     let isValid = true;
+    if (!validationRequirement) return true;
     if (validationRequirement.isRequired)
       isValid = inputVal.trim().length > 0 && isValid;
     if (validationRequirement.isArrayPresent)

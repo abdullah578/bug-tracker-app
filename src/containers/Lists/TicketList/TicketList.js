@@ -33,6 +33,16 @@ class UserList extends Lists {
         false,
         false
       ),
+      description: formConfig(
+        "Ticket Description",
+        "Description ...",
+        "text",
+        "",
+        "textArea",
+        { isRequired: true },
+        false,
+        false
+      ),
       assigned: formConfig(
         "Assigned",
         "email ...",
@@ -43,6 +53,39 @@ class UserList extends Lists {
         false,
         false
       ),
+      ticketPriority: {
+        elementConfig: [
+          { value: "Low" },
+          { value: "Medium" },
+          { value: "High" },
+        ],
+        value: "High",
+        name: "Ticket Priority",
+        isValid: true,
+        fieldType: "select",
+      },
+      ticketType: {
+        elementConfig: [
+          { value: "Bugs/Errors" },
+          { value: "Feature Requests " },
+        ],
+        value: "Bugs/Errors",
+        name: "Ticket Type",
+        isValid: true,
+        fieldType: "select",
+      },
+      ticketStatus: {
+        elementConfig: [
+          { value: "Open" },
+          { value: "In Progress" },
+          { value: "Resolved" },
+          { value: "Additional Info Required" },
+        ],
+        value: "Open",
+        name: "Ticket Status",
+        isValid: true,
+        fieldType: "select",
+      },
     },
   };
   componentDidMount() {
@@ -55,9 +98,12 @@ class UserList extends Lists {
     );
     const ticketObj = {
       title: this.state.form.title.value,
+      description: this.state.form.description.value,
+      ticketPriority: this.state.form.ticketPriority.value,
+      ticketType: this.state.form.ticketPriority.value,
       assigned: this.props.projUsers[devIndex].name,
       submitter: this.props.name,
-      status: "Open",
+      status: this.state.form.ticketStatus.value,
       created: new Date(),
       projid: this.props.match.params.id,
     };
@@ -90,7 +136,7 @@ class UserList extends Lists {
         <td>{curr.title}</td>
         <td>{curr.assigned}</td>
         <td>{curr.submitter}</td>
-        <td>{curr.status}</td>
+        <td>{curr.ticketStatus}</td>
         <td>{curr.created}</td>
       </tr>
     ));
