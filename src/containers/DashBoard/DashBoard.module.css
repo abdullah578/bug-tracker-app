@@ -1,0 +1,13 @@
+.DashBoard {
+  display: flex;
+  justify-content: space-around;
+}
+.DashBoard div:first-child {
+  margin-bottom: 40px;
+}
+
+@media (max-width: 999px) {
+  .DashBoard {
+    display: block;
+  }
+}

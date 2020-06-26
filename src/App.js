@@ -3,12 +3,14 @@ import { connect } from "react-redux";
 import * as actionCreators from "./store/actions/auth";
 import { Switch, Route } from "react-router-dom";
 import Layout from "../src/containers/Layout/Layout";
+import DashBoard from "./containers/DashBoard/Dashboard";
 import ProjectList from "./containers/Lists/ProjectList/ProjectList";
 import UserList from "./containers/Lists/UserList/UserList";
 import TicketList from "./containers/Lists/TicketList/TicketList";
 import UserRoles from "./containers/UserRoles/UserRoles";
 import Login from "./containers/login/Login";
 import "./App.css";
+
 
 class App extends Component {
   componentDidMount() {
@@ -30,6 +32,7 @@ class App extends Component {
             <Route path="/users/:id/:name" component={UserList} />
             <Route path="/users" component={UserRoles} />
             <Route path="/projects" component={ProjectList} />
+            <Route path="/" component={DashBoard} />
           </Switch>
         </Layout>
       );

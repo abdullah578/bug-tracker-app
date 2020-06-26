@@ -1,0 +1,20 @@
+.BarChart{
+    width:80%;
+    margin:auto;
+    height:290px;
+    background-color: #fff;
+    position:relative
+}
+.BarChart p{
+    position:absolute;
+    bottom:8px;
+    font-size:80%;
+    font-weight: 300;
+    left:5px;
+}
+
+@media (min-width:600px){
+    .BarChart{
+        width:450px;
+    }
+}
