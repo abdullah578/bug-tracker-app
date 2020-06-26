@@ -26,28 +26,7 @@ class BarChart extends Component {
         {
           // Change type to "doughnut", "line", "splineArea", etc.
           type: "column",
-          dataPoints: [
-            {
-              label: "Apple",
-              y: 10,
-              color: this.props.type === "red" ? "#8C0C01" : "#00099C",
-            },
-            {
-              label: "Orange",
-              y: 15,
-              color: this.props.type === "red" ? "#D21100" : "#000BC8",
-            },
-            {
-              label: "Banana",
-              y: 25,
-              color: this.props.type === "red" ? "#FF1900" : "#000664",
-            },
-            {
-              label: "Mango",
-              y: 30,
-              color: this.props.type === "red" ? "#460501" : "#00022E",
-            },
-          ],
+          dataPoints: this.props.data,
         },
       ],
     };
@@ -57,7 +36,7 @@ class BarChart extends Component {
           options={options}
           /* onRef={ref => this.chart = ref} */
         />
-        <p>{this.props.title}</p>
+        <p>Ticket By {this.props.title}</p>
         {/*You can get reference to the chart instance as shown above using onRef. This allows you to access all chart properties and methods*/}
       </div>
     );

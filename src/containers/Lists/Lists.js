@@ -28,10 +28,12 @@ class Lists extends Component {
     if (!validationRequirement) return true;
     if (validationRequirement.isRequired)
       isValid = inputVal.trim().length > 0 && isValid;
-    if (validationRequirement.isArrayPresent)
+    if (validationRequirement.isArrayPresent) {
       isValid =
         isValid &&
         inputArr.findIndex((curr) => curr.email === inputVal.trim()) !== -1;
+      console.log("Lists -> checkValidation -> isValid", isValid);
+    }
     return isValid;
   };
   checkFormValidity = (form) => {
@@ -47,19 +49,14 @@ class Lists extends Component {
       ...this.state.form,
     };
     Object.keys(formCopy).forEach((curr) => {
-      formCopy[curr] =
-        curr.fieldType === "select"
-          ? {
-              ...formCopy[curr],
-              value: "admin",
-              isValid: true,
-            }
-          : {
-              ...formCopy[curr],
-              value: "",
-              isValid: false,
-              touch: false,
-            };
+      console.log(curr);
+      if (formCopy[curr].fieldType === "input")
+        formCopy[curr] = {
+          ...formCopy[curr],
+          value: "",
+          isValid: false,
+          touch: false,
+        };
     });
     this.setState({ form: formCopy });
   }

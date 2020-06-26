@@ -13,7 +13,7 @@ import Spinner from "../../../components/UI/Spinner/Spinner";
 import Pagination from "../../../components/UI/Pagination/Pagination";
 import NewTicket from "../../../components/NewItem/NewItem";
 
-class UserList extends Lists {
+class TicketList extends Lists {
   state = {
     newItem: false,
     deleteItem: {
@@ -67,7 +67,7 @@ class UserList extends Lists {
       ticketType: {
         elementConfig: [
           { value: "Bugs/Errors" },
-          { value: "Feature Requests " },
+          { value: "Feature Requests" },
         ],
         value: "Bugs/Errors",
         name: "Ticket Type",
@@ -102,7 +102,7 @@ class UserList extends Lists {
       title: this.state.form.title.value,
       description: this.state.form.description.value,
       ticketPriority: this.state.form.ticketPriority.value,
-      ticketType: this.state.form.ticketPriority.value,
+      ticketType: this.state.form.ticketType.value,
       assigned: this.props.projUsers[devIndex].name,
       submitter: this.props.name,
       status: this.state.form.ticketStatus.value,
@@ -129,6 +129,7 @@ class UserList extends Lists {
   createTableBody() {
     const startIndex = (this.state.currentPage - 1) * this.state.numPerPage;
     const endIndex = startIndex + this.state.numPerPage;
+    console.log(this.props.tickets);
     const tickets =
       this.props.type === "User" ? this.props.userTickets : this.props.tickets;
     return tickets.slice(startIndex, endIndex).map((curr) => (
@@ -140,7 +141,7 @@ class UserList extends Lists {
         <td>{curr.title}</td>
         <td>{curr.assigned}</td>
         <td>{curr.submitter}</td>
-        <td>{curr.ticketStatus}</td>
+        <td>{curr.status}</td>
         <td>{curr.created}</td>
       </tr>
     ));
@@ -181,13 +182,13 @@ class UserList extends Lists {
             <Pagination
               currPage={this.state.currentPage}
               numPerPage={this.state.numPerPage}
-              items={this.props.projUsers.length}
+              items={tickets.length}
               prev={this.prevPage}
               next={this.nextPage}
             />
           }
           err={this.props.error || tickets.length === 0}
-          type="Users"
+          type="Tickets"
         >
           <Table header={this.createTableHeader()}>
             {this.createTableBody()}
@@ -221,4 +222,4 @@ const mapDispatchToProps = (dispatch) => ({
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(WithErrorHandle(UserList, axios));
+)(WithErrorHandle(TicketList, axios));
