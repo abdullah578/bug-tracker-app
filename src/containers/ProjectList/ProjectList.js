@@ -112,7 +112,7 @@ class ProjectList extends Component {
               </NavLink>
             </li>
             <li>
-              <NavLink to={`/ncdkcnkdnc`} style={styles}>
+              <NavLink to={`/tickets/${curr.key}/${curr.name}`} style={styles}>
                 {" "}
                 Details
               </NavLink>
@@ -184,4 +184,7 @@ const mapDispatchToProps = (dispatch) => ({
   submitProject: (obj) => dispatch(actionCreators.postProjectCreator(obj)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(WithErrorHandle(ProjectList,axios));
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(WithErrorHandle(ProjectList, axios));

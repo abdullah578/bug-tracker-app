@@ -17,10 +17,12 @@ export const authLogoutCreator = () => {
     type: actionTypes.AUTH_LOGOUT,
   };
 };
-const authSuccessCreator = (token, userid) => ({
+const authSuccessCreator = (token, userid, name, email) => ({
   type: actionTypes.AUTH_SUCCESS,
   token,
   userid,
+  email,
+  name,
 });
 const authFailureCreator = (error) => ({
   type: actionTypes.AUTH_FAILURE,
@@ -36,11 +38,17 @@ export const authenticate = (email, password, isSignUp, name) => (dispatch) => {
     .then((resp) => {
       localStorage.setItem("token", resp.data.idToken);
       localStorage.setItem("userid", resp.data.localId);
+      if (isSignUp) {
+        localStorage.setItem("name", name);
+        localStorage.setItem("email", email);
+      }
       localStorage.setItem(
         "expiryTime",
         new Date(new Date().getTime() + resp.data.expiresIn * 1000)
       );
-      dispatch(authSuccessCreator(resp.data.idToken, resp.data.localId));
+      dispatch(
+        authSuccessCreator(resp.data.idToken, resp.data.localId, name, email)
+      );
       dispatch(authLogout(resp.data.expiresIn));
       if (isSignUp) postUsers(email, name);
     })
@@ -64,7 +72,14 @@ export const authCheckState = () => (dispatch) => {
   else {
     const expirationDate = new Date(localStorage.getItem("expiryTime"));
     if (expirationDate > new Date()) {
-      dispatch(authSuccessCreator(token, userid));
+      dispatch(
+        authSuccessCreator(
+          token,
+          userid,
+          localStorage.getItem("name"),
+          localStorage.getItem("email")
+        )
+      );
       dispatch(
         authLogout((expirationDate.getTime() - new Date().getTime()) / 1000)
       );

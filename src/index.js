@@ -7,6 +7,7 @@ import thunk from "redux-thunk";
 import projectReducer from "../src/store/reducers/Projects";
 import userReducer from "../src/store/reducers/Users";
 import authReducer from "../src/store/reducers/auth";
+import ticketReducer from "../src/store/reducers/Tickets";
 
 import "./index.css";
 import App from "./App";
@@ -15,6 +16,7 @@ import * as serviceWorker from "./serviceWorker";
 const reducer = combineReducers({
   project: projectReducer,
   user: userReducer,
+  ticket: ticketReducer,
   auth: authReducer,
 });
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;

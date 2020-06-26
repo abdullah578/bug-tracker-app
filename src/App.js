@@ -5,6 +5,7 @@ import { Switch, Route } from "react-router-dom";
 import Layout from "../src/containers/Layout/Layout";
 import ProjectList from "./containers/ProjectList/ProjectList";
 import UserList from "./containers/UserList/UserList";
+import TicketList from "./containers/TicketList/TicketList";
 import UserRoles from "./containers/UserRoles/UserRoles";
 import Login from "./containers/login/Login";
 import "./App.css";
@@ -19,6 +20,7 @@ class App extends Component {
       routes = (
         <Layout>
           <Switch>
+            <Route path="/tickets/:id/:name" component={TicketList} />
             <Route path="/users/:id/:name" component={UserList} />
             <Route path="/users" component={UserRoles} />
             <Route path="/projects" component={ProjectList} />
