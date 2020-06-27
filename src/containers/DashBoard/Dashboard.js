@@ -25,6 +25,7 @@ class DashBoard extends Component {
       projects: {},
     };
     const projLabels = {};
+    const typeLabels = {};
     this.props.tickets.forEach((curr) => {
       ticketStat["status"][curr.status] =
         ticketStat["status"][curr.status] || 0;
@@ -33,15 +34,16 @@ class DashBoard extends Component {
       ticketStat["type"][curr.ticketType] =
         ticketStat["type"][curr.ticketType] || 0;
       ticketStat["type"][curr.ticketType] += 1;
+      typeLabels[curr.ticketType] = null;
 
       ticketStat["priority"][curr.ticketPriority] =
         ticketStat["priority"][curr.ticketPriority] || 0;
       ticketStat["priority"][curr.ticketPriority] += 1;
 
-      ticketStat["projects"][curr.projid] =
-        ticketStat["projects"][curr.projid] || 0;
-      ticketStat["projects"][curr.projid] += 1;
-      projLabels[curr.projid] = null;
+      ticketStat["projects"][curr.projName] =
+        ticketStat["projects"][curr.projName] || 0;
+      ticketStat["projects"][curr.projName] += 1;
+      projLabels[curr.projName] = null;
     });
     const priorityChart = this.createBarChart(
       ticketStat,
@@ -57,7 +59,7 @@ class DashBoard extends Component {
     );
     const typeChart = this.createPieChart(
       ticketStat,
-      ["Bugs/Errors", "Feature Requests"],
+      Object.keys(typeLabels),
       ["#89ABBC", "#E19100"],
       "type"
     );
@@ -67,9 +69,6 @@ class DashBoard extends Component {
       ["red", "blue", "green", "purple"],
       "projects"
     );
-    console.log(typeChart);
-    console.log(statusChart);
-    console.log(ticketStat);
     return {
       priority: priorityChart,
       status: statusChart,
@@ -90,6 +89,7 @@ class DashBoard extends Component {
     return labels
       .map((curr, index) => {
         total += ticketStat[type][curr];
+        console.log("DashBoard -> createPieChart -> total", total);
         return {
           name: curr,
           color: colors[index],

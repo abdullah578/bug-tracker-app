@@ -23,7 +23,6 @@ const Input = (props) => {
     );
     name = props.name;
   } else {
-    console.log(props);
     field =
       props.fieldType === "textArea" ? (
         <textarea

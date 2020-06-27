@@ -45,9 +45,10 @@ class ProjectList extends Lists {
     this.props.fetchProjects();
   }
   formSubmitHandler = () => {
+    const { name, description } = this.state.form;
     this.props.submitProject({
-      name: this.state.form.name.value,
-      description: this.state.form.description.value,
+      name: name.value,
+      description: description.value,
     });
     this.resetForm();
     this.setState({ newItem: false });
@@ -63,8 +64,9 @@ class ProjectList extends Lists {
     );
   }
   createTableBody() {
-    const startIndex = (this.state.currentPage - 1) * this.state.numPerPage;
-    const endIndex = startIndex + this.state.numPerPage;
+    const { currentPage, numPerPage } = this.state;
+    const startIndex = (currentPage - 1) * numPerPage;
+    const endIndex = startIndex + numPerPage;
     const styles = { textDecoration: "none", color: "#551A8B" };
     return this.props.projects.slice(startIndex, endIndex).map((curr) => (
       <tr key={curr.key}>
@@ -90,25 +92,26 @@ class ProjectList extends Lists {
     ));
   }
   render() {
+    const { newItem, form, currentPage, numPerPage } = this.state;
     return this.props.dispSpinner ? (
       <Spinner />
     ) : (
       <div>
         <NewProject
-          open={this.state.newItem}
-          form={this.state.form}
+          open={newItem}
+          form={form}
           inputHandler={this.inputHandler}
           cancelForm={this.formCancelHandler}
           submitForm={this.formSubmitHandler}
-          disabled={!this.checkFormValidity()}
+          disabled={!this.checkFormValidity(this.state.form)}
         />
         <Button clicked={this.addItemHandler}>Add New Project</Button>
         <Modal
           header={<p> My projects</p>}
           footer={
             <Pagination
-              currPage={this.state.currentPage}
-              numPerPage={this.state.numPerPage}
+              currPage={currentPage}
+              numPerPage={numPerPage}
               items={this.props.projects.length}
               prev={this.prevPage}
               next={this.nextPage}

@@ -39,8 +39,6 @@ class UserRoles extends Component {
     this.setState({ userRole: userRoleCopy });
   };
   selectUser = (key) => {
-    console.log("p");
-    console.log(key);
     this.setState({ selectedUser: key });
   };
   createTableHeader() {
@@ -53,8 +51,9 @@ class UserRoles extends Component {
     );
   }
   createTableBody() {
-    const startIndex = (this.state.currentPage - 1) * this.state.numPerPage;
-    const endIndex = startIndex + this.state.numPerPage;
+    const {numPerPage,currentPage}=this.state;
+    const startIndex = (currentPage - 1) * numPerPage;
+    const endIndex = startIndex + numPerPage;
     return this.props.users.slice(startIndex, endIndex).map((curr) => (
       <tr key={curr.key}>
         <td>{curr.name}</td>
@@ -77,7 +76,6 @@ class UserRoles extends Component {
       ...this.props.allUsers[index],
       role: this.state.userRole.value,
     };
-    console.log(obj);
     this.props.updateUser(this.state.selectedUser, obj);
     this.setState({ selectedUser: null });
   };
@@ -99,6 +97,7 @@ class UserRoles extends Component {
     );
   }
   render() {
+    const {currentPage,numPerPage,selectedUser,userRole}=this.state;
     return this.props.dispSpinner ? (
       <Spinner />
     ) : (
@@ -109,9 +108,9 @@ class UserRoles extends Component {
             <Users
               all={this.props.allUsers}
               select={this.selectUser}
-              selected={this.state.selectedUser}
+              selected={selectedUser}
             />
-            <Input {...this.state.userRole} inputHandler={this.roleHandler} />
+            <Input {...userRole} inputHandler={this.roleHandler} />
             <Button style={{ width: "100%" }} clicked={this.formSubmit}>
               {" "}
               Submit
@@ -122,8 +121,8 @@ class UserRoles extends Component {
               header={this.createHeader()}
               footer={
                 <Pagination
-                  currPage={this.state.currentPage}
-                  numPerPage={this.state.numPerPage}
+                  currPage={currentPage}
+                  numPerPage={numPerPage}
                   items={this.props.users.length}
                   prev={this.prevPage}
                   next={this.nextPage}

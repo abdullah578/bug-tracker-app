@@ -59,8 +59,9 @@ class UserList extends Lists {
     );
   }
   createTableBody() {
-    const startIndex = (this.state.currentPage - 1) * this.state.numPerPage;
-    const endIndex = startIndex + this.state.numPerPage;
+    const {currentPage,numPerPage}=this.state;
+    const startIndex = (currentPage - 1) * numPerPage;
+    const endIndex = startIndex + numPerPage;
     return this.props.projUsers.slice(startIndex, endIndex).map((curr) => (
       <tr
         key={curr.key}

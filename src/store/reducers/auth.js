@@ -6,6 +6,7 @@ const initialState = {
   error: null,
   email: null,
   name: null,
+  role: null,
 };
 
 const authReducer = (state = initialState, action) => {
@@ -17,6 +18,7 @@ const authReducer = (state = initialState, action) => {
         id: action.userid,
         email: action.email,
         name: action.name,
+        role: action.role,
         error: null,
       };
     case actionTypes.AUTH_FAILURE:

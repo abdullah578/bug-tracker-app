@@ -1,28 +1,23 @@
 import * as actionTypes from "./actionTypes";
 import axios from "axios";
 import axiosInst from "../../axiosInstance/AxiosInstance";
-
 const authLogout = (expirationTime) => (dispatch) => {
-  setTimeout(
-    () => dispatch({ type: actionTypes.AUTH_LOGOUT }),
-    expirationTime * 1000
-  );
+  setTimeout(() => dispatch(authLogoutCreator()), expirationTime * 1000);
 };
 
 export const authLogoutCreator = () => {
-  localStorage.removeItem("token");
-  localStorage.removeItem("userid");
-  localStorage.removeItem("expiryTime");
+  localStorage.clear();
   return {
     type: actionTypes.AUTH_LOGOUT,
   };
 };
-const authSuccessCreator = (token, userid, name, email) => ({
+const authSuccessCreator = (token, userid, name, email, role) => ({
   type: actionTypes.AUTH_SUCCESS,
   token,
   userid,
-  email,
   name,
+  email,
+  role,
 });
 const authFailureCreator = (error) => ({
   type: actionTypes.AUTH_FAILURE,
@@ -36,30 +31,69 @@ export const authenticate = (email, password, isSignUp, name) => (dispatch) => {
   axios
     .post(url, { email, password, returnSecureToken: true })
     .then((resp) => {
-      localStorage.setItem("token", resp.data.idToken);
-      localStorage.setItem("userid", resp.data.localId);
       localStorage.setItem(
         "expiryTime",
         new Date(new Date().getTime() + resp.data.expiresIn * 1000)
       );
-      dispatch(
-        authSuccessCreator(resp.data.idToken, resp.data.localId, name, email)
-      );
-      dispatch(authLogout(resp.data.expiresIn));
-      if (isSignUp) postUsers(email, name);
+      if (isSignUp) {
+        postUsers(email, name, resp.data.localId);
+        localStorage.setItem("token", resp.data.idToken);
+        localStorage.setItem("userid", resp.data.localId);
+        localStorage.setItem("name", name);
+        localStorage.setItem("email", email);
+        localStorage.setItem("role", "N/A");
+        dispatch(
+          authSuccessCreator(
+            resp.data.idToken,
+            resp.data.localId,
+            name,
+            email,
+            "N/A"
+          )
+        );
+        dispatch(authLogout(resp.data.expiresIn));
+      } else {
+        dispatch(
+          getUser(resp.data.idToken, resp.data.localId, resp.data.expiresIn)
+        );
+      }
     })
     .catch((err) => {
       dispatch(authFailureCreator(err.response.data.error.message));
     });
 };
 
-const postUsers = (email, name) => {
-  axiosInst.post("/allUsers.json", {
+const postUsers = (email, name, key) => {
+  axiosInst.put(`/allUsers/${key}.json`, {
     name,
     email,
     role: "N/A",
   });
 };
+const getUser = (token, userid, expiry) => (dispatch) =>
+  axiosInst
+    .get(`/allUsers/${userid}.json`)
+    .then((resp) => {
+      localStorage.setItem("name", resp.data.name);
+      localStorage.setItem("email", resp.data.email);
+      localStorage.setItem("role", resp.data.role);
+      localStorage.setItem("token", resp.data.idToken);
+      localStorage.setItem("userid", resp.data.localId);
+      dispatch(
+        authSuccessCreator(
+          token,
+          userid,
+          resp.data.name,
+          resp.data.email,
+          resp.data.role
+        )
+      );
+      dispatch(authLogout(expiry));
+    })
+    .catch((err) => {
+      dispatch(authFailureCreator(err.response.data.message));
+      console.log(err);
+    });
 
 export const authCheckState = () => (dispatch) => {
   const token = localStorage.getItem("token");
@@ -73,7 +107,8 @@ export const authCheckState = () => (dispatch) => {
           token,
           userid,
           localStorage.getItem("name"),
-          localStorage.getItem("email")
+          localStorage.getItem("email"),
+          localStorage.getItem("role")
         )
       );
       dispatch(

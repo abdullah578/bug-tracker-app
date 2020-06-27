@@ -117,16 +117,18 @@ class TicketForm extends Lists {
     const devIndex = this.props.projUsers.findIndex(
       (curr) => curr.email === this.state.form.assigned.value
     );
+    const { form } = this.state;
     const ticketObj = {
-      title: this.state.form.title.value,
-      description: this.state.form.description.value,
-      ticketPriority: this.state.form.ticketPriority.value,
-      ticketType: this.state.form.ticketType.value,
+      title: form.title.value,
+      description: form.description.value,
+      ticketPriority: form.ticketPriority.value,
+      ticketType: form.ticketType.value,
       assigned: this.props.projUsers[devIndex].name,
       projName: this.props.match.params.name,
-      assignedEmail: this.state.form.assigned.value.trim(),
+      assignedEmail: form.assigned.value.trim(),
       submitter: this.props.name,
-      status: this.state.form.ticketStatus.value,
+      submitterEmail: this.props.email.trim(),
+      status: form.ticketStatus.value,
       created: new Date(),
       projid: this.props.match.params.id,
     };

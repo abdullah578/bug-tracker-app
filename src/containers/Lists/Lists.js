@@ -32,7 +32,6 @@ class Lists extends Component {
       isValid =
         isValid &&
         inputArr.findIndex((curr) => curr.email === inputVal.trim()) !== -1;
-      console.log("Lists -> checkValidation -> isValid", isValid);
     }
     return isValid;
   };
@@ -49,7 +48,6 @@ class Lists extends Component {
       ...this.state.form,
     };
     Object.keys(formCopy).forEach((curr) => {
-      console.log(curr);
       if (formCopy[curr].fieldType !== "select")
         formCopy[curr] = {
           ...formCopy[curr],

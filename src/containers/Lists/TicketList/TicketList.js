@@ -10,7 +10,6 @@ import Table from "../../../components/UI/Table/Table";
 import Button from "../../../components/UI/Button/Add/Add";
 //import Spinner from "../../../components/UI/Spinner/Spinner";
 import Pagination from "../../../components/UI/Pagination/Pagination";
-import DeleteTicket from "../../../components/DeleteItem/DeleteItem";
 
 class TicketList extends Lists {
   state = {
@@ -27,6 +26,10 @@ class TicketList extends Lists {
       ? this.props.fetchUserTickets()
       : this.props.fetchProjTickets(this.props.match.params.id);
   }
+  addTicketHandler = () =>
+    this.props.history.push(
+      `/tickets/${this.props.match.params.id}/${this.props.match.params.name}/new`
+    );
   createTableHeader() {
     return (
       <tr>
@@ -40,15 +43,14 @@ class TicketList extends Lists {
     );
   }
   createTableBody() {
-    const startIndex = (this.state.currentPage - 1) * this.state.numPerPage;
-    const endIndex = startIndex + this.state.numPerPage;
+    const { currentPage, numPerPage } = this.state;
+    const startIndex = (currentPage - 1) * numPerPage;
+    const endIndex = startIndex + numPerPage;
     const styles = { textDecoration: "none", color: "#551A8B" };
     const tickets =
       this.props.type === "User" ? this.props.userTickets : this.props.tickets;
     return tickets.slice(startIndex, endIndex).map((curr) => (
-      <tr
-        key={curr.key}
-      >
+      <tr key={curr.key}>
         <td>{curr.title}</td>
         <td>{curr.assigned}</td>
         <td>{curr.submitter}</td>
@@ -68,23 +70,9 @@ class TicketList extends Lists {
   render() {
     const tickets =
       this.props.type === "User" ? this.props.userTickets : this.props.tickets;
-    return(
+    return (
       <div>
-        <DeleteTicket
-          type="Ticket"
-          removeItemCancel={this.removeItemCancel}
-          removeItemContinue={this.removeTicketContinue}
-          show={this.state.deleteItem.continue}
-        />
-        <Button
-          clicked={() =>
-            this.props.history.push(
-              `/tickets/${this.props.match.params.id}/${this.props.match.params.name}/new`
-            )
-          }
-        >
-          Add New Ticket
-        </Button>
+        <Button clicked={this.addTicketHandler}>Add New Ticket</Button>
         <Modal
           header={<p> {`${this.props.match.params.name} Tickets`}</p>}
           footer={
