@@ -59,7 +59,7 @@ export const authenticate = (email, password, isSignUp, name) => (dispatch) => {
       }
     })
     .catch((err) => {
-      dispatch(authFailureCreator(err.response.data.error.message));
+      dispatch(authFailureCreator( err.response.data.error.message));
     });
 };
 
@@ -91,8 +91,7 @@ const getUser = (token, userid, expiry) => (dispatch) =>
       dispatch(authLogout(expiry));
     })
     .catch((err) => {
-      dispatch(authFailureCreator(err.response.data.message));
-      console.log(err);
+      dispatch(authFailureCreator("Error"));
     });
 
 export const authCheckState = () => (dispatch) => {

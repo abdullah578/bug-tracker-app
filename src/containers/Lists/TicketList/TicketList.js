@@ -76,7 +76,13 @@ class TicketList extends Lists {
           <Button clicked={this.addTicketHandler}>Add New Ticket</Button>
         ) : null}
         <Modal
-          header={<p> {`${this.props.match.params.name} Tickets`}</p>}
+          header={
+            <p>
+              {this.props.type === "User"
+                ? "Tickets"
+                : `${this.props.match.params.name} Tickets`}
+            </p>
+          }
           footer={
             <Pagination
               currPage={this.state.currentPage}
@@ -89,7 +95,10 @@ class TicketList extends Lists {
           err={this.props.error || tickets.length === 0}
           type="Tickets"
         >
-          <Table header={this.createTableHeader()} style={this.props.tableStyle}>
+          <Table
+            header={this.createTableHeader()}
+            style={this.props.tableStyle}
+          >
             {this.createTableBody()}
           </Table>
         </Modal>

@@ -45,12 +45,17 @@ export const submitProjTicketsCreator = (id, ticket, key) => (dispatch) => {
   if (key === "new")
     axios
       .post("/tickets.json", ticket)
-      .then((resp) => dispatch(fetchProjTicketsCreator(id)))
+      .then((resp) => {
+        dispatch(fetchProjTicketsCreator(id));
+      })
       .catch((err) => console.log(err));
   else
     axios
       .put(`/tickets/${key}.json`, ticket)
-      .then((resp) => dispatch(fetchProjTicketsCreator(id)))
+      .then((resp) => {
+        dispatch(fetchProjTicketsCreator(id));
+        dispatch(fetchUserTicketsCreator());
+      })
       .catch((err) => console.log(err));
 };
 
@@ -59,5 +64,14 @@ export const deleteTicketCreator = (projectID, ticketKey) => (dispatch) => {
   axios
     .delete(`/tickets/${ticketKey}.json`)
     .then((resp) => dispatch(fetchProjTicketsCreator(projectID)))
+    .catch((err) => console.log(err));
+};
+
+export const deleteUserTicketCreator = (projectID, userEmail) => (dispatch) => {
+  axios
+    .get(
+      `/tickets.json?orderBy="projid"&equalTo="${projectID}&orderBy="assignedEmail"&equalTo=${userEmail}`
+    )
+    .then((resp) => console.log(resp.data))
     .catch((err) => console.log(err));
 };

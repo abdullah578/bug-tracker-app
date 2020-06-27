@@ -117,6 +117,7 @@ class TicketForm extends Lists {
     const devIndex = this.props.projUsers.findIndex(
       (curr) => curr.email === this.state.form.assigned.value
     );
+    if(devIndex===-1) return null;
     const { form } = this.state;
     const ticketObj = {
       title: form.title.value,
