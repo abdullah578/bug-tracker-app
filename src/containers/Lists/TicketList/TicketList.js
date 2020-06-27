@@ -1,8 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import * as userActionCreators from "../../../store/actions/Users";
 import * as ticketActionCreators from "../../../store/actions/Tickets";
-import { formConfig } from "../../../Utilities/Utilities";
 import WithErrorHandle from "../../../hoc/WithErrorHandle";
 import Lists from "../Lists";
 import axios from "../../../axiosInstance/AxiosInstance";
@@ -11,110 +9,23 @@ import Table from "../../../components/UI/Table/Table";
 import Button from "../../../components/UI/Button/Add/Add";
 import Spinner from "../../../components/UI/Spinner/Spinner";
 import Pagination from "../../../components/UI/Pagination/Pagination";
-import NewTicket from "../../../components/NewItem/NewItem";
 import DeleteTicket from "../../../components/DeleteItem/DeleteItem";
 
 class TicketList extends Lists {
   state = {
-    newItem: false,
     deleteItem: {
       continue: false,
       key: null,
     },
     currentPage: 1,
     numPerPage: 5,
-    form: {
-      title: formConfig(
-        "Tile",
-        "Title ...",
-        "text",
-        "",
-        "input",
-        { isRequired: true },
-        false,
-        false
-      ),
-      description: formConfig(
-        "Ticket Description",
-        "Description ...",
-        "text",
-        "",
-        "textArea",
-        { isRequired: true },
-        false,
-        false
-      ),
-      assigned: formConfig(
-        "Assigned",
-        "email ...",
-        "email",
-        "",
-        "input",
-        { isRequired: true, isArrayPresent: true },
-        false,
-        false
-      ),
-      ticketPriority: {
-        elementConfig: [
-          { value: "Low" },
-          { value: "Medium" },
-          { value: "High" },
-        ],
-        value: "High",
-        name: "Ticket Priority",
-        isValid: true,
-        fieldType: "select",
-      },
-      ticketType: {
-        elementConfig: [
-          { value: "Bugs/Errors" },
-          { value: "Feature Requests" },
-        ],
-        value: "Bugs/Errors",
-        name: "Ticket Type",
-        isValid: true,
-        fieldType: "select",
-      },
-      ticketStatus: {
-        elementConfig: [
-          { value: "Open" },
-          { value: "In Progress" },
-          { value: "Resolved" },
-          { value: "Additional Info Required" },
-        ],
-        value: "Open",
-        name: "Ticket Status",
-        isValid: true,
-        fieldType: "select",
-      },
-    },
   };
+
   componentDidMount() {
     this.props.type === "User"
       ? this.props.fetchUserTickets()
       : this.props.fetchProjTickets(this.props.match.params.id);
-    this.props.fetchProjUsers(this.props.match.params.id);
   }
-  formSubmitHandler = () => {
-    const devIndex = this.props.projUsers.findIndex(
-      (curr) => curr.email === this.state.form.assigned.value
-    );
-    const ticketObj = {
-      title: this.state.form.title.value,
-      description: this.state.form.description.value,
-      ticketPriority: this.state.form.ticketPriority.value,
-      ticketType: this.state.form.ticketType.value,
-      assigned: this.props.projUsers[devIndex].name,
-      submitter: this.props.name,
-      status: this.state.form.ticketStatus.value,
-      created: new Date(),
-      projid: this.props.match.params.id,
-    };
-    this.props.submitTicket(this.props.match.params.id, ticketObj);
-    this.resetForm();
-    this.setState({ newItem: false });
-  };
-
   createTableHeader() {
     return (
       <tr>
@@ -166,23 +77,21 @@ class TicketList extends Lists {
       <Spinner />
     ) : (
       <div>
-        <NewTicket
-          open={this.state.newItem}
-          form={this.state.form}
-          array={this.props.projUsers}
-          inputHandler={this.inputHandler}
-          cancelForm={this.formCancelHandler}
-          submitForm={this.formSubmitHandler}
-          disabled={!this.checkFormValidity(this.state.form)}
-        />
         <DeleteTicket
           type="Ticket"
           removeItemCancel={this.removeItemCancel}
           removeItemContinue={this.removeTicketContinue}
           show={this.state.deleteItem.continue}
         />
-
-        <Button clicked={this.addItemHandler}>Add New Ticket</Button>
+        <Button
+          clicked={() =>
+            this.props.history.push(
+              `/tickets/${this.props.match.params.id}/${this.props.match.params.name}/new`
+            )
+          }
+        >
+          Add New Ticket
+        </Button>
         <Modal
           header={<p> {`${this.props.match.params.name} Tickets`}</p>}
           footer={
@@ -216,16 +125,12 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  fetchProjUsers: (id) =>
-    dispatch(userActionCreators.fetchProjUsersCreator(id)),
   fetchProjTickets: (id) =>
     dispatch(ticketActionCreators.fetchProjTicketsCreator(id)),
   fetchUserTickets: (id) =>
     dispatch(ticketActionCreators.fetchUserTicketsCreator()),
   deleteTicket: (id, key) =>
     dispatch(ticketActionCreators.deleteTicketCreator(id, key)),
-  submitTicket: (id, ticket) =>
-    dispatch(ticketActionCreators.submitProjTicketsCreator(id, ticket)),
 });
 
 export default connect(

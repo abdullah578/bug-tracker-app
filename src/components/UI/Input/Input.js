@@ -11,6 +11,7 @@ const Input = (props) => {
         value={props.value}
         onChange={props.inputHandler}
         id={props.name}
+        style={props.inputStyle}
         className={classes.Input}
       >
         {props.elementConfig.map((curr) => (
@@ -22,6 +23,7 @@ const Input = (props) => {
     );
     name = props.name;
   } else {
+    console.log(props);
     field =
       props.fieldType === "textArea" ? (
         <textarea
@@ -29,6 +31,7 @@ const Input = (props) => {
           value={props.value}
           onChange={props.inputHandler}
           id={props.elementConfig.name}
+          style={props.inputStyle}
           className={styles.join(" ")}
         />
       ) : (
@@ -37,18 +40,19 @@ const Input = (props) => {
           value={props.value}
           onChange={props.inputHandler}
           id={props.elementConfig.name}
+          style={props.inputStyle}
           className={styles.join(" ")}
         />
       );
     name = props.elementConfig.name;
   }
   return (
-    <React.Fragment>
-      <label htmlFor={name} className={classes.Label}>
+    <div style={props.containerStyle}>
+      <label htmlFor={name} className={classes.Label} style={props.labelStyle}>
         {name}
       </label>
       {field}
-    </React.Fragment>
+    </div>
   );
 };
 

@@ -7,10 +7,10 @@ import DashBoard from "./containers/DashBoard/Dashboard";
 import ProjectList from "./containers/Lists/ProjectList/ProjectList";
 import UserList from "./containers/Lists/UserList/UserList";
 import TicketList from "./containers/Lists/TicketList/TicketList";
+import TicketForm from "./containers/Lists/TicketList/TicketForm/TicketForm";
 import UserRoles from "./containers/UserRoles/UserRoles";
 import Login from "./containers/login/Login";
 import "./App.css";
-
 
 class App extends Component {
   componentDidMount() {
@@ -22,6 +22,7 @@ class App extends Component {
       routes = (
         <Layout>
           <Switch>
+            <Route path="/tickets/:id/:name/new" component={TicketForm} />
             <Route path="/tickets/:id/:name" component={TicketList} />
             <Route
               path="/tickets"

@@ -7,7 +7,7 @@ const Modal = (props) => {
       No {props.type} Found
     </p>
   ) : (
-    <div className={classes.Modal}>
+    <div className={classes.Modal} style={props.modalStyle}>
       <header className={classes.Header}>{props.header}</header>
       <section className={classes.Section}>{props.children}</section>
       <footer className={classes.Footer}>{props.footer}</footer>
