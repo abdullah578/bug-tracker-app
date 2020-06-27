@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import Modal from "../../components/UI/Modal/Modal";
+import ProjectInfo from "../../components/ProjectInfo/ProjectInfo";
 import UserList from "../../containers/Lists/UserList/UserList";
 import TicketList from "../../containers/Lists/TicketList/TicketList";
 import classes from "./ProjectDetails.module.css";
@@ -18,18 +18,10 @@ class ProjectDetails extends Component {
   render() {
     return (
       <div className={classes.Details}>
-        <Modal header={<p>Details for Project </p>}>
-          <div className={classes.Desc}>
-            <div>
-              <p className={classes.ParaHeader}>Project Name</p>
-              <p>{this.state.name}</p>
-            </div>
-            <div>
-              <p className={classes.ParaHeader}>Project Description</p>
-              <p>{this.state.description}</p>
-            </div>
-          </div>
-        </Modal>
+        <ProjectInfo
+          name={this.state.name}
+          description={this.state.description}
+        />
         <div className={classes.Objects}>
           <UserList
             {...this.props}
