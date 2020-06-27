@@ -1,0 +1,39 @@
+.Details {
+    width: 100%;
+    background-color: #fff;
+  }
+  .Desc {
+    display: flex;
+    padding:15px;
+  }
+  .Desc > div {
+    width: 50%;
+    padding:15px;
+    background-color: #fff;
+  
+  }
+  .Desc p{
+      font-size: 60%;
+  }
+  .ParaHeader{
+      color:#aaa;
+      margin-bottom:7px;
+  }
+  .Objects {
+    display: flex;
+    justify-content: space-around;
+  }
+  .Objects > div {
+    width: 49%;
+  }
+
+  @media (max-width:900px){
+    .Objects {
+        display: block;
+
+      }
+      .Objects > div {
+        width: 100%;
+      }
+
+  }

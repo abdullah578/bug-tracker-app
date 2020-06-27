@@ -12,11 +12,6 @@ const Navigationitems = (props) => {
         path="/users"
       />
       <Navigationitem
-        itemName="Manage Project Users"
-        iconName="people-outline"
-        path="/projects_users"
-      />
-      <Navigationitem
         itemName="My Projects"
         iconName="layers-outline"
         path="/projects"

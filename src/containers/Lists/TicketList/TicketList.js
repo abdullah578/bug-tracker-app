@@ -72,7 +72,9 @@ class TicketList extends Lists {
       this.props.type === "User" ? this.props.userTickets : this.props.tickets;
     return (
       <div>
-        <Button clicked={this.addTicketHandler}>Add New Ticket</Button>
+        {!this.props.remButton ? (
+          <Button clicked={this.addTicketHandler}>Add New Ticket</Button>
+        ) : null}
         <Modal
           header={<p> {`${this.props.match.params.name} Tickets`}</p>}
           footer={
@@ -87,7 +89,7 @@ class TicketList extends Lists {
           err={this.props.error || tickets.length === 0}
           type="Tickets"
         >
-          <Table header={this.createTableHeader()}>
+          <Table header={this.createTableHeader()} style={this.props.tableStyle}>
             {this.createTableBody()}
           </Table>
         </Modal>

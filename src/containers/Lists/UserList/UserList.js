@@ -110,7 +110,7 @@ class UserList extends Lists {
           removeItemContinue={this.removeUserContinue}
           show={this.state.deleteItem.continue}
         />
-        <Button clicked={this.addItemHandler}>Add New User</Button>
+       {!this.props.remButton ?<Button clicked={this.addItemHandler}>Add New User</Button>:null}
         <Modal
           header={<p> {`${this.props.match.params.name} Users`}</p>}
           footer={
@@ -125,7 +125,7 @@ class UserList extends Lists {
           err={this.props.error || this.props.projUsers.length === 0}
           type="Users"
         >
-          <Table header={this.createTableHeader()}>
+          <Table header={this.createTableHeader()} style={this.props.tableStyle}>
             {this.createTableBody()}
           </Table>
         </Modal>

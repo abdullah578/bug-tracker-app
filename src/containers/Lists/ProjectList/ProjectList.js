@@ -83,6 +83,12 @@ class ProjectList extends Lists {
             <li>
               <NavLink to={`/tickets/${curr.key}/${curr.name}`} style={styles}>
                 {" "}
+                Manage Tickets
+              </NavLink>
+            </li>
+            <li>
+              <NavLink to={`/projects/${curr.key}/${curr.name}`} style={styles}>
+                {" "}
                 Details
               </NavLink>
             </li>

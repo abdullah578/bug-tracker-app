@@ -9,6 +9,7 @@ import UserList from "./containers/Lists/UserList/UserList";
 import TicketList from "./containers/Lists/TicketList/TicketList";
 import TicketForm from "./containers/Lists/TicketList/TicketForm/TicketForm";
 import UserRoles from "./containers/UserRoles/UserRoles";
+import ProjectDetails from "./containers/ProjectDetails/ProjectDetails";
 import Login from "./containers/login/Login";
 import "./App.css";
 
@@ -32,6 +33,7 @@ class App extends Component {
             />
             <Route path="/users/:id/:name" component={UserList} />
             <Route path="/users" component={UserRoles} />
+            <Route path="/projects/:id/:name" component={ProjectDetails} />
             <Route path="/projects" component={ProjectList} />
             <Route path="/" component={DashBoard} />
           </Switch>
