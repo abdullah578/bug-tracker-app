@@ -1,5 +1,6 @@
 import React from "react";
 import { formConfig } from "../../../../Utilities/Utilities";
+import axios from "../../../../axiosInstance/AxiosInstance";
 import { connect } from "react-redux";
 import * as userActionCreators from "../../../../store/actions/Users";
 import * as ticketActionCreators from "../../../../store/actions/Tickets";
@@ -81,6 +82,36 @@ class TicketForm extends Lists {
   };
   componentDidMount() {
     this.props.fetchProjUsers(this.props.match.params.id);
+    if (this.props.match.params.key !== "new") {
+      axios
+        .get(`/tickets/${this.props.match.params.key}.json`)
+        .then((resp) => {
+          console.log("TicketForm -> componentDidMount -> resp", resp);
+          const formCopy = { ...this.state.form };
+          Object.keys(formCopy).map(
+            (name) =>
+              (formCopy[name] = {
+                ...formCopy[name],
+                value: resp.data[this.mapResponseToState(name)],
+                isValid: true,
+              })
+          );
+          console.log(formCopy);
+          this.setState({ form: formCopy });
+        })
+        .catch((err) => this.props.history.goBack());
+    }
+  }
+  mapResponseToState(name) {
+    const obj = {
+      ticketStatus: "status",
+      ticketPriority: "ticketPriority",
+      ticketType: "ticketType",
+      title: "title",
+      description: "description",
+      assigned: "assignedEmail",
+    };
+    return obj[name];
   }
   formSubmitHandler = () => {
     const devIndex = this.props.projUsers.findIndex(
@@ -92,12 +123,18 @@ class TicketForm extends Lists {
       ticketPriority: this.state.form.ticketPriority.value,
       ticketType: this.state.form.ticketType.value,
       assigned: this.props.projUsers[devIndex].name,
+      projName: this.props.match.params.name,
+      assignedEmail: this.state.form.assigned.value.trim(),
       submitter: this.props.name,
       status: this.state.form.ticketStatus.value,
       created: new Date(),
       projid: this.props.match.params.id,
     };
-    this.props.submitTicket(this.props.match.params.id, ticketObj);
+    this.props.submitTicket(
+      this.props.match.params.id,
+      ticketObj,
+      this.props.match.params.key
+    );
     this.props.history.goBack();
   };
   render() {
@@ -163,8 +200,8 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   fetchProjUsers: (id) =>
     dispatch(userActionCreators.fetchProjUsersCreator(id)),
-  submitTicket: (id, ticket) =>
-    dispatch(ticketActionCreators.submitProjTicketsCreator(id, ticket)),
+  submitTicket: (id, ticket, key) =>
+    dispatch(ticketActionCreators.submitProjTicketsCreator(id, ticket, key)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(TicketForm);

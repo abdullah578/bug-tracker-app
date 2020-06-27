@@ -85,6 +85,10 @@ class UserList extends Lists {
       },
     });
   };
+  removeItemCancel = () =>
+    this.setState({ deleteItem: { key: null, continue: false } });
+
+  clickItem = (key) => this.setState({ deleteItem: { key, continue: true } });
   render() {
     return this.props.dispSpinner ? (
       <Spinner />

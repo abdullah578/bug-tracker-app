@@ -1,13 +1,14 @@
 import React from "react";
 import { connect } from "react-redux";
 import * as ticketActionCreators from "../../../store/actions/Tickets";
+import { NavLink } from "react-router-dom";
 import WithErrorHandle from "../../../hoc/WithErrorHandle";
 import Lists from "../Lists";
 import axios from "../../../axiosInstance/AxiosInstance";
 import Modal from "../../../components/UI/Modal/Modal";
 import Table from "../../../components/UI/Table/Table";
 import Button from "../../../components/UI/Button/Add/Add";
-import Spinner from "../../../components/UI/Spinner/Spinner";
+//import Spinner from "../../../components/UI/Spinner/Spinner";
 import Pagination from "../../../components/UI/Pagination/Pagination";
 import DeleteTicket from "../../../components/DeleteItem/DeleteItem";
 
@@ -41,41 +42,33 @@ class TicketList extends Lists {
   createTableBody() {
     const startIndex = (this.state.currentPage - 1) * this.state.numPerPage;
     const endIndex = startIndex + this.state.numPerPage;
-    console.log(this.props.tickets);
+    const styles = { textDecoration: "none", color: "#551A8B" };
     const tickets =
       this.props.type === "User" ? this.props.userTickets : this.props.tickets;
     return tickets.slice(startIndex, endIndex).map((curr) => (
       <tr
         key={curr.key}
-        onClick={() => this.clickItem(curr.key, curr.projid)}
-        style={{ cursor: "pointer" }}
       >
         <td>{curr.title}</td>
         <td>{curr.assigned}</td>
         <td>{curr.submitter}</td>
         <td>{curr.status}</td>
         <td>{curr.created}</td>
+        <td>
+          <NavLink
+            to={`/tickets/${curr.projid}/${curr.projName}/${curr.key}`}
+            style={styles}
+          >
+            Edit Ticket
+          </NavLink>
+        </td>
       </tr>
     ));
   }
-  removeTicketContinue = () => {
-    this.props.deleteTicket(
-      this.props.match.params.id,
-      this.state.deleteItem.key
-    );
-    this.setState({
-      deleteItem: {
-        key: null,
-        continue: false,
-      },
-    });
-  };
   render() {
     const tickets =
       this.props.type === "User" ? this.props.userTickets : this.props.tickets;
-    return this.props.dispSpinner ? (
-      <Spinner />
-    ) : (
+    return(
       <div>
         <DeleteTicket
           type="Ticket"

@@ -22,7 +22,7 @@ class App extends Component {
       routes = (
         <Layout>
           <Switch>
-            <Route path="/tickets/:id/:name/new" component={TicketForm} />
+            <Route path="/tickets/:id/:name/:key" component={TicketForm} />
             <Route path="/tickets/:id/:name" component={TicketList} />
             <Route
               path="/tickets"

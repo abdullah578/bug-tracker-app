@@ -60,10 +60,6 @@ class Lists extends Component {
     });
     this.setState({ form: formCopy });
   }
-  removeItemCancel = () =>
-    this.setState({ deleteItem: { key: null, continue: false } });
-
-  clickItem = (key) => this.setState({ deleteItem: { key, continue: true } });
   nextPage = () =>
     this.setState((prevState) => ({ currentPage: prevState.currentPage + 1 }));
   prevPage = () =>

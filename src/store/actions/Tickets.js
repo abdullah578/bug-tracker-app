@@ -41,16 +41,21 @@ export const fetchUserTicketsCreator = () => (dispatch) => {
       })
     );
 };
-
-export const submitProjTicketsCreator = (id, ticket) => (dispatch) => {
-  axios
-    .post("/tickets.json", ticket)
-    .then((resp) => dispatch(fetchProjTicketsCreator(id)))
-    .catch((err) => console.log(err));
+export const submitProjTicketsCreator = (id, ticket, key) => (dispatch) => {
+  if (key === "new")
+    axios
+      .post("/tickets.json", ticket)
+      .then((resp) => dispatch(fetchProjTicketsCreator(id)))
+      .catch((err) => console.log(err));
+  else
+    axios
+      .put(`/tickets/${key}.json`, ticket)
+      .then((resp) => dispatch(fetchProjTicketsCreator(id)))
+      .catch((err) => console.log(err));
 };
 
 export const deleteTicketCreator = (projectID, ticketKey) => (dispatch) => {
-console.log("hellooo")
+  console.log("hellooo");
   axios
     .delete(`/tickets/${ticketKey}.json`)
     .then((resp) => dispatch(fetchProjTicketsCreator(projectID)))
