@@ -22,9 +22,13 @@ class TicketList extends Lists {
   };
 
   componentDidMount() {
-    this.props.type === "User"
-      ? this.props.fetchUserTickets()
-      : this.props.fetchProjTickets(this.props.match.params.id);
+    if (this.props.type === "User" && !this.props.userTickets.length)
+      this.props.fetchUserTickets();
+    else {
+      if (!this.props.allProjTickets[this.props.match.params.id])
+        this.props.fetchProjTickets(this.props.match.params.id);
+      else this.props.getTickets(this.props.match.params.id);
+    }
   }
   addTicketHandler = () =>
     this.props.history.push(
@@ -49,6 +53,7 @@ class TicketList extends Lists {
     const styles = { textDecoration: "none", color: "#551A8B" };
     const tickets =
       this.props.type === "User" ? this.props.userTickets : this.props.tickets;
+    console.log(tickets);
     return tickets.slice(startIndex, endIndex).map((curr) => (
       <tr key={curr.key}>
         <td>{curr.title}</td>
@@ -112,6 +117,7 @@ const mapStateToProps = (state) => ({
   projUsers: state.user.projUsers,
   dispSpinner: state.ticket.dispSpinner,
   tickets: state.ticket.tickets,
+  allProjTickets: state.ticket.allProjTickets,
   userTickets: state.ticket.userTickets,
   error: state.ticket.error,
 });
@@ -121,6 +127,7 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(ticketActionCreators.fetchProjTicketsCreator(id)),
   fetchUserTickets: (id) =>
     dispatch(ticketActionCreators.fetchUserTicketsCreator()),
+  getTickets: (id) => dispatch(ticketActionCreators.getTicketsCreator(id)),
   deleteTicket: (id, key) =>
     dispatch(ticketActionCreators.deleteTicketCreator(id, key)),
 });

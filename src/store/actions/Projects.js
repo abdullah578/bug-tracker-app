@@ -25,4 +25,10 @@ export const fetchProjectsCreator = () => (dispatch) => {
 export const postProjectCreator = (obj) => (dispatch) =>
   axios
     .post("/projects.json", obj)
-    .then((resp) => dispatch(fetchProjectsCreator()));
+    .then((resp) =>
+      dispatch({
+        type: actionTypes.UPDATE_PROJECT,
+        proj: { ...obj, key: resp.data.name },
+      })
+    )
+    .catch((err) => console.log(err));

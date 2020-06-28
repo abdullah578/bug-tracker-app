@@ -13,8 +13,7 @@ class DashBoard extends Component {
     typeChart: null,
   };
   componentDidMount() {
-    this.props.fetchTickets();
-
+    if (!this.props.tickets.length) this.props.fetchTickets();
   }
   createStat() {
     if (!this.props.tickets.length) return null;

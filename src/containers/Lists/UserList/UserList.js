@@ -37,8 +37,10 @@ class UserList extends Lists {
     },
   };
   componentDidMount() {
-    this.props.fetchProjUsers(this.props.match.params.id);
-    this.props.fetchAllUsers();
+    const projid = this.props.match.params.id;
+    if (!this.props.allProjUsers[projid]) this.props.fetchProjUsers(projid);
+    else this.props.getProjUsers(projid);
+    if (!this.props.users.length) this.props.fetchAllUsers();
   }
 
   formSubmitHandler = () => {
@@ -88,7 +90,7 @@ class UserList extends Lists {
         this.props.match.params.id,
         this.props.users[userIndex].email
       );
-     console.log("UserList -> removeUserContinue -> userIndex", userIndex)
+    console.log("UserList -> removeUserContinue -> userIndex", userIndex);
     this.setState({
       deleteItem: {
         key: null,
@@ -151,6 +153,7 @@ class UserList extends Lists {
 const mapStateToProps = (state) => ({
   users: state.user.users,
   projUsers: state.user.projUsers,
+  allProjUsers: state.user.allProjUsers,
   dispSpinner: state.user.dispSpinner,
   error: state.user.error,
 });
@@ -159,6 +162,7 @@ const mapDispatchToProps = (dispatch) => ({
   fetchProjUsers: (id) =>
     dispatch(userActionCreators.fetchProjUsersCreator(id)),
   fetchAllUsers: () => dispatch(userActionCreators.fetchAllUsersCreator()),
+  getProjUsers: (id) => dispatch(userActionCreators.getProjUsersCreator(id)),
   submitUser: (id, obj) =>
     dispatch(userActionCreators.postUserCreator(id, obj)),
   deleteUser: (projectId, userKey) =>

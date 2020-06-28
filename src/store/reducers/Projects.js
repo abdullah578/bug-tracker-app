@@ -29,6 +29,13 @@ const projectReducer = (state = initialState, action) => {
         error: true,
       };
     }
+    case actionTypes.UPDATE_PROJECT: {
+      return {
+        ...state,
+        projects: state.projects.concat(action.proj),
+      };
+    }
+
     default:
       return state;
   }

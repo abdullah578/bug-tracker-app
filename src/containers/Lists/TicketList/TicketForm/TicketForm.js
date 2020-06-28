@@ -1,6 +1,5 @@
 import React from "react";
 import { formConfig } from "../../../../Utilities/Utilities";
-import axios from "../../../../axiosInstance/AxiosInstance";
 import { connect } from "react-redux";
 import * as userActionCreators from "../../../../store/actions/Users";
 import * as ticketActionCreators from "../../../../store/actions/Tickets";
@@ -81,25 +80,26 @@ class TicketForm extends Lists {
     },
   };
   componentDidMount() {
-    this.props.fetchProjUsers(this.props.match.params.id);
+    if (!this.props.allProjUsers[this.props.match.params.id])
+      this.props.fetchProjUsers(this.props.match.params.id);
+    else this.props.getProjUsers(this.props.match.params.id);
     if (this.props.match.params.key !== "new") {
-      axios
-        .get(`/tickets/${this.props.match.params.key}.json`)
-        .then((resp) => {
-          console.log("TicketForm -> componentDidMount -> resp", resp);
-          const formCopy = { ...this.state.form };
-          Object.keys(formCopy).map(
-            (name) =>
-              (formCopy[name] = {
-                ...formCopy[name],
-                value: resp.data[this.mapResponseToState(name)],
-                isValid: true,
-              })
-          );
-          console.log(formCopy);
-          this.setState({ form: formCopy });
-        })
-        .catch((err) => this.props.history.goBack());
+      const formCopy = { ...this.state.form };
+      const tickets =
+        this.props.allProjTickets[this.props.match.params.id] ||
+        this.props.userTickets;
+      const dataIndex = tickets.findIndex(
+        (curr) => curr.key === this.props.match.params.key
+      );
+      Object.keys(formCopy).map(
+        (name) =>
+          (formCopy[name] = {
+            ...formCopy[name],
+            value: tickets[dataIndex][this.mapResponseToState(name)],
+            isValid: true,
+          })
+      );
+      this.setState({ form: formCopy });
     }
   }
   mapResponseToState(name) {
@@ -117,7 +117,8 @@ class TicketForm extends Lists {
     const devIndex = this.props.projUsers.findIndex(
       (curr) => curr.email === this.state.form.assigned.value
     );
-    if(devIndex===-1) return null;
+    if (devIndex === -1) return null;
+
     const { form } = this.state;
     const ticketObj = {
       title: form.title.value,
@@ -130,7 +131,7 @@ class TicketForm extends Lists {
       submitter: this.props.name,
       submitterEmail: this.props.email.trim(),
       status: form.ticketStatus.value,
-      created: new Date(),
+      created: new Date().toString().split("G")[0],
       projid: this.props.match.params.id,
     };
     this.props.submitTicket(
@@ -197,12 +198,16 @@ const mapStateToProps = (state) => ({
   email: state.auth.email,
   name: state.auth.name,
   projUsers: state.user.projUsers,
+  allProjUsers: state.user.allProjUsers,
+  userTickets: state.ticket.userTickets,
+  allProjTickets: state.ticket.allProjTickets,
   dispSpinner: state.ticket.dispSpinner,
   error: state.ticket.error,
 });
 const mapDispatchToProps = (dispatch) => ({
   fetchProjUsers: (id) =>
     dispatch(userActionCreators.fetchProjUsersCreator(id)),
+  getProjUsers: (id) => dispatch(userActionCreators.getProjUsersCreator(id)),
   submitTicket: (id, ticket, key) =>
     dispatch(ticketActionCreators.submitProjTicketsCreator(id, ticket, key)),
 });

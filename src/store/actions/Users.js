@@ -23,10 +23,16 @@ export const fetchProjUsersCreator = (id) => (dispatch) => {
       dispatch({
         type: actionTypes.FETCH_PROJ_USERS_SUCCESS,
         users: usersArray,
+        projid: id,
       });
     })
     .catch((err) => dispatch({ type: actionTypes.FETCH_PROJ_USERS_FAILURE }));
 };
+
+export const getProjUsersCreator = (id) => ({
+  type: actionTypes.GET_PROJ_USERS,
+  id,
+});
 export const fetchAllUsersCreator = () => (dispatch) => {
   dispatch(fetchUsersInit());
   axios
@@ -53,13 +59,15 @@ export const fetchAllUsersCreator = () => (dispatch) => {
 export const updateUsersCreator = (key, obj) => (dispatch) => {
   axios
     .put(`/allUsers/${key}.json`, obj)
-    .then((resp) => dispatch(fetchAllUsersCreator()))
+    .then((resp) => dispatch({type:actionTypes.UPDATE_USERS,obj,key}))
     .catch((err) => null);
 };
 export const postUserCreator = (id, obj) => (dispatch) => {
   axios
     .put(`/users/${id}/${obj.key}.json`, obj)
-    .then((resp) => dispatch(fetchProjUsersCreator(id)))
+    .then((resp) => {
+      dispatch({ type: actionTypes.UPDATE_PROJ_USERS, obj, id });
+    })
     .catch((err) => console.log(err));
   /*axios.put(`/allUsers/${obj.key}.json`, {
     name: obj.name,

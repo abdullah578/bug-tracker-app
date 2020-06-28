@@ -31,7 +31,7 @@ class UserRoles extends Component {
     selectedUser: null,
   };
   componentDidMount() {
-    this.props.fetchAllUsers();
+    if (!this.props.allUsers.length) this.props.fetchAllUsers();
   }
   roleHandler = (e) => {
     const userRoleCopy = { ...this.state.userRole };
@@ -51,7 +51,7 @@ class UserRoles extends Component {
     );
   }
   createTableBody() {
-    const {numPerPage,currentPage}=this.state;
+    const { numPerPage, currentPage } = this.state;
     const startIndex = (currentPage - 1) * numPerPage;
     const endIndex = startIndex + numPerPage;
     return this.props.users.slice(startIndex, endIndex).map((curr) => (
@@ -97,7 +97,7 @@ class UserRoles extends Component {
     );
   }
   render() {
-    const {currentPage,numPerPage,selectedUser,userRole}=this.state;
+    const { currentPage, numPerPage, selectedUser, userRole } = this.state;
     return this.props.dispSpinner ? (
       <Spinner />
     ) : (

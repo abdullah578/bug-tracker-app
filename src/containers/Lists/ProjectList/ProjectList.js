@@ -42,7 +42,7 @@ class ProjectList extends Lists {
     },
   };
   componentDidMount() {
-    this.props.fetchProjects();
+    if(!this.props.projects.length) this.props.fetchProjects();
   }
   formSubmitHandler = () => {
     const { name, description } = this.state.form;

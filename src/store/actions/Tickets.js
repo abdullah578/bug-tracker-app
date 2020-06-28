@@ -12,6 +12,7 @@ export const fetchProjTicketsCreator = (id) => (dispatch) => {
       dispatch({
         type: actionTypes.FETCH_PROJ_TICKETS_SUCCESS,
         tickets: ticketsArr,
+        id,
       });
     })
     .catch((err) =>
@@ -20,6 +21,13 @@ export const fetchProjTicketsCreator = (id) => (dispatch) => {
         error: err,
       })
     );
+};
+
+export const getTicketsCreator = (id) => {
+  return {
+    type: actionTypes.GET_TICKETS,
+    id,
+  };
 };
 export const fetchUserTicketsCreator = () => (dispatch) => {
   dispatch({ type: actionTypes.FETCH_USER_TICKETS_INIT });
@@ -41,20 +49,30 @@ export const fetchUserTicketsCreator = () => (dispatch) => {
       })
     );
 };
-export const submitProjTicketsCreator = (id, ticket, key) => (dispatch) => {
+export const submitProjTicketsCreator = (id, tick, key) => (dispatch) => {
   if (key === "new")
     axios
-      .post("/tickets.json", ticket)
+      .post("/tickets.json", tick)
       .then((resp) => {
-        dispatch(fetchProjTicketsCreator(id));
+        console.log(resp);
+        dispatch({
+          type: actionTypes.ADD_TICKET,
+          id,
+          key,
+          ticket: { ...tick, key: resp.data.name },
+        });
       })
       .catch((err) => console.log(err));
   else
     axios
-      .put(`/tickets/${key}.json`, ticket)
+      .put(`/tickets/${key}.json`, tick)
       .then((resp) => {
-        dispatch(fetchProjTicketsCreator(id));
-        dispatch(fetchUserTicketsCreator());
+        dispatch({
+          type: actionTypes.UPDATE_TICKET,
+          id,
+          key,
+          ticket: { ...tick, key },
+        });
       })
       .catch((err) => console.log(err));
 };
@@ -76,9 +94,6 @@ export const deleteUserTicketCreator = (projectID, userEmail) => (dispatch) => {
           resp.data[key].assignedEmail === userEmail ||
           resp.data[key].submitterEmail === userEmail
       );
-      console.log(projectID);
-      console.log(userEmail);
-      console.log(filterKeys);
       filterKeys.forEach((key) => {
         axios
           .delete(`/tickets/${key}.json`)

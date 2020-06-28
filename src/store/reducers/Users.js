@@ -3,6 +3,7 @@ const initialState = {
   users: [],
   allUsers: [],
   projUsers: [],
+  allProjUsers: {},
   dispSpinner: false,
   error: false,
 };
@@ -42,9 +43,21 @@ const userReducer = (state = initialState, action) => {
         error: true,
       };
     }
+    case actionTypes.UPDATE_USERS:{
+      const index=state.allUsers.findIndex(curr=>curr.key===action.key);
+      const allUsersCopy=[...state.allUsers];
+      allUsersCopy[index]=action.obj;
+      return {
+        ...state,
+        allUsers:allUsersCopy,
+        users:allUsersCopy.filter(curr=>curr.role!=="N/A")
+      }
+
+    }
     case actionTypes.FETCH_PROJ_USERS_SUCCESS: {
       return {
         ...state,
+        allProjUsers: { ...state.allProjUsers, [action.projid]: action.users },
         projUsers: action.users,
         dispSpinner: false,
         error: false,
@@ -55,6 +68,22 @@ const userReducer = (state = initialState, action) => {
         ...state,
         dispSpinner: false,
         error: true,
+      };
+    }
+    case actionTypes.GET_PROJ_USERS: {
+      return {
+        ...state,
+        projUsers: state.allProjUsers[action.id],
+      };
+    }
+    case actionTypes.UPDATE_PROJ_USERS: {
+      return {
+        ...state,
+        projUsers: state.projUsers.concat(action.obj),
+        allProjUsers: {
+          ...state.allProjUsers,
+          [action.id]: state.allProjUsers[action.id].concat(action.obj),
+        },
       };
     }
     default:
