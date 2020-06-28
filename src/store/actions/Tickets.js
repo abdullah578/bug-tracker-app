@@ -69,9 +69,22 @@ export const deleteTicketCreator = (projectID, ticketKey) => (dispatch) => {
 
 export const deleteUserTicketCreator = (projectID, userEmail) => (dispatch) => {
   axios
-    .get(
-      `/tickets.json?orderBy="projid"&equalTo="${projectID}&orderBy="assignedEmail"&equalTo=${userEmail}`
-    )
-    .then((resp) => console.log(resp.data))
+    .get(`/tickets.json?orderBy="projid"&equalTo="${projectID}"`)
+    .then((resp) => {
+      const filterKeys = Object.keys(resp.data).filter(
+        (key) =>
+          resp.data[key].assignedEmail === userEmail ||
+          resp.data[key].submitterEmail === userEmail
+      );
+      console.log(projectID);
+      console.log(userEmail);
+      console.log(filterKeys);
+      filterKeys.forEach((key) => {
+        axios
+          .delete(`/tickets/${key}.json`)
+          .then((resp) => dispatch({ type: actionTypes.DELETE_TICKET, key }))
+          .catch((err) => console.log(err));
+      });
+    })
     .catch((err) => console.log(err));
 };

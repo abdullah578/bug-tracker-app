@@ -2,7 +2,6 @@ import React from "react";
 import classes from "./Add.module.css";
 
 const Button = (props) => {
-  console.log(props.disabled);
   return (
     <button
       onClick={props.clicked}

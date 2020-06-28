@@ -51,6 +51,15 @@ const ticketsReducer = (state = initialState, action) => {
         error: true,
       };
     }
+    case actionTypes.DELETE_TICKET: {
+      return {
+        state,
+        tickets: state.tickets.filter((curr) => curr.key !== action.key),
+        userTickets: state.userTickets.filter(
+          (curr) => curr.key !== action.key
+        ),
+      };
+    }
     default:
       return state;
   }

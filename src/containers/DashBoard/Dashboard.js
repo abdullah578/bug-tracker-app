@@ -14,7 +14,7 @@ class DashBoard extends Component {
   };
   componentDidMount() {
     this.props.fetchTickets();
-    console.log("hello");
+
   }
   createStat() {
     if (!this.props.tickets.length) return null;
@@ -89,7 +89,6 @@ class DashBoard extends Component {
     return labels
       .map((curr, index) => {
         total += ticketStat[type][curr];
-        console.log("DashBoard -> createPieChart -> total", total);
         return {
           name: curr,
           color: colors[index],

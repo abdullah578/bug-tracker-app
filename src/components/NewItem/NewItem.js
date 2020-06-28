@@ -6,7 +6,6 @@ import Button from "../UI/Button/Button";
 import classes from "./NewItem.module.css";
 
 const NewItem = (props) => {
-  console.log("NewItem -> props", props.disabled)
   return (
     <React.Fragment>
       <BackDrop show={props.open} clicked={props.cancelForm} />

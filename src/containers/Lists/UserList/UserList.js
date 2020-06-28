@@ -1,6 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
-import * as actionCreators from "../../../store/actions/Users";
+import * as userActionCreators from "../../../store/actions/Users";
+import * as ticketActionCreators from "../../../store/actions/Tickets";
 import { formConfig } from "../../../Utilities/Utilities";
 import WithErrorHandle from "../../../hoc/WithErrorHandle";
 import Lists from "../Lists";
@@ -59,7 +60,7 @@ class UserList extends Lists {
     );
   }
   createTableBody() {
-    const {currentPage,numPerPage}=this.state;
+    const { currentPage, numPerPage } = this.state;
     const startIndex = (currentPage - 1) * numPerPage;
     const endIndex = startIndex + numPerPage;
     return this.props.projUsers.slice(startIndex, endIndex).map((curr) => (
@@ -79,6 +80,15 @@ class UserList extends Lists {
       this.props.match.params.id,
       this.state.deleteItem.key
     );
+    const userIndex = this.props.users.findIndex(
+      (curr) => curr.key === this.state.deleteItem.key
+    );
+    if (userIndex !== -1)
+      this.props.deleteCorrespondingTickets(
+        this.props.match.params.id,
+        this.props.users[userIndex].email
+      );
+     console.log("UserList -> removeUserContinue -> userIndex", userIndex)
     this.setState({
       deleteItem: {
         key: null,
@@ -110,7 +120,9 @@ class UserList extends Lists {
           removeItemContinue={this.removeUserContinue}
           show={this.state.deleteItem.continue}
         />
-       {!this.props.remButton ?<Button clicked={this.addItemHandler}>Add New User</Button>:null}
+        {!this.props.remButton ? (
+          <Button clicked={this.addItemHandler}>Add New User</Button>
+        ) : null}
         <Modal
           header={<p> {`${this.props.match.params.name} Users`}</p>}
           footer={
@@ -125,7 +137,10 @@ class UserList extends Lists {
           err={this.props.error || this.props.projUsers.length === 0}
           type="Users"
         >
-          <Table header={this.createTableHeader()} style={this.props.tableStyle}>
+          <Table
+            header={this.createTableHeader()}
+            style={this.props.tableStyle}
+          >
             {this.createTableBody()}
           </Table>
         </Modal>
@@ -141,11 +156,17 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  fetchProjUsers: (id) => dispatch(actionCreators.fetchProjUsersCreator(id)),
-  fetchAllUsers: () => dispatch(actionCreators.fetchAllUsersCreator()),
-  submitUser: (id, obj) => dispatch(actionCreators.postUserCreator(id, obj)),
+  fetchProjUsers: (id) =>
+    dispatch(userActionCreators.fetchProjUsersCreator(id)),
+  fetchAllUsers: () => dispatch(userActionCreators.fetchAllUsersCreator()),
+  submitUser: (id, obj) =>
+    dispatch(userActionCreators.postUserCreator(id, obj)),
   deleteUser: (projectId, userKey) =>
-    dispatch(actionCreators.deleteUserCreator(projectId, userKey)),
+    dispatch(userActionCreators.deleteUserCreator(projectId, userKey)),
+  deleteCorrespondingTickets: (projectId, userEmail) =>
+    dispatch(
+      ticketActionCreators.deleteUserTicketCreator(projectId, userEmail)
+    ),
 });
 
 export default connect(
