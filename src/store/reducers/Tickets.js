@@ -36,7 +36,7 @@ const ticketsReducer = (state = initialState, action) => {
         ...state,
         dispSpinner: true,
         error: false,
-        tickets:[]
+        tickets: [],
       };
     }
     case actionTypes.FETCH_PROJ_TICKETS_SUCCESS: {
@@ -71,7 +71,7 @@ const ticketsReducer = (state = initialState, action) => {
           ...state.allProjTickets,
           [action.id]: state.allProjTickets[action.id].concat(action.ticket),
         },
-        tickets:state.tickets.concat(action.ticket),
+        tickets: state.tickets.concat(action.ticket),
         userTickets: state.userTickets.concat(action.ticket),
       };
     }
@@ -86,9 +86,6 @@ const ticketsReducer = (state = initialState, action) => {
       const projIndex = state.allProjTickets[action.id].findIndex(
         (curr) => curr.key === action.key
       );
-      console.log(state.allProjTickets);
-      console.log(action.id);
-      console.log(projIndex);
       const projTicketsCopy = [...state.allProjTickets[action.id]];
       projTicketsCopy[projIndex] = action.ticket;
       return {
@@ -102,13 +99,28 @@ const ticketsReducer = (state = initialState, action) => {
       };
     }
     case actionTypes.DELETE_TICKET: {
-      return {
-        state,
-        tickets: state.tickets.filter((curr) => curr.key !== action.key),
-        userTickets: state.userTickets.filter(
-          (curr) => curr.key !== action.key
-        ),
-      };
+      if (!state.allProjTickets[action.id])
+        return {
+          ...state,
+          tickets: state.tickets.filter((curr) => curr.key !== action.key),
+          userTickets: state.userTickets.filter(
+            (curr) => curr.key !== action.key
+          ),
+        };
+      else
+        return {
+          ...state,
+          tickets: state.tickets.filter((curr) => curr.key !== action.key),
+          userTickets: state.userTickets.filter(
+            (curr) => curr.key !== action.key
+          ),
+          allProjTickets: {
+            ...state.allProjTickets,
+            [action.id]: state.allProjTickets[action.id].filter(
+              (curr) => curr.key !== action.key
+            ),
+          },
+        };
     }
     default:
       return state;

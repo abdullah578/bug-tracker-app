@@ -10,6 +10,7 @@ const Search = (props) => {
         <input
           type="number"
           name="num"
+          min="1"
           onChange={props.inputNumHandler}
           value={props.numValue}
           className={classes.NumInput}

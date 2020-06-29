@@ -59,7 +59,7 @@ export const fetchAllUsersCreator = () => (dispatch) => {
 export const updateUsersCreator = (key, obj) => (dispatch) => {
   axios
     .put(`/allUsers/${key}.json`, obj)
-    .then((resp) => dispatch({type:actionTypes.UPDATE_USERS,obj,key}))
+    .then((resp) => dispatch({ type: actionTypes.UPDATE_USERS, obj, key }))
     .catch((err) => null);
 };
 export const postUserCreator = (id, obj) => (dispatch) => {
@@ -77,9 +77,43 @@ export const postUserCreator = (id, obj) => (dispatch) => {
     tickets: obj.tickets,
   })*/
 };
-export const deleteUserCreator = (projectID, userKey) => (dispatch) => {
+const deleteUserCreator = (projectID, userKey) => (dispatch) => {
   axios
     .delete(`users/${projectID}/${userKey}.json`)
-    .then((resp) => dispatch(fetchProjUsersCreator(projectID)))
+    .then((resp) =>
+      dispatch({
+        type: actionTypes.DELETE_PROJ_USERS,
+        id: projectID,
+        key: userKey,
+      })
+    )
+    .catch((err) => console.log(err));
+};
+
+export const deleteUserTicketsCreator = (projectID, userEmail, userKey) => (
+  dispatch
+) => {
+  axios
+    .get(`/tickets.json?orderBy="projid"&equalTo="${projectID}"`)
+    .then((resp) => {
+      const filterKeys = Object.keys(resp.data).filter(
+        (key) =>
+          resp.data[key].assignedEmail === userEmail ||
+          resp.data[key].submitterEmail === userEmail
+      );
+      filterKeys.map((key) =>
+        axios
+          .delete(`/tickets/${key}.json`)
+          .then((resp) =>
+            dispatch({
+              type: actionTypes.DELETE_TICKET,
+              key,
+              id: projectID,
+            })
+          )
+          .catch((err) => console.log(err))
+      );
+      dispatch(deleteUserCreator(projectID, userKey));
+    })
     .catch((err) => console.log(err));
 };

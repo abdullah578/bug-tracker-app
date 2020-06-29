@@ -8,7 +8,7 @@ import axios from "../../../axiosInstance/AxiosInstance";
 import Modal from "../../../components/UI/Modal/Modal";
 import Table from "../../../components/UI/Table/Table";
 import Button from "../../../components/UI/Button/Add/Add";
-import Search from "../../../components/Search/Search";
+import Search from "../../../components/UI/Search/Search";
 //import Spinner from "../../../components/UI/Spinner/Spinner";
 import Pagination from "../../../components/UI/Pagination/Pagination";
 

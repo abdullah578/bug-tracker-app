@@ -59,7 +59,9 @@ export const authenticate = (email, password, isSignUp, name) => (dispatch) => {
       }
     })
     .catch((err) => {
-      dispatch(authFailureCreator( err.response.data.error.message));
+      let error;
+      if(err.response) error=err.response.data.error.message;
+      dispatch(authFailureCreator( error || "Error"));
     });
 };
 

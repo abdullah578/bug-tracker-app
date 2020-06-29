@@ -7,7 +7,27 @@
   box-shadow: 0px 2px 2px #ccc;
   margin-top: 100px;
 }
-.Login p{
+.Header{
+  margin-bottom:5px;
+  text-align: center;
+}
+.Header ion-icon{
+  font-size: 200%;
+  display: inline-block;
+  vertical-align: middle; 
+  margin-right:5px;
+}
+.Background {
+  width: 100%;
+  height: 100%;
+  position:fixed;
+  top:0;
+  left:0;
+  background-image: url("../../assets/images/login.jpg");
+  background-position: center;
+  background-size: cover;
+}
+.Login p {
   text-align: center;
 }
 
@@ -23,4 +43,26 @@
 }
 .Button:hover {
   color: #000;
+}
+
+@media(max-width:1000px){
+  .Login{
+    width:50%;
+  }
+}
+
+@media (max-width: 750px) {
+  .Login {
+    width: 65%;
+  }
+}
+@media (max-width:500px){
+  .Login{
+    width:80%;
+  }
+}
+@media (max-width:300px){
+  .Login{
+    width:100%;
+  }
 }

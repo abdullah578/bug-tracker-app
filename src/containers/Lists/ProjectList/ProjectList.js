@@ -6,7 +6,7 @@ import { formConfig } from "../../../Utilities/Utilities";
 import WithErrorHandle from "../../../hoc/WithErrorHandle";
 import Lists from "../Lists";
 import axios from "../../../axiosInstance/AxiosInstance";
-import Search from "../../../components/Search/Search";
+import Search from "../../../components/UI/Search/Search";
 import Modal from "../../../components/UI/Modal/Modal";
 import Table from "../../../components/UI/Table/Table";
 import Button from "../../../components/UI/Button/Add/Add";

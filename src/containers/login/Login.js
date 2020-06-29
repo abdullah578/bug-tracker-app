@@ -16,7 +16,7 @@ class Login extends Component {
       name: formConfig(
         "Name",
         "Name ...",
-        "name",
+        "text",
         "",
         "input",
         { isRequired: true },
@@ -102,27 +102,39 @@ class Login extends Component {
     });
   render() {
     return (
-      <div className={classes.Login}>
-        {this.props.error ? <p>{this.props.error}</p> : null}
-        {Object.keys(this.state.form).map((curr) => (
-          <Input
-            {...this.state.form[curr]}
-            key={curr}
-            inputHandler={(e) => this.inputHandler(e, curr)}
-          />
-        ))}
-        <Button
-          style={{ width: "100%" }}
-          disabled={!checkFormValidity(this.state.form)}
-          clicked={this.formSubmitHandler}
-        >
-          {this.state.isSignUp ? "Sign Up" : "Sign In"}
-        </Button>
-        <button className={classes.Button} onClick={this.switchSignUp}>
-          {this.state.isSignUp
-            ? "Already have an account?"
-            : "Create new account"}
-        </button>
+      <div className={classes.Background}>
+        <div className={classes.Login}>
+          <div className={classes.Header}>
+            <ion-icon name="bug-outline"></ion-icon>
+            <span> Bug Tracker Login</span>
+          </div>
+          {this.props.error ? <p style={{fontWeight:300}}>{this.props.error}</p> : null}
+          {Object.keys(this.state.form).map((curr) => (
+            <Input
+              {...this.state.form[curr]}
+              key={curr}
+              inputHandler={(e) => this.inputHandler(e, curr)}
+              inputStyle={{ borderRadius: "0" }}
+              labelStyle={{ fontWeight: "300" }}
+            />
+          ))}
+          <Button
+            style={{
+              width: "100%",
+              backgroundColor: "#3E73DD",
+              borderRadius: "0",
+            }}
+            disabled={!checkFormValidity(this.state.form)}
+            clicked={this.formSubmitHandler}
+          >
+            {this.state.isSignUp ? "Sign Up" : "Sign In"}
+          </Button>
+          <button className={classes.Button} onClick={this.switchSignUp}>
+            {this.state.isSignUp
+              ? "Already have an account?"
+              : "Create new account"}
+          </button>
+        </div>
       </div>
     );
   }

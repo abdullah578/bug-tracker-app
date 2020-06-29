@@ -43,16 +43,15 @@ const userReducer = (state = initialState, action) => {
         error: true,
       };
     }
-    case actionTypes.UPDATE_USERS:{
-      const index=state.allUsers.findIndex(curr=>curr.key===action.key);
-      const allUsersCopy=[...state.allUsers];
-      allUsersCopy[index]=action.obj;
+    case actionTypes.UPDATE_USERS: {
+      const index = state.allUsers.findIndex((curr) => curr.key === action.key);
+      const allUsersCopy = [...state.allUsers];
+      allUsersCopy[index] = action.obj;
       return {
         ...state,
-        allUsers:allUsersCopy,
-        users:allUsersCopy.filter(curr=>curr.role!=="N/A")
-      }
-
+        allUsers: allUsersCopy,
+        users: allUsersCopy.filter((curr) => curr.role !== "N/A"),
+      };
     }
     case actionTypes.FETCH_PROJ_USERS_SUCCESS: {
       return {
@@ -83,6 +82,18 @@ const userReducer = (state = initialState, action) => {
         allProjUsers: {
           ...state.allProjUsers,
           [action.id]: state.allProjUsers[action.id].concat(action.obj),
+        },
+      };
+    }
+    case actionTypes.DELETE_PROJ_USERS: {
+      return {
+        ...state,
+        projUsers: state.projUsers.filter((curr) => curr.key !== action.key),
+        allProjUsers: {
+          ...state.allProjUsers,
+          [action.id]: state.allProjUsers[action.id].filter(
+            (curr) => curr.key !== action.key
+          ),
         },
       };
     }

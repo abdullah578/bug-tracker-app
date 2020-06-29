@@ -1,7 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
 import * as userActionCreators from "../../../store/actions/Users";
-import * as ticketActionCreators from "../../../store/actions/Tickets";
 import { formConfig } from "../../../Utilities/Utilities";
 import WithErrorHandle from "../../../hoc/WithErrorHandle";
 import Lists from "../Lists";
@@ -11,7 +10,7 @@ import Table from "../../../components/UI/Table/Table";
 import Button from "../../../components/UI/Button/Add/Add";
 import Spinner from "../../../components/UI/Spinner/Spinner";
 import Pagination from "../../../components/UI/Pagination/Pagination";
-import Search from "../../../components/Search/Search";
+import Search from "../../../components/UI/Search/Search";
 import NewUser from "../../../components/NewItem/NewItem";
 import DeleteUser from "../../../components/DeleteItem/DeleteItem";
 
@@ -88,19 +87,16 @@ class UserList extends Lists {
       ));
   }
   removeUserContinue = () => {
-    this.props.deleteUser(
-      this.props.match.params.id,
-      this.state.deleteItem.key
-    );
+
     const userIndex = this.props.users.findIndex(
       (curr) => curr.key === this.state.deleteItem.key
     );
     if (userIndex !== -1)
-      this.props.deleteCorrespondingTickets(
+      this.props.deleteUser(
         this.props.match.params.id,
-        this.props.users[userIndex].email
+        this.props.users[userIndex].email,
+        this.state.deleteItem.key
       );
-    console.log("UserList -> removeUserContinue -> userIndex", userIndex);
     this.setState({
       deleteItem: {
         key: null,
@@ -184,12 +180,8 @@ const mapDispatchToProps = (dispatch) => ({
   getProjUsers: (id) => dispatch(userActionCreators.getProjUsersCreator(id)),
   submitUser: (id, obj) =>
     dispatch(userActionCreators.postUserCreator(id, obj)),
-  deleteUser: (projectId, userKey) =>
-    dispatch(userActionCreators.deleteUserCreator(projectId, userKey)),
-  deleteCorrespondingTickets: (projectId, userEmail) =>
-    dispatch(
-      ticketActionCreators.deleteUserTicketCreator(projectId, userEmail)
-    ),
+  deleteUser: (projectId, userEmail,userKey) =>
+    dispatch(userActionCreators.deleteUserTicketsCreator(projectId,userEmail, userKey)),
 });
 
 export default connect(
