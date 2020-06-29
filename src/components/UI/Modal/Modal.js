@@ -13,7 +13,7 @@ const Modal = (props) => {
         {props.search}
         <div className={classes.Content}>{props.children}</div>
       </section>
-      <footer className={classes.Footer}>{props.footer}</footer>
+      <footer className={classes.Footer} style={props.footerStyle}>{props.footer}</footer>
     </div>
   );
 };

@@ -1,0 +1,15 @@
+.DetailDiv{
+    display:flex;
+    padding: 20px 0px;
+    border-bottom: 2px solid #eee;
+}
+.DetailDiv div{
+    flex:0 1 50%;
+}
+.DetailDiv p{
+    font-size:70%
+}
+.Value{
+    margin-top:5px;
+    color:#888;
+}

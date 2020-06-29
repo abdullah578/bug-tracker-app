@@ -99,7 +99,7 @@ class TicketForm extends Lists {
             isValid: true,
           })
       );
-      this.setState({ form: formCopy });
+      this.setState({ form: formCopy,ticket:tickets[dataIndex] });
     }
   }
   mapResponseToState(name) {

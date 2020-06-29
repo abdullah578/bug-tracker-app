@@ -1,0 +1,34 @@
+.Details {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+.ModalHeader p {
+  font-size: 60%;
+  line-height: 4px;
+}
+.ModalHeader span {
+  margin: 0px 1px;
+}
+.ModalHeader button {
+  outline: none;
+  border: none;
+  font-size: 60%;
+  padding: 2px;
+  text-decoration: underline;
+  cursor: pointer;
+  background-color: inherit;
+  color: #fff;
+}
+.Details > div {
+  flex: 0 1 47%;
+}
+
+@media (max-width: 900px) {
+  .Details {
+    display: block;
+  }
+  .Details > div {
+    width: 100%;
+  }
+}

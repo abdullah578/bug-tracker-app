@@ -10,6 +10,7 @@ import TicketList from "./containers/Lists/TicketList/TicketList";
 import TicketForm from "./containers/Lists/TicketList/TicketForm/TicketForm";
 import UserRoles from "./containers/UserRoles/UserRoles";
 import ProjectDetails from "./containers/ProjectDetails/ProjectDetails";
+import TicketDetails from "./containers/TicketDetails/TicketDetails";
 import Login from "./containers/login/Login";
 import "./App.css";
 
@@ -23,6 +24,7 @@ class App extends Component {
       routes = (
         <Layout>
           <Switch>
+          <Route path="/tickets/:id/:name/:key/details" component={TicketDetails} />
             <Route path="/tickets/:id/:name/:key" component={TicketForm} />
             <Route path="/tickets/:id/:name" component={TicketList} />
             <Route

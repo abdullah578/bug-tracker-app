@@ -83,10 +83,10 @@ class TicketList extends Lists {
           <td>{curr.created}</td>
           <td>
             <NavLink
-              to={`/tickets/${curr.projid}/${curr.projName}/${curr.key}`}
+              to={`/tickets/${curr.projid}/${curr.projName}/${curr.key}/details`}
               style={styles}
             >
-              Edit Ticket
+              Ticket Details
             </NavLink>
           </td>
         </tr>
