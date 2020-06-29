@@ -62,6 +62,12 @@ class Lists extends Component {
     this.setState((prevState) => ({ currentPage: prevState.currentPage + 1 }));
   prevPage = () =>
     this.setState((prevState) => ({ currentPage: prevState.currentPage - 1 }));
+  searchInputHandler = (e) => {
+    this.setState({ currentPage: 1, search: e.target.value });
+  };
+  numPerPageInputHandler = (e) => {
+    this.setState({ numPerPage: parseInt(e.target.value), currentPage: 1 });
+  };
   addItemHandler = () => this.setState({ newItem: true });
 }
 

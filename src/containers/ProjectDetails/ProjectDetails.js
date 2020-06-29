@@ -16,6 +16,10 @@ class ProjectDetails extends Component {
     this.setState({ name: project.name, description: project.description });
   }
   render() {
+    const searchStyle = {
+      fontSize: "30%",
+      fontWeight: "bold",
+    };
     return (
       <div className={classes.Details}>
         <ProjectInfo
@@ -27,11 +31,13 @@ class ProjectDetails extends Component {
             {...this.props}
             remButton={true}
             tableStyle={{ fontSize: "55%", fontWeight: "bold" }}
+            searchStyle={searchStyle}
           />
           <TicketList
             {...this.props}
             remButton={true}
             tableStyle={{ fontSize: "55%", fontWeight: "bold" }}
+            searchStyle={searchStyle}
           />
         </div>
       </div>

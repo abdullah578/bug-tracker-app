@@ -11,12 +11,14 @@ import Table from "../../../components/UI/Table/Table";
 import Button from "../../../components/UI/Button/Add/Add";
 import Spinner from "../../../components/UI/Spinner/Spinner";
 import Pagination from "../../../components/UI/Pagination/Pagination";
+import Search from "../../../components/Search/Search";
 import NewUser from "../../../components/NewItem/NewItem";
 import DeleteUser from "../../../components/DeleteItem/DeleteItem";
 
 class UserList extends Lists {
   state = {
     newItem: false,
+    search: "",
     deleteItem: {
       continue: false,
       key: null,
@@ -51,6 +53,12 @@ class UserList extends Lists {
     this.resetForm();
     this.setState({ newItem: false });
   };
+  filterUser(arr) {
+    const filterArr = arr.filter((curr) =>
+      curr.name.toLowerCase().startsWith(this.state.search.toLowerCase())
+    );
+    return filterArr.length ? filterArr : arr;
+  }
 
   createTableHeader() {
     return (
@@ -65,17 +73,19 @@ class UserList extends Lists {
     const { currentPage, numPerPage } = this.state;
     const startIndex = (currentPage - 1) * numPerPage;
     const endIndex = startIndex + numPerPage;
-    return this.props.projUsers.slice(startIndex, endIndex).map((curr) => (
-      <tr
-        key={curr.key}
-        onClick={() => this.clickItem(curr.key)}
-        style={{ cursor: "pointer" }}
-      >
-        <td>{curr.name}</td>
-        <td>{curr.email}</td>
-        <td>{curr.role}</td>
-      </tr>
-    ));
+    return this.filterUser(this.props.projUsers)
+      .slice(startIndex, endIndex)
+      .map((curr) => (
+        <tr
+          key={curr.key}
+          onClick={() => this.clickItem(curr.key)}
+          style={{ cursor: "pointer" }}
+        >
+          <td>{curr.name}</td>
+          <td>{curr.email}</td>
+          <td>{curr.role}</td>
+        </tr>
+      ));
   }
   removeUserContinue = () => {
     this.props.deleteUser(
@@ -131,9 +141,18 @@ class UserList extends Lists {
             <Pagination
               currPage={this.state.currentPage}
               numPerPage={this.state.numPerPage}
-              items={this.props.projUsers.length}
+              items={this.filterUser(this.props.projUsers).length}
               prev={this.prevPage}
               next={this.nextPage}
+            />
+          }
+          search={
+            <Search
+              value={this.state.search}
+              numValue={this.state.numPerPage}
+              inputNumHandler={this.numPerPageInputHandler}
+              inputSearchHandler={this.searchInputHandler}
+              style={this.props.searchStyle}
             />
           }
           err={this.props.error || this.props.projUsers.length === 0}

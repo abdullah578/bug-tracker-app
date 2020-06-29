@@ -8,6 +8,7 @@ import axios from "../../../axiosInstance/AxiosInstance";
 import Modal from "../../../components/UI/Modal/Modal";
 import Table from "../../../components/UI/Table/Table";
 import Button from "../../../components/UI/Button/Add/Add";
+import Search from "../../../components/Search/Search";
 //import Spinner from "../../../components/UI/Spinner/Spinner";
 import Pagination from "../../../components/UI/Pagination/Pagination";
 
@@ -17,6 +18,7 @@ class TicketList extends Lists {
       continue: false,
       key: null,
     },
+    search: "",
     currentPage: 1,
     numPerPage: 5,
   };
@@ -30,6 +32,22 @@ class TicketList extends Lists {
       else this.props.getTickets(this.props.match.params.id);
     }
   }
+  filterTickets = (arr) => {
+    const keys = [
+      "title",
+      "assigned",
+      "status",
+      "ticketPriority",
+      "ticketType",
+    ];
+    for (let key of keys) {
+      let filteredArr = arr.filter((curr) =>
+        curr[key].toLowerCase().startsWith(this.state.search.toLowerCase())
+      );
+      if (filteredArr.length) return filteredArr;
+    }
+    return arr;
+  };
   addTicketHandler = () =>
     this.props.history.push(
       `/tickets/${this.props.match.params.id}/${this.props.match.params.name}/new`
@@ -54,23 +72,25 @@ class TicketList extends Lists {
     const tickets =
       this.props.type === "User" ? this.props.userTickets : this.props.tickets;
     console.log(tickets);
-    return tickets.slice(startIndex, endIndex).map((curr) => (
-      <tr key={curr.key}>
-        <td>{curr.title}</td>
-        <td>{curr.assigned}</td>
-        <td>{curr.submitter}</td>
-        <td>{curr.status}</td>
-        <td>{curr.created}</td>
-        <td>
-          <NavLink
-            to={`/tickets/${curr.projid}/${curr.projName}/${curr.key}`}
-            style={styles}
-          >
-            Edit Ticket
-          </NavLink>
-        </td>
-      </tr>
-    ));
+    return this.filterTickets(tickets)
+      .slice(startIndex, endIndex)
+      .map((curr) => (
+        <tr key={curr.key}>
+          <td>{curr.title}</td>
+          <td>{curr.assigned}</td>
+          <td>{curr.submitter}</td>
+          <td>{curr.status}</td>
+          <td>{curr.created}</td>
+          <td>
+            <NavLink
+              to={`/tickets/${curr.projid}/${curr.projName}/${curr.key}`}
+              style={styles}
+            >
+              Edit Ticket
+            </NavLink>
+          </td>
+        </tr>
+      ));
   }
   render() {
     const tickets =
@@ -92,9 +112,18 @@ class TicketList extends Lists {
             <Pagination
               currPage={this.state.currentPage}
               numPerPage={this.state.numPerPage}
-              items={tickets.length}
+              items={this.filterTickets(tickets).length}
               prev={this.prevPage}
               next={this.nextPage}
+            />
+          }
+          search={
+            <Search
+              value={this.state.search}
+              numValue={this.state.numPerPage}
+              inputNumHandler={this.numPerPageInputHandler}
+              inputSearchHandler={this.searchInputHandler}
+              style={this.props.searchStyle}
             />
           }
           err={this.props.error || tickets.length === 0}

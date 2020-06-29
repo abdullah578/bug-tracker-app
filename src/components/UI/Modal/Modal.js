@@ -9,7 +9,10 @@ const Modal = (props) => {
   ) : (
     <div className={classes.Modal} style={props.modalStyle}>
       <header className={classes.Header}>{props.header}</header>
-      <section className={classes.Section}>{props.children}</section>
+      <section className={classes.Section}>
+        {props.search}
+        <div className={classes.Content}>{props.children}</div>
+      </section>
       <footer className={classes.Footer}>{props.footer}</footer>
     </div>
   );

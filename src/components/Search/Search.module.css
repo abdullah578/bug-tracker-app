@@ -1,0 +1,42 @@
+.Input {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+.Input div:first-child {
+  font-size: 50%;
+}
+.Input div:last-child{
+  display:flex;
+  align-items: center;
+  justify-content: space-around;
+}
+.Input div {
+  flex: 0 1 20%;
+}
+.NumInput {
+  width: 30px;
+  font-size: 120%;
+  margin-left: 5px;
+  margin-right: 5px;
+  border: 1px solid #ccc;
+  outline: none;
+}
+.SearchInput {
+  width :70%;
+  outline: none;
+  border: 1.5px solid #eee;
+  box-shadow: -1px -1px 1px #ccc;
+}
+.Input label {
+  font-size: 50%;
+ width:20%;
+  display: inline-block;
+}
+@media(max-width:950px){
+  .Input div{
+    flex:0 1 30%;
+  }
+}
+

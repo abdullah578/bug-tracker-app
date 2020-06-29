@@ -6,6 +6,7 @@ import { formConfig } from "../../../Utilities/Utilities";
 import WithErrorHandle from "../../../hoc/WithErrorHandle";
 import Lists from "../Lists";
 import axios from "../../../axiosInstance/AxiosInstance";
+import Search from "../../../components/Search/Search";
 import Modal from "../../../components/UI/Modal/Modal";
 import Table from "../../../components/UI/Table/Table";
 import Button from "../../../components/UI/Button/Add/Add";
@@ -40,9 +41,16 @@ class ProjectList extends Lists {
         false
       ),
     },
+    search: "",
   };
   componentDidMount() {
-    if(!this.props.projects.length) this.props.fetchProjects();
+    if (!this.props.projects.length) this.props.fetchProjects();
+  }
+  filterProjects(arr) {
+    const filteredArr = arr.filter((curr) =>
+      curr.name.toLowerCase().includes(this.state.search.toLowerCase())
+    );
+    return filteredArr.length ? filteredArr : arr;
   }
   formSubmitHandler = () => {
     const { name, description } = this.state.form;
@@ -53,7 +61,6 @@ class ProjectList extends Lists {
     this.resetForm();
     this.setState({ newItem: false });
   };
-
   createTableHeader() {
     return (
       <tr>
@@ -67,35 +74,44 @@ class ProjectList extends Lists {
     const { currentPage, numPerPage } = this.state;
     const startIndex = (currentPage - 1) * numPerPage;
     const endIndex = startIndex + numPerPage;
+
     const styles = { textDecoration: "none", color: "#551A8B" };
-    return this.props.projects.slice(startIndex, endIndex).map((curr) => (
-      <tr key={curr.key}>
-        <td>{curr.name}</td>
-        <td>{curr.description}</td>
-        <td>
-          <ul>
-            <li>
-              <NavLink to={`/users/${curr.key}/${curr.name}`} style={styles}>
-                {" "}
-                Manage Users
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to={`/tickets/${curr.key}/${curr.name}`} style={styles}>
-                {" "}
-                Manage Tickets
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to={`/projects/${curr.key}/${curr.name}`} style={styles}>
-                {" "}
-                Details
-              </NavLink>
-            </li>
-          </ul>
-        </td>
-      </tr>
-    ));
+    return this.filterProjects(this.props.projects)
+      .slice(startIndex, endIndex)
+      .map((curr) => (
+        <tr key={curr.key}>
+          <td>{curr.name}</td>
+          <td>{curr.description}</td>
+          <td>
+            <ul>
+              <li>
+                <NavLink to={`/users/${curr.key}/${curr.name}`} style={styles}>
+                  {" "}
+                  Manage Users
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  to={`/tickets/${curr.key}/${curr.name}`}
+                  style={styles}
+                >
+                  {" "}
+                  Manage Tickets
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  to={`/projects/${curr.key}/${curr.name}`}
+                  style={styles}
+                >
+                  {" "}
+                  Details
+                </NavLink>
+              </li>
+            </ul>
+          </td>
+        </tr>
+      ));
   }
   render() {
     const { newItem, form, currentPage, numPerPage } = this.state;
@@ -118,9 +134,17 @@ class ProjectList extends Lists {
             <Pagination
               currPage={currentPage}
               numPerPage={numPerPage}
-              items={this.props.projects.length}
+              items={this.filterProjects(this.props.projects).length}
               prev={this.prevPage}
               next={this.nextPage}
+            />
+          }
+          search={
+            <Search
+              value={this.state.search}
+              numValue={this.state.numPerPage}
+              inputNumHandler={this.numPerPageInputHandler}
+              inputSearchHandler={this.searchInputHandler}
             />
           }
           err={this.props.err || this.props.projects === 0}
