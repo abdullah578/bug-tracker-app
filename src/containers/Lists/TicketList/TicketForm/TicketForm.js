@@ -133,6 +133,10 @@ class TicketForm extends Lists {
     const devIndex = this.props.projUsers.findIndex(
       (curr) => curr.email === this.state.form.assigned.value
     );
+    const { id: projectID, key: ticketKey } = this.props.match.params;
+    const tickets =
+      this.props.allProjTickets[projectID] || this.props.userTickets;
+    const ticket = tickets.find((curr) => curr.key === ticketKey);
     if (devIndex === -1) return null;
     const {
       title,
@@ -157,6 +161,7 @@ class TicketForm extends Lists {
         ? this.state.ticket.created
         : createDateString(new Date()),
       projid: this.props.match.params.id,
+      comments: ticket.comments,
     };
     return ticketObj;
   }

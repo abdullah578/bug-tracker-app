@@ -9,11 +9,17 @@ export const fetchProjTicketsCreator = (id) => (dispatch) => {
       const ticketsArr = resp.data
         ? Object.keys(resp.data).map((key) => {
             const ticket = resp.data[key];
-            if (!ticket.history) return { ...resp.data[key], key, history: [] };
-            const history = Object.keys(ticket.history).map(
-              (index) => ticket.history[index]
-            );
-            return { ...resp.data[key], key, history };
+            let history = [];
+            let comments = [];
+            if (ticket.history)
+              history = Object.keys(ticket.history).map(
+                (index) => ticket.history[index]
+              );
+            if (ticket.comments)
+              comments = Object.keys(ticket.comments).map(
+                (index) => ticket.comments[index]
+              );
+            return { ...resp.data[key], key, history, comments };
           })
         : [];
       dispatch({
@@ -45,11 +51,17 @@ export const fetchUserTicketsCreator = () => (dispatch) => {
       const ticketsArr = resp.data
         ? Object.keys(resp.data).map((key) => {
             const ticket = resp.data[key];
-            if (!ticket.history) return { ...resp.data[key], key, history: [] };
-            const history = Object.keys(ticket.history).map(
-              (index) => ticket.history[index]
-            );
-            return { ...resp.data[key], key, history };
+            let history = [];
+            let comments = [];
+            if (ticket.history)
+              history = Object.keys(ticket.history).map(
+                (index) => ticket.history[index]
+              );
+            if (ticket.comments)
+              comments = Object.keys(ticket.comments).map(
+                (index) => ticket.comments[index]
+              );
+            return { ...resp.data[key], key, history, comments };
           })
         : [];
       dispatch({

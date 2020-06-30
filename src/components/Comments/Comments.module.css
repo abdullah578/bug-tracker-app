@@ -13,5 +13,6 @@
   width: 78%;
   margin-right: 2%;
   height: 30px;
+  outline: none;
   display: inline-block;
 }

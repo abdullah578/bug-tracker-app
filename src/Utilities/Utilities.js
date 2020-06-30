@@ -34,6 +34,9 @@ export const mapResponseToName = (property) => {
   };
   return obj[property];
 };
+export const findInArray = (arr, property, value) => {
+  return arr.find((curr) => curr[property] === value);
+};
 export const checkValidation = (inputVal, validationRequirement, inputArr) => {
   let isValid = true;
   if (validationRequirement.isRequired)
