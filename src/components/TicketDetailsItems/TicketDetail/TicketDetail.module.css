@@ -12,4 +12,5 @@
 .Value{
     margin-top:5px;
     color:#888;
+    overflow-wrap: break-word;
 }

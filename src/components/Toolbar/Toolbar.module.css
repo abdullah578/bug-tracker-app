@@ -8,36 +8,47 @@
   z-index: 250;
   border: 1px solid #eee;
   box-shadow: 0px 2px 2px #ccc;
-  width: 100%;
+  width:100%
+}
+.Content{
+  display:flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: margin-left 0.3s ease-out;
+  height: 100%;
+}
+.ContentOpen{
+  margin-left:250px;
+}
+.ContentClose{
+  margin-left:62.5px;
+}
+@media (max-width: 750px) {
+  .ContentOpen {
+    margin-left: 62.5px;
+  }
 }
 .UserInfo {
-  transition: margin-left 0.3s ease-out;
-  float: left;
   color: #333;
   font-size: 80%;
-  margin-top: 1.5%;
-}
-.UserInfoOpen {
-  margin-left: 250px;
-}
-.UserInfoClose {
-  margin-left: 62.5px;
 }
 .UserActions {
   cursor: pointer;
-  float: right;
-  height: 100%;
 }
-.Toolbar ion-icon {
+.UserActions ion-icon {
   margin-left: 8px;
   display: inline-block;
   cursor: pointer;
   font-size: 80%;
+  font-weight: bold;
   vertical-align: middle;
 }
+
+.Bug{
+  font-size:200%;
+
+}
 .Logout {
-  display:inline-block;
   font-size: 80%;
-  margin-top:15px;
   color: #333;
 }

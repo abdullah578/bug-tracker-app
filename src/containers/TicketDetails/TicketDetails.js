@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import Comments from "../../components/Comments/Comments";
 import Modal from "../../components/UI/Modal/Modal";
 import Table from "../../components/UI/Table/Table";
 import DetailItems from "../../components/TicketDetailsItems/TicketDetailsItems";
@@ -19,7 +20,7 @@ class TicketDetails extends Component {
     const key = this.props.match.params.key;
     const projid = this.props.match.params.id;
     const tickets = this.props.allProjTickets[projid] || this.props.userTickets;
-    const ticket = tickets.find((curr) => curr.key === key);;
+    const ticket = tickets.find((curr) => curr.key === key);
     const details = {};
     let history = ticket.history;
     Object.keys(obj).map((curr) => (details[obj[curr]] = ticket[curr]));
@@ -62,21 +63,30 @@ class TicketDetails extends Component {
   render() {
     const { details, history } = this.getTicketInfo();
     return (
-      <div className={classes.Details}>
-        <Modal
-          header={this.createDetailsModalHeader()}
-          footerStyle={{ border: "none" }}
-        >
-          <DetailItems details={details} />
-        </Modal>
-        <Modal header={<p>Ticket History</p>}>
-          <Table
-            header={this.createTableHeader()}
-            style={{ fontSize: "60%", fontWeight: "bold" }}
+      <div className={classes.Content}>
+        <div className={classes.Details}>
+          <Modal
+            header={this.createDetailsModalHeader()}
+            footerStyle={{ border: "none" }}
           >
-            {this.createTableBody(history)}
-          </Table>
-        </Modal>
+            <DetailItems details={details} />
+          </Modal>
+          <Modal header={<p>Ticket History</p>}>
+            <Table
+              header={this.createTableHeader()}
+              style={{ fontSize: "60%", fontWeight: "bold" }}
+            >
+              {this.createTableBody(history)}
+            </Table>
+          </Modal>
+        </div>
+
+        <Comments>
+          <Modal
+            modalStyle={{ marginTop: "70px" }}
+            header={<p>Ticket Comments</p>}
+          />
+        </Comments>
       </div>
     );
   }

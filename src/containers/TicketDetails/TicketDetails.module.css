@@ -1,6 +1,9 @@
+.Content {
+  padding: 0px 20px;
+}
 .Details {
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: center;
 }
 .ModalHeader p {
@@ -23,7 +26,6 @@
 .Details > div {
   flex: 0 1 47%;
 }
-
 @media (max-width: 900px) {
   .Details {
     display: block;

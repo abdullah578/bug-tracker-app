@@ -166,7 +166,10 @@ class TicketForm extends Lists {
       history = [...this.state.ticket.history];
       Object.keys(this.state.form).forEach((curr) => {
         const current = this.mapResponseToState(curr);
-        if (ticketObj[current] !== this.state.ticket[current])
+        if (
+          ticketObj[current] !== this.state.ticket[current] &&
+          current !== "description"
+        )
           history.unshift({
             property: mapResponseToName(current),
             oldVal: this.state.ticket[current],
