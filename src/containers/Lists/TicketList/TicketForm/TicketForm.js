@@ -9,6 +9,14 @@ import Input from "../../../../components/UI/Input/Input";
 import Button from "../../../../components/UI/Button/Add/Add";
 
 import classes from "./TicketForm.module.css";
+const obj = {
+  ticketStatus: "status",
+  ticketPriority: "ticketPriority",
+  ticketType: "ticketType",
+  title: "title",
+  description: "description",
+  assigned: "assignedEmail",
+};
 
 class TicketForm extends Lists {
   state = {
@@ -99,18 +107,10 @@ class TicketForm extends Lists {
             isValid: true,
           })
       );
-      this.setState({ form: formCopy,ticket:tickets[dataIndex] });
+      this.setState({ form: formCopy, ticket: tickets[dataIndex] });
     }
   }
   mapResponseToState(name) {
-    const obj = {
-      ticketStatus: "status",
-      ticketPriority: "ticketPriority",
-      ticketType: "ticketType",
-      title: "title",
-      description: "description",
-      assigned: "assignedEmail",
-    };
     return obj[name];
   }
   formSubmitHandler = () => {
@@ -131,13 +131,31 @@ class TicketForm extends Lists {
       submitter: this.props.name,
       submitterEmail: this.props.email.trim(),
       status: form.ticketStatus.value,
-      created: new Date().toString().split("G")[0],
+      created: this.state.ticket
+        ? this.state.ticket.created
+        : new Date().toString().split("G")[0],
       projid: this.props.match.params.id,
     };
+    let history = [];
+    if (this.state.ticket) {
+      history = [...this.state.ticket.history];
+      Object.keys(this.state.form).forEach((curr) => {
+        const current = this.mapResponseToState(curr);
+        console.log("TicketForm -> formSubmitHandler -> current", current)
+        if (ticketObj[current] !== this.state.ticket[current])
+          history.push({
+            oldVal: this.state.ticket[current],
+            newVal: ticketObj[current],
+            date: new Date().toString().split("G")[0],
+          });
+      });
+    }
+    console.log(history);
     this.props.submitTicket(
       this.props.match.params.id,
       ticketObj,
-      this.props.match.params.key
+      this.props.match.params.key,
+      history
     );
     this.props.history.goBack();
   };
@@ -208,8 +226,10 @@ const mapDispatchToProps = (dispatch) => ({
   fetchProjUsers: (id) =>
     dispatch(userActionCreators.fetchProjUsersCreator(id)),
   getProjUsers: (id) => dispatch(userActionCreators.getProjUsersCreator(id)),
-  submitTicket: (id, ticket, key) =>
-    dispatch(ticketActionCreators.submitProjTicketsCreator(id, ticket, key)),
+  submitTicket: (id, ticket, key, history) =>
+    dispatch(
+      ticketActionCreators.submitProjTicketsCreator(id, ticket, key, history)
+    ),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(TicketForm);

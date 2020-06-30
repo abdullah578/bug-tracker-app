@@ -7,7 +7,14 @@ export const fetchProjTicketsCreator = (id) => (dispatch) => {
     .get(`/tickets.json?orderBy="projid"&equalTo="${id}"`)
     .then((resp) => {
       const ticketsArr = resp.data
-        ? Object.keys(resp.data).map((key) => ({ ...resp.data[key], key }))
+        ? Object.keys(resp.data).map((key) => {
+            const ticket = resp.data[key];
+            if (!ticket.history) return { ...resp.data[key], key, history: [] };
+            const history = Object.keys(ticket.history).map(
+              (index) => ticket.history[index]
+            );
+            return { ...resp.data[key], key, history };
+          })
         : [];
       dispatch({
         type: actionTypes.FETCH_PROJ_TICKETS_SUCCESS,
@@ -34,8 +41,16 @@ export const fetchUserTicketsCreator = () => (dispatch) => {
   axios
     .get(`/tickets.json`)
     .then((resp) => {
+      console.log("fetchUserTicketsCreator -> resp", resp);
       const ticketsArr = resp.data
-        ? Object.keys(resp.data).map((key) => ({ ...resp.data[key], key }))
+        ? Object.keys(resp.data).map((key) => {
+          const ticket = resp.data[key];
+          if (!ticket.history) return { ...resp.data[key], key, history: [] };
+          const history = Object.keys(ticket.history).map(
+            (index) => ticket.history[index]
+          );
+          return { ...resp.data[key], key, history };
+        })
         : [];
       dispatch({
         type: actionTypes.FETCH_USER_TICKETS_SUCCESS,
@@ -49,7 +64,9 @@ export const fetchUserTicketsCreator = () => (dispatch) => {
       })
     );
 };
-export const submitProjTicketsCreator = (id, tick, key) => (dispatch) => {
+export const submitProjTicketsCreator = (id, tick, key, history) => (
+  dispatch
+) => {
   if (key === "new")
     axios
       .post("/tickets.json", tick)
@@ -59,7 +76,7 @@ export const submitProjTicketsCreator = (id, tick, key) => (dispatch) => {
           type: actionTypes.ADD_TICKET,
           id,
           key,
-          ticket: { ...tick, key: resp.data.name },
+          ticket: { ...tick, key: resp.data.name,history:[] },
         });
       })
       .catch((err) => console.log(err));
@@ -71,10 +88,14 @@ export const submitProjTicketsCreator = (id, tick, key) => (dispatch) => {
           type: actionTypes.UPDATE_TICKET,
           id,
           key,
-          ticket: { ...tick, key },
+          ticket: { ...tick, key,history },
         });
       })
       .catch((err) => console.log(err));
+  axios
+    .put(`/tickets/${key}/history.json`, history)
+    .then((resp) => console.log(resp))
+    .catch((err) => console.log(err));
 };
 
 export const deleteTicketCreator = (projectID, ticketKey) => (dispatch) => {

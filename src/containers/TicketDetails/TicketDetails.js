@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import Modal from "../../components/UI/Modal/Modal";
+import Table from "../../components/UI/Table/Table";
 import DetailItems from "../../components/TicketDetailsItems/TicketDetailsItems";
 import classes from "./TicketDetails.module.css";
 const obj = {
@@ -19,9 +20,12 @@ class TicketDetails extends Component {
     const projid = this.props.match.params.id;
     const tickets = this.props.allProjTickets[projid] || this.props.userTickets;
     const index = tickets.findIndex((curr) => curr.key === key);
+    const ticket = tickets[index];
     const details = {};
-    Object.keys(obj).map((curr) => (details[obj[curr]] = tickets[index][curr]));
-    return details;
+    let history = ticket.history;
+    Object.keys(obj).map((curr) => (details[obj[curr]] = ticket[curr]));
+    console.log(history);
+    return { details, history };
   }
   editHandler = () => {
     const { key, id, name } = this.props.match.params;
@@ -37,16 +41,44 @@ class TicketDetails extends Component {
       </div>
     );
   }
+  createTableHeader() {
+    return (
+      <tr>
+        <th>Property</th>
+        <th>Old Value</th>
+        <th> New Value</th>
+        <th>Date Changed </th>
+      </tr>
+    );
+  }
+  createTableBody(hist) {
+    return hist.map((curr, index) => (
+      <tr key={index}>
+        <td>{curr.property}</td>
+        <td>{curr.oldVal}</td>
+        <td>{curr.newVal}</td>
+        <td>{curr.date}</td>
+      </tr>
+    ));
+  }
   render() {
+    const { details, history } = this.getTicketInfo();
     return (
       <div className={classes.Details}>
         <Modal
           header={this.createDetailsModalHeader()}
           footerStyle={{ border: "none" }}
         >
-          <DetailItems details={this.getTicketInfo()} />
+          <DetailItems details={details} />
         </Modal>
-        <Modal header={<p>Ticket History</p>} />
+        <Modal header={<p>Ticket History</p>}>
+          <Table
+            header={this.createTableHeader()}
+            style={{ fontSize: "60%", fontWeight: "bold" }}
+          >
+            {this.createTableBody(history)}
+          </Table>
+        </Modal>
       </div>
     );
   }
