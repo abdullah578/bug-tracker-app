@@ -60,17 +60,20 @@ export const authenticate = (email, password, isSignUp, name) => (dispatch) => {
     })
     .catch((err) => {
       let error;
-      if(err.response) error=err.response.data.error.message;
-      dispatch(authFailureCreator( error || "Error"));
+      if (err.response) error = err.response.data.error.message;
+      dispatch(authFailureCreator(error || "Error"));
     });
 };
 
 const postUsers = (email, name, key) => {
-  axiosInst.put(`/allUsers/${key}.json`, {
-    name,
-    email,
-    role: "N/A",
-  });
+  axiosInst
+    .put(`/allUsers/${key}.json`, {
+      name,
+      email,
+      role: "N/A",
+    })
+    .then((resp) => null)
+    .catch((err) => console.log(err));
 };
 const getUser = (token, userid, expiry) => (dispatch) =>
   axiosInst

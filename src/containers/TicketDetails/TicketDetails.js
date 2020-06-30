@@ -5,6 +5,7 @@ import { createDateString } from "../../Utilities/Utilities";
 import Comments from "../../components/Comments/Comments";
 import Modal from "../../components/UI/Modal/Modal";
 import Table from "../../components/UI/Table/Table";
+import Pagination from "../../components/UI/Pagination/Pagination";
 import DetailItems from "../../components/TicketDetailsItems/TicketDetailsItems";
 import classes from "./TicketDetails.module.css";
 const obj = {
@@ -20,12 +21,17 @@ const obj = {
 class TicketDetails extends Component {
   state = {
     commentsValue: "",
+    currentPage: {
+      history: 1,
+      comments: 1,
+    },
+    numPerPage: {
+      history: 5,
+      comments: 5,
+    },
   };
   getTicketInfo() {
-    const key = this.props.match.params.key;
-    const projid = this.props.match.params.id;
-    const tickets = this.props.allProjTickets[projid] || this.props.userTickets;
-    const ticket = tickets.find((curr) => curr.key === key);
+    const ticket = this.getTicket();
     const details = {};
     let history = ticket.history;
     Object.keys(obj).map((curr) => (details[obj[curr]] = ticket[curr]));
@@ -44,15 +50,19 @@ class TicketDetails extends Component {
       date: createDateString(new Date()),
       name: this.props.name,
     };
-    const key = this.props.match.params.key;
-    const projid = this.props.match.params.id;
-    const tickets = this.props.allProjTickets[projid] || this.props.userTickets;
-    const ticket = tickets.find((curr) => curr.key === key);
+    const { id: projid, key } = this.props.match.params;
+    const ticket = this.getTicket();
     const comments = [...ticket.comments];
     comments.unshift(comment);
     const respTicket = { ...ticket, comments };
-    this.props.submitTicket(projid, respTicket, key, ticket.history);
+    this.props.submitTicket(projid, respTicket, key);
   };
+  getTicket() {
+    const { key, id: projid } = this.props.match.params;
+    const tickets = this.props.allProjTickets[projid] || this.props.userTickets;
+    const ticket = tickets.find((curr) => curr.key === key);
+    return ticket;
+  }
   createDetailsModalHeader() {
     return (
       <div className={classes.ModalHeader}>
@@ -74,7 +84,11 @@ class TicketDetails extends Component {
     );
   }
   createHistoryTableBody(hist) {
-    return hist.map((curr, index) => (
+    const currentPage = this.state.currentPage.history;
+    const numPerPage = this.state.numPerPage.history;
+    const startIndex = (currentPage - 1) * numPerPage;
+    const endIndex = startIndex + numPerPage;
+    return hist.slice(startIndex, endIndex).map((curr, index) => (
       <tr key={index}>
         <td>{curr.property}</td>
         <td>{curr.oldVal}</td>
@@ -93,11 +107,12 @@ class TicketDetails extends Component {
     );
   }
   createCommentsTableBody() {
-    const key = this.props.match.params.key;
-    const projid = this.props.match.params.id;
-    const tickets = this.props.allProjTickets[projid] || this.props.userTickets;
-    const ticket = tickets.find((curr) => curr.key === key);
-    return ticket.comments.map((curr, index) => (
+    const ticket = this.getTicket();
+    const currentPage = this.state.currentPage.comments;
+    const numPerPage = this.state.numPerPage.comments;
+    const startIndex = (currentPage - 1) * numPerPage;
+    const endIndex = startIndex + numPerPage;
+    return ticket.comments.slice(startIndex, endIndex).map((curr, index) => (
       <tr key={index}>
         <td>{curr.name}</td>
         <td>{curr.value}</td>
@@ -105,6 +120,16 @@ class TicketDetails extends Component {
       </tr>
     ));
   }
+  prevPage = (type) => {
+    const currCopy = { ...this.state.currentPage };
+    currCopy[type] -= 1;
+    this.setState({ currentPage: currCopy });
+  };
+  nextPage = (type) => {
+    const currCopy = { ...this.state.currentPage };
+    currCopy[type] += 1;
+    this.setState({ currentPage: currCopy });
+  };
   render() {
     const { details, history } = this.getTicketInfo();
     return (
@@ -116,7 +141,18 @@ class TicketDetails extends Component {
           >
             <DetailItems details={details} />
           </Modal>
-          <Modal header={<p>Ticket History</p>}>
+          <Modal
+            header={<p>Ticket History</p>}
+            footer={
+              <Pagination
+                currPage={this.state.currentPage.history}
+                numPerPage={this.state.numPerPage.history}
+                items={history.length}
+                prev={() => this.prevPage("history")}
+                next={() => this.nextPage("history")}
+              />
+            }
+          >
             <Table
               header={this.createHistoryTableHeader()}
               style={{ fontSize: "60%", fontWeight: "bold" }}
@@ -135,6 +171,15 @@ class TicketDetails extends Component {
           <Modal
             modalStyle={{ marginTop: "70px" }}
             header={<p>Ticket Comments</p>}
+            footer={
+              <Pagination
+                currPage={this.state.currentPage.comments}
+                numPerPage={this.state.numPerPage.comments}
+                items={this.getTicket().comments.length}
+                prev={() => this.prevPage("comments")}
+                next={() => this.nextPage("comments")}
+              />
+            }
           >
             {" "}
             <Table header={this.createCommentsTableHeader()}>
@@ -152,10 +197,8 @@ const mapStateToProps = (state) => ({
   allProjTickets: state.ticket.allProjTickets,
 });
 const mapDispatchToProps = (dispatch) => ({
-  submitTicket: (id, ticket, key, history) =>
-    dispatch(
-      ticketActionCreators.submitProjTicketsCreator(id, ticket, key, history)
-    ),
+  submitTicket: (id, ticket, key) =>
+    dispatch(ticketActionCreators.submitProjTicketsCreator(id, ticket, key)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(TicketDetails);

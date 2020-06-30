@@ -9,33 +9,37 @@ const initialState = {
   role: null,
 };
 
+const authSuccess = (state, action) => ({
+  ...state,
+  token: action.token,
+  id: action.userid,
+  email: action.email,
+  name: action.name,
+  role: action.role,
+  error: null,
+});
+const authFailure = (state, action) => ({
+  ...state,
+  token: null,
+  id: null,
+  error: action.error,
+});
+const authLogout = (state, action) => ({
+  ...state,
+  token: null,
+  id: null,
+  email: null,
+  name: null,
+});
+
 const authReducer = (state = initialState, action) => {
   switch (action.type) {
     case actionTypes.AUTH_SUCCESS:
-      return {
-        ...state,
-        token: action.token,
-        id: action.userid,
-        email: action.email,
-        name: action.name,
-        role: action.role,
-        error: null,
-      };
+      return authSuccess(state, action);
     case actionTypes.AUTH_FAILURE:
-      return {
-        ...state,
-        token: null,
-        id: null,
-        error: action.error,
-      };
+      return authFailure(state, action);
     case actionTypes.AUTH_LOGOUT:
-      return {
-        ...state,
-        token: null,
-        id: null,
-        email: null,
-        name: null,
-      };
+      return authLogout(state, action);
     default:
       return state;
   }

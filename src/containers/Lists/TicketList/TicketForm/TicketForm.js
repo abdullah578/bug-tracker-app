@@ -123,9 +123,8 @@ class TicketForm extends Lists {
     const history = this.createTicketHistory(ticketObj);
     this.props.submitTicket(
       this.props.match.params.id,
-      ticketObj,
-      this.props.match.params.key,
-      history
+      { ...ticketObj, history },
+      this.props.match.params.key
     );
     this.props.history.goBack();
   };
@@ -133,10 +132,6 @@ class TicketForm extends Lists {
     const devIndex = this.props.projUsers.findIndex(
       (curr) => curr.email === this.state.form.assigned.value
     );
-    const { id: projectID, key: ticketKey } = this.props.match.params;
-    const tickets =
-      this.props.allProjTickets[projectID] || this.props.userTickets;
-    const ticket = tickets.find((curr) => curr.key === ticketKey);
     if (devIndex === -1) return null;
     const {
       title,
@@ -161,7 +156,7 @@ class TicketForm extends Lists {
         ? this.state.ticket.created
         : createDateString(new Date()),
       projid: this.props.match.params.id,
-      comments: ticket.comments,
+      comments: this.state.ticket ? this.state.ticket.comments : [],
     };
     return ticketObj;
   }
@@ -252,10 +247,8 @@ const mapDispatchToProps = (dispatch) => ({
   fetchProjUsers: (id) =>
     dispatch(userActionCreators.fetchProjUsersCreator(id)),
   getProjUsers: (id) => dispatch(userActionCreators.getProjUsersCreator(id)),
-  submitTicket: (id, ticket, key, history) =>
-    dispatch(
-      ticketActionCreators.submitProjTicketsCreator(id, ticket, key, history)
-    ),
+  submitTicket: (id, ticket, key) =>
+    dispatch(ticketActionCreators.submitProjTicketsCreator(id, ticket, key)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(TicketForm);

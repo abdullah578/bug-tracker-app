@@ -8,94 +8,99 @@ const initialState = {
   error: false,
 };
 
+const fetchUsersInit = (state, action) => ({
+  ...state,
+  dispSpinner: true,
+  error: false,
+  allUsers: [],
+  users: [],
+});
+const fetchUsersSuccess = (state, action) => ({
+  ...state,
+  users: action.users,
+  dispSpinner: false,
+  error: false,
+  allUsers: action.allUsers,
+});
+const fetchUsersFailure = (state, action) => ({
+  ...state,
+  dispSpinner: false,
+  error: true,
+});
+const fetchProjUsersInit = (state, action) => ({
+  ...state,
+  dispSpinner: true,
+  error: false,
+  projUsers: [],
+});
+const fetchProjUsersSucess = (state, action) => ({
+  ...state,
+  allProjUsers: { ...state.allProjUsers, [action.projid]: action.users },
+  projUsers: action.users,
+  dispSpinner: false,
+  error: false,
+});
+const fetchProjUsersFailure = (state, action) => ({
+  ...state,
+  dispSpinner: false,
+  error: true,
+});
+const updateUsers = (state, action) => {
+  const allUsersCopy = [...state.allUsers];
+  const index = state.allUsers.findIndex((curr) => curr.key === action.key);
+  allUsersCopy[index] = action.obj;
+  return {
+    ...state,
+    allUsers: allUsersCopy,
+    users: allUsersCopy.filter((curr) => curr.role !== "N/A"),
+  };
+};
+const getProjUsers = (state, action) => ({
+  ...state,
+  projUsers: state.allProjUsers[action.id],
+});
+const updateProjUsers = (state, action) => ({
+  ...state,
+  projUsers: state.projUsers.concat(action.obj),
+  allProjUsers: {
+    ...state.allProjUsers,
+    [action.id]: state.allProjUsers[action.id].concat(action.obj),
+  },
+});
+const deleteProjUsers = (state, action) => ({
+  ...state,
+  projUsers: state.projUsers.filter((curr) => curr.key !== action.key),
+  allProjUsers: {
+    ...state.allProjUsers,
+    [action.id]: state.allProjUsers[action.id].filter(
+      (curr) => curr.key !== action.key
+    ),
+  },
+});
+
 const userReducer = (state = initialState, action) => {
   switch (action.type) {
-    case actionTypes.FETCH_USERS_INIT: {
-      return {
-        ...state,
-        dispSpinner: true,
-        error: false,
-        allUsers: [],
-        users: [],
-      };
-    }
-    case actionTypes.FETCH_PROJ_USERS_INIT: {
-      return {
-        ...state,
-        dispSpinner: true,
-        error: false,
-        projUsers: [],
-      };
-    }
-    case actionTypes.FETCH_USERS_SUCCESS: {
-      return {
-        ...state,
-        users: action.users,
-        dispSpinner: false,
-        error: false,
-        allUsers: action.allUsers,
-      };
-    }
-    case actionTypes.FETCH_USERS_FAILURE: {
-      return {
-        ...state,
-        dispSpinner: false,
-        error: true,
-      };
-    }
-    case actionTypes.UPDATE_USERS: {
-      const index = state.allUsers.findIndex((curr) => curr.key === action.key);
-      const allUsersCopy = [...state.allUsers];
-      allUsersCopy[index] = action.obj;
-      return {
-        ...state,
-        allUsers: allUsersCopy,
-        users: allUsersCopy.filter((curr) => curr.role !== "N/A"),
-      };
-    }
-    case actionTypes.FETCH_PROJ_USERS_SUCCESS: {
-      return {
-        ...state,
-        allProjUsers: { ...state.allProjUsers, [action.projid]: action.users },
-        projUsers: action.users,
-        dispSpinner: false,
-        error: false,
-      };
-    }
-    case actionTypes.FETCH_PROJ_USERS_FAILURE: {
-      return {
-        ...state,
-        dispSpinner: false,
-        error: true,
-      };
-    }
-    case actionTypes.GET_PROJ_USERS: {
-      return {
-        ...state,
-        projUsers: state.allProjUsers[action.id],
-      };
-    }
+    case actionTypes.FETCH_USERS_INIT:
+      return fetchUsersInit(state, action);
+    case actionTypes.FETCH_USERS_SUCCESS:
+      return fetchUsersSuccess(state, action);
+    case actionTypes.FETCH_USERS_FAILURE:
+      return fetchUsersFailure(state, action);
+    case actionTypes.FETCH_PROJ_USERS_INIT:
+      return fetchProjUsersInit(state, action);
+    case actionTypes.FETCH_PROJ_USERS_SUCCESS:
+      return fetchProjUsersSucess(state, action);
+    case actionTypes.FETCH_PROJ_USERS_FAILURE:
+      return fetchProjUsersFailure(state, action);
+    case actionTypes.GET_PROJ_USERS:
+      return getProjUsers(state, action);
+    case actionTypes.UPDATE_USERS:
+      return updateUsers(state, action);
     case actionTypes.UPDATE_PROJ_USERS: {
-      return {
-        ...state,
-        projUsers: state.projUsers.concat(action.obj),
-        allProjUsers: {
-          ...state.allProjUsers,
-          [action.id]: state.allProjUsers[action.id].concat(action.obj),
-        },
-      };
+      return updateProjUsers(state, action);
     }
     case actionTypes.DELETE_PROJ_USERS: {
-      return {
-        ...state,
-        projUsers: state.projUsers.filter((curr) => curr.key !== action.key),
-        allProjUsers: {
-          ...state.allProjUsers,
-          [action.id]: state.allProjUsers[action.id].filter(
-            (curr) => curr.key !== action.key
-          ),
-        },
-      };
+      return deleteProjUsers(state, action);
     }
     default:
       return state;

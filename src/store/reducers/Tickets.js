@@ -7,65 +7,50 @@ const initialState = {
   error: false,
 };
 
-const ticketsReducer = (state = initialState, action) => {
-  switch (action.type) {
-    case actionTypes.FETCH_USER_TICKETS_INIT: {
-      return {
-        ...state,
-        error: false,
-        dispSpinner: true,
-      };
-    }
-    case actionTypes.FETCH_USER_TICKETS_SUCCESS: {
-      return {
-        ...state,
-        dispSpinner: false,
-        error: false,
-        userTickets: action.tickets,
-      };
-    }
-    case actionTypes.FETCH_USER_TICKETS_FAILURE: {
-      return {
-        ...state,
-        dispSpinner: false,
-        error: true,
-      };
-    }
-    case actionTypes.FETCH_PROJ_TICKETS_INIT: {
-      return {
-        ...state,
-        dispSpinner: true,
-        error: false,
-        tickets: [],
-      };
-    }
-    case actionTypes.FETCH_PROJ_TICKETS_SUCCESS: {
-      return {
-        ...state,
-        dispSpinner: false,
-        allProjTickets: {
-          ...state.allProjTickets,
-          [action.id]: action.tickets,
-        },
-        tickets: action.tickets,
-      };
-    }
-    case actionTypes.FETCH_PROJ_TICKETS_FAILURE: {
-      return {
-        ...state,
-        dispSpinner: false,
-        error: true,
-      };
-    }
-    case actionTypes.GET_TICKETS: {
-      return {
-        ...state,
-        tickets: state.allProjTickets[action.id],
-      };
-    }
-    case actionTypes.ADD_TICKET: {
-      if (!state.allProjTickets[action.id]) return state;
-      return {
+const fetchUserTicketsInit = (state, action) => ({
+  ...state,
+  error: false,
+  dispSpinner: true,
+});
+const fetchUserTicketsSuccess = (state, action) => ({
+  ...state,
+  dispSpinner: false,
+  error: false,
+  userTickets: action.tickets,
+});
+const fetchUserTicketsFailure = (state, action) => ({
+  ...state,
+  dispSpinner: false,
+  error: true,
+});
+const fetchProjTicketsInit = (state, action) => ({
+  ...state,
+  dispSpinner: true,
+  error: false,
+  tickets: [],
+});
+const fetchProjTicketsSuccess = (state, action) => ({
+  ...state,
+  dispSpinner: false,
+  allProjTickets: {
+    ...state.allProjTickets,
+    [action.id]: action.tickets,
+  },
+  tickets: action.tickets,
+});
+const fetchProjTicketsFailure = (state, action) => ({
+  ...state,
+  dispSpinner: false,
+  error: true,
+});
+const getTickets = (state, action) => ({
+  ...state,
+  tickets: state.allProjTickets[action.id],
+});
+const addTicket = (state, action) =>
+  !state.allProjTickets[action.id]
+    ? state
+    : {
         ...state,
         allProjTickets: {
           ...state.allProjTickets,
@@ -74,54 +59,73 @@ const ticketsReducer = (state = initialState, action) => {
         tickets: state.tickets.concat(action.ticket),
         userTickets: state.userTickets.concat(action.ticket),
       };
-    }
-    case actionTypes.UPDATE_TICKET: {
-      const userIndex = state.userTickets.findIndex(
-        (curr) => curr.key === action.key
-      );
-      const userTicketsCopy = [...state.userTickets];
-      if (userIndex !== -1) userTicketsCopy[userIndex] = action.ticket;
-      if (!state.allProjTickets[action.id])
-        return { ...state, userTickets: userTicketsCopy };
-      const projIndex = state.allProjTickets[action.id].findIndex(
-        (curr) => curr.key === action.key
-      );
-      const projTicketsCopy = [...state.allProjTickets[action.id]];
-      projTicketsCopy[projIndex] = action.ticket;
-      return {
-        ...state,
-        allProjTickets: {
-          ...state.allProjTickets,
-          [action.id]: projTicketsCopy,
-        },
-        tickets: projTicketsCopy,
-        userTickets: userTicketsCopy,
-      };
-    }
-    case actionTypes.DELETE_TICKET: {
-      if (!state.allProjTickets[action.id])
-        return {
-          ...state,
-          tickets: state.tickets.filter((curr) => curr.key !== action.key),
-          userTickets: state.userTickets.filter(
-            (curr) => curr.key !== action.key
-          ),
-        };
-      else
-        return {
-          ...state,
-          tickets: state.tickets.filter((curr) => curr.key !== action.key),
-          userTickets: state.userTickets.filter(
-            (curr) => curr.key !== action.key
-          ),
-          allProjTickets: {
-            ...state.allProjTickets,
-            [action.id]: state.allProjTickets[action.id].filter(
-              (curr) => curr.key !== action.key
-            ),
-          },
-        };
-    }
+const updateTicket = (state, action) => {
+  const userIndex = state.userTickets.findIndex(
+    (curr) => curr.key === action.key
+  );
+  const userTicketsCopy = [...state.userTickets];
+  if (userIndex !== -1) userTicketsCopy[userIndex] = action.ticket;
+  if (!state.allProjTickets[action.id])
+    return { ...state, userTickets: userTicketsCopy };
+  const projIndex = state.allProjTickets[action.id].findIndex(
+    (curr) => curr.key === action.key
+  );
+  const projTicketsCopy = [...state.allProjTickets[action.id]];
+  projTicketsCopy[projIndex] = action.ticket;
+  return {
+    ...state,
+    allProjTickets: {
+      ...state.allProjTickets,
+      [action.id]: projTicketsCopy,
+    },
+    tickets: projTicketsCopy,
+    userTickets: userTicketsCopy,
+  };
+};
+
+const deleteTicket = (state, action) => {
+  if (!state.allProjTickets[action.id])
+    return {
+      ...state,
+      tickets: state.tickets.filter((curr) => curr.key !== action.key),
+      userTickets: state.userTickets.filter((curr) => curr.key !== action.key),
+    };
+  else
+    return {
+      ...state,
+      tickets: state.tickets.filter((curr) => curr.key !== action.key),
+      userTickets: state.userTickets.filter((curr) => curr.key !== action.key),
+      allProjTickets: {
+        ...state.allProjTickets,
+        [action.id]: state.allProjTickets[action.id].filter(
+          (curr) => curr.key !== action.key
+        ),
+      },
+    };
+};
+
+const ticketsReducer = (state = initialState, action) => {
+  switch (action.type) {
+    case actionTypes.FETCH_USER_TICKETS_INIT:
+      return fetchUserTicketsInit(state, action);
+    case actionTypes.FETCH_USER_TICKETS_SUCCESS:
+      return fetchUserTicketsSuccess(state, action);
+    case actionTypes.FETCH_USER_TICKETS_FAILURE:
+      return fetchUserTicketsFailure(state, action);
+    case actionTypes.FETCH_PROJ_TICKETS_INIT:
+      return fetchProjTicketsInit(state, action);
+    case actionTypes.FETCH_PROJ_TICKETS_SUCCESS:
+      return fetchProjTicketsSuccess(state, action);
+    case actionTypes.FETCH_PROJ_TICKETS_FAILURE:
+      return fetchProjTicketsFailure(state, action);
+    case actionTypes.GET_TICKETS:
+      return getTickets(state, action);
+    case actionTypes.ADD_TICKET:
+      return addTicket(state, action);
+    case actionTypes.UPDATE_TICKET:
+      return updateTicket(state, action);
+    case actionTypes.DELETE_TICKET:
+      return deleteTicket(state, action);
     default:
       return state;
   }

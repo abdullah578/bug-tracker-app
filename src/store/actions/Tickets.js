@@ -1,39 +1,69 @@
 import * as actionTypes from "./actionTypes";
 import axios from "../../axiosInstance/AxiosInstance";
 
+const parseResponse = (resp) => {
+  return resp.data
+    ? Object.keys(resp.data).map((key) => {
+        const ticket = resp.data[key];
+        let history = [];
+        let comments = [];
+        if (ticket.history)
+          history = Object.keys(ticket.history).map(
+            (index) => ticket.history[index]
+          );
+        if (ticket.comments)
+          comments = Object.keys(ticket.comments).map(
+            (index) => ticket.comments[index]
+          );
+        return { ...resp.data[key], key, history, comments };
+      })
+    : [];
+};
+const fetchProjTicketsInit = () => ({
+  type: actionTypes.FETCH_PROJ_TICKETS_INIT,
+});
+const fetchProjTicketsSuccess = (tickets, projID) => ({
+  type: actionTypes.FETCH_PROJ_TICKETS_SUCCESS,
+  tickets,
+  id: projID,
+});
+const fetchProjTicketsFailure = (err) => ({
+  type: actionTypes.FETCH_PROJ_TICKETS_FAILURE,
+  error: err,
+});
+const fetchUserTicketsInit = () => ({
+  type: actionTypes.FETCH_USER_TICKETS_INIT,
+});
+const fetchUserTicketsSuccess = (tickets) => ({
+  type: actionTypes.FETCH_USER_TICKETS_SUCCESS,
+  tickets,
+});
+const fetchUserTicketsFailure = (err) => ({
+  type: actionTypes.FETCH_USER_TICKETS_FAILURE,
+  error: err,
+});
+const addNewTicket = (tick, projectID, ticketKey) => ({
+  type: actionTypes.ADD_TICKET,
+  id: projectID,
+  key: "new",
+  ticket: { ...tick, key: ticketKey },
+});
+const updateTicket = (tick, projID, ticketKey) => ({
+  type: actionTypes.UPDATE_TICKET,
+  id: projID,
+  key: ticketKey,
+  ticket: { ...tick, key: ticketKey },
+});
+
 export const fetchProjTicketsCreator = (id) => (dispatch) => {
-  dispatch({ type: actionTypes.FETCH_PROJ_TICKETS_INIT });
+  dispatch(fetchProjTicketsInit());
   axios
     .get(`/tickets.json?orderBy="projid"&equalTo="${id}"`)
     .then((resp) => {
-      const ticketsArr = resp.data
-        ? Object.keys(resp.data).map((key) => {
-            const ticket = resp.data[key];
-            let history = [];
-            let comments = [];
-            if (ticket.history)
-              history = Object.keys(ticket.history).map(
-                (index) => ticket.history[index]
-              );
-            if (ticket.comments)
-              comments = Object.keys(ticket.comments).map(
-                (index) => ticket.comments[index]
-              );
-            return { ...resp.data[key], key, history, comments };
-          })
-        : [];
-      dispatch({
-        type: actionTypes.FETCH_PROJ_TICKETS_SUCCESS,
-        tickets: ticketsArr,
-        id,
-      });
+      const ticketsArr = parseResponse(resp);
+      dispatch(fetchProjTicketsSuccess(ticketsArr, id));
     })
-    .catch((err) =>
-      dispatch({
-        type: actionTypes.FETCH_PROJ_TICKETS_FAILURE,
-        error: err,
-      })
-    );
+    .catch((err) => dispatch(fetchProjTicketsFailure(err)));
 };
 
 export const getTicketsCreator = (id) => {
@@ -43,92 +73,35 @@ export const getTicketsCreator = (id) => {
   };
 };
 export const fetchUserTicketsCreator = () => (dispatch) => {
-  dispatch({ type: actionTypes.FETCH_USER_TICKETS_INIT });
+  dispatch(fetchUserTicketsInit());
   axios
     .get(`/tickets.json`)
     .then((resp) => {
-      console.log("fetchUserTicketsCreator -> resp", resp);
-      const ticketsArr = resp.data
-        ? Object.keys(resp.data).map((key) => {
-            const ticket = resp.data[key];
-            let history = [];
-            let comments = [];
-            if (ticket.history)
-              history = Object.keys(ticket.history).map(
-                (index) => ticket.history[index]
-              );
-            if (ticket.comments)
-              comments = Object.keys(ticket.comments).map(
-                (index) => ticket.comments[index]
-              );
-            return { ...resp.data[key], key, history, comments };
-          })
-        : [];
-      dispatch({
-        type: actionTypes.FETCH_USER_TICKETS_SUCCESS,
-        tickets: ticketsArr,
-      });
+      const ticketsArr = parseResponse(resp);
+      dispatch(fetchUserTicketsSuccess(ticketsArr));
     })
-    .catch((err) =>
-      dispatch({
-        type: actionTypes.FETCH_USER_TICKETS_FAILURE,
-        error: err,
-      })
-    );
+    .catch((err) => dispatch(fetchUserTicketsFailure(err)));
 };
-export const submitProjTicketsCreator = (id, tick, key, history) => (
-  dispatch
-) => {
+export const submitProjTicketsCreator = (id, tick, key) => (dispatch) => {
   if (key === "new")
     axios
       .post("/tickets.json", tick)
       .then((resp) => {
-        console.log(resp);
-        dispatch({
-          type: actionTypes.ADD_TICKET,
-          id,
-          key,
-          ticket: { ...tick, key: resp.data.name, history: [] },
-        });
+        dispatch(addNewTicket(tick, id, resp.data.name));
       })
       .catch((err) => console.log(err));
   else
     axios
-      .put(`/tickets/${key}.json`, { ...tick, history })
+      .put(`/tickets/${key}.json`, { ...tick })
       .then((resp) => {
-        dispatch({
-          type: actionTypes.UPDATE_TICKET,
-          id,
-          key,
-          ticket: { ...tick, key, history },
-        });
+        dispatch(updateTicket(tick, id, key));
       })
       .catch((err) => console.log(err));
 };
 
 export const deleteTicketCreator = (projectID, ticketKey) => (dispatch) => {
-  console.log("hellooo");
   axios
     .delete(`/tickets/${ticketKey}.json`)
     .then((resp) => dispatch(fetchProjTicketsCreator(projectID)))
-    .catch((err) => console.log(err));
-};
-
-export const deleteUserTicketCreator = (projectID, userEmail) => (dispatch) => {
-  axios
-    .get(`/tickets.json?orderBy="projid"&equalTo="${projectID}"`)
-    .then((resp) => {
-      const filterKeys = Object.keys(resp.data).filter(
-        (key) =>
-          resp.data[key].assignedEmail === userEmail ||
-          resp.data[key].submitterEmail === userEmail
-      );
-      filterKeys.forEach((key) => {
-        axios
-          .delete(`/tickets/${key}.json`)
-          .then((resp) => dispatch({ type: actionTypes.DELETE_TICKET, key }))
-          .catch((err) => console.log(err));
-      });
-    })
     .catch((err) => console.log(err));
 };

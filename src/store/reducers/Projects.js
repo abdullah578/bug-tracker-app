@@ -4,37 +4,40 @@ const initialState = {
   dispSpinner: false,
   error: false,
 };
+const fetchProjectsInit = (state, action) => ({
+  ...state,
+  dispSpinner: true,
+  error: false,
+});
+const fetchProjectsSuccess = (state, action) => ({
+  ...state,
+  projects: action.projects,
+  dispSpinner: false,
+  error: false,
+});
+const fetchProjectsFailure = (state, action) => ({
+  ...state,
+  dispSpinner: false,
+  error: true,
+});
+const updateProject = (state, action) => ({
+  ...state,
+  projects: state.projects.concat(action.proj),
+});
 
 const projectReducer = (state = initialState, action) => {
   switch (action.type) {
-    case actionTypes.FETCH_PROJECTS_INIT: {
-      return {
-        ...state,
-        dispSpinner: true,
-        error: false,
-      };
-    }
-    case actionTypes.FETCH_PROJECTS_SUCCESS: {
-      return {
-        ...state,
-        projects: action.projects,
-        dispSpinner: false,
-        error: false,
-      };
-    }
-    case actionTypes.FETCH_PROJECTS_FAILURE: {
-      return {
-        ...state,
-        dispSpinner: false,
-        error: true,
-      };
-    }
-    case actionTypes.UPDATE_PROJECT: {
-      return {
-        ...state,
-        projects: state.projects.concat(action.proj),
-      };
-    }
+    case actionTypes.FETCH_PROJECTS_INIT:
+      return fetchProjectsInit(state, action);
+
+    case actionTypes.FETCH_PROJECTS_SUCCESS:
+      return fetchProjectsSuccess(state, action);
+
+    case actionTypes.FETCH_PROJECTS_FAILURE:
+      return fetchProjectsFailure(state, action);
+
+    case actionTypes.UPDATE_PROJECT:
+      return updateProject(state, action);
 
     default:
       return state;
