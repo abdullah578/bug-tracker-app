@@ -19,7 +19,21 @@ export const formConfig = (
   isValid,
   touch,
 });
-
+export const createDateString = (date) => date.toString().split("G")[0];
+export const mapResponseToName = (property) => {
+  const obj = {
+    title: "Ticket Title",
+    description: "Ticket Description",
+    assigned: "Assigned Developer",
+    assignedEmail: "Assigned Developer",
+    submitter: "Submitter",
+    ticketPriority: "Ticket Priority",
+    status: "Ticket Status",
+    ticketType: "Ticket Type",
+    created: "Created",
+  };
+  return obj[property];
+};
 export const checkValidation = (inputVal, validationRequirement, inputArr) => {
   let isValid = true;
   if (validationRequirement.isRequired)

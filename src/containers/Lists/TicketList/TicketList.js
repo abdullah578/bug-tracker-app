@@ -27,9 +27,10 @@ class TicketList extends Lists {
     if (this.props.type === "User" && !this.props.userTickets.length)
       this.props.fetchUserTickets();
     else {
-      if (!this.props.allProjTickets[this.props.match.params.id])
-        this.props.fetchProjTickets(this.props.match.params.id);
-      else this.props.getTickets(this.props.match.params.id);
+      const projectID = this.props.match.params.id;
+      !this.props.allProjTickets[projectID]
+        ? this.props.fetchProjTickets(projectID)
+        : this.props.getTickets(projectID);
     }
   }
   filterTickets = (arr) => {
@@ -71,7 +72,6 @@ class TicketList extends Lists {
     const styles = { textDecoration: "none", color: "#551A8B" };
     const tickets =
       this.props.type === "User" ? this.props.userTickets : this.props.tickets;
-    console.log(tickets);
     return this.filterTickets(tickets)
       .slice(startIndex, endIndex)
       .map((curr) => (

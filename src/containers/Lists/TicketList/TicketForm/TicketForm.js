@@ -1,8 +1,12 @@
 import React from "react";
-import { formConfig } from "../../../../Utilities/Utilities";
 import { connect } from "react-redux";
 import * as userActionCreators from "../../../../store/actions/Users";
 import * as ticketActionCreators from "../../../../store/actions/Tickets";
+import {
+  formConfig,
+  createDateString,
+  mapResponseToName,
+} from "../../../../Utilities/Utilities";
 import Lists from "../../Lists";
 import Modal from "../../../../components/UI/Modal/Modal";
 import Input from "../../../../components/UI/Input/Input";
@@ -88,69 +92,35 @@ class TicketForm extends Lists {
     },
   };
   componentDidMount() {
-    if (!this.props.allProjUsers[this.props.match.params.id])
-      this.props.fetchProjUsers(this.props.match.params.id);
-    else this.props.getProjUsers(this.props.match.params.id);
-    if (this.props.match.params.key !== "new") {
-      const formCopy = { ...this.state.form };
-      const tickets =
-        this.props.allProjTickets[this.props.match.params.id] ||
-        this.props.userTickets;
-      const dataIndex = tickets.findIndex(
-        (curr) => curr.key === this.props.match.params.key
-      );
-      Object.keys(formCopy).map(
-        (name) =>
-          (formCopy[name] = {
-            ...formCopy[name],
-            value: tickets[dataIndex][this.mapResponseToState(name)],
-            isValid: true,
-          })
-      );
-      this.setState({ form: formCopy, ticket: tickets[dataIndex] });
-    }
+    const { id: projectID, key: ticketKey } = this.props.match.params;
+    !this.props.allProjUsers[projectID]
+      ? this.props.fetchProjUsers(projectID)
+      : this.props.getProjUsers(projectID);
+    if (ticketKey === "new") return null;
+    this.populateForm();
   }
   mapResponseToState(name) {
     return obj[name];
   }
-  formSubmitHandler = () => {
-    const devIndex = this.props.projUsers.findIndex(
-      (curr) => curr.email === this.state.form.assigned.value
+  populateForm() {
+    const { id: projectID, key: ticketKey } = this.props.match.params;
+    const formCopy = { ...this.state.form };
+    const tickets =
+      this.props.allProjTickets[projectID] || this.props.userTickets;
+    const ticket = tickets.find((curr) => curr.key === ticketKey);
+    Object.keys(formCopy).map(
+      (name) =>
+        (formCopy[name] = {
+          ...formCopy[name],
+          value: ticket[this.mapResponseToState(name)],
+          isValid: true,
+        })
     );
-    if (devIndex === -1) return null;
-
-    const { form } = this.state;
-    const ticketObj = {
-      title: form.title.value,
-      description: form.description.value,
-      ticketPriority: form.ticketPriority.value,
-      ticketType: form.ticketType.value,
-      assigned: this.props.projUsers[devIndex].name,
-      projName: this.props.match.params.name,
-      assignedEmail: form.assigned.value.trim(),
-      submitter: this.props.name,
-      submitterEmail: this.props.email.trim(),
-      status: form.ticketStatus.value,
-      created: this.state.ticket
-        ? this.state.ticket.created
-        : new Date().toString().split("G")[0],
-      projid: this.props.match.params.id,
-    };
-    let history = [];
-    if (this.state.ticket) {
-      history = [...this.state.ticket.history];
-      Object.keys(this.state.form).forEach((curr) => {
-        const current = this.mapResponseToState(curr);
-        console.log("TicketForm -> formSubmitHandler -> current", current)
-        if (ticketObj[current] !== this.state.ticket[current])
-          history.push({
-            oldVal: this.state.ticket[current],
-            newVal: ticketObj[current],
-            date: new Date().toString().split("G")[0],
-          });
-      });
-    }
-    console.log(history);
+    this.setState({ form: formCopy, ticket });
+  }
+  formSubmitHandler = () => {
+    const ticketObj = this.createResponseTicket();
+    const history = this.createTicketHistory(ticketObj);
     this.props.submitTicket(
       this.props.match.params.id,
       ticketObj,
@@ -159,6 +129,54 @@ class TicketForm extends Lists {
     );
     this.props.history.goBack();
   };
+  createResponseTicket() {
+    const devIndex = this.props.projUsers.findIndex(
+      (curr) => curr.email === this.state.form.assigned.value
+    );
+    if (devIndex === -1) return null;
+    const {
+      title,
+      description,
+      ticketPriority,
+      ticketType,
+      assigned,
+      ticketStatus,
+    } = this.state.form;
+    const ticketObj = {
+      title: title.value,
+      description: description.value,
+      ticketPriority: ticketPriority.value,
+      ticketType: ticketType.value,
+      assigned: this.props.projUsers[devIndex].name,
+      projName: this.props.match.params.name,
+      assignedEmail: assigned.value.trim(),
+      submitter: this.props.name,
+      submitterEmail: this.props.email.trim(),
+      status: ticketStatus.value,
+      created: this.state.ticket
+        ? this.state.ticket.created
+        : createDateString(new Date()),
+      projid: this.props.match.params.id,
+    };
+    return ticketObj;
+  }
+  createTicketHistory(ticketObj) {
+    let history = [];
+    if (this.state.ticket) {
+      history = [...this.state.ticket.history];
+      Object.keys(this.state.form).forEach((curr) => {
+        const current = this.mapResponseToState(curr);
+        if (ticketObj[current] !== this.state.ticket[current])
+          history.unshift({
+            property: mapResponseToName(current),
+            oldVal: this.state.ticket[current],
+            newVal: ticketObj[current],
+            date: createDateString(new Date()),
+          });
+      });
+    }
+    return history;
+  }
   render() {
     return (
       <div>

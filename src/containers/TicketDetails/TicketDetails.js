@@ -19,12 +19,10 @@ class TicketDetails extends Component {
     const key = this.props.match.params.key;
     const projid = this.props.match.params.id;
     const tickets = this.props.allProjTickets[projid] || this.props.userTickets;
-    const index = tickets.findIndex((curr) => curr.key === key);
-    const ticket = tickets[index];
+    const ticket = tickets.find((curr) => curr.key === key);;
     const details = {};
     let history = ticket.history;
     Object.keys(obj).map((curr) => (details[obj[curr]] = ticket[curr]));
-    console.log(history);
     return { details, history };
   }
   editHandler = () => {

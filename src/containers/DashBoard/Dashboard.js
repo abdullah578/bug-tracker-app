@@ -2,19 +2,17 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import * as actionCreators from "../../store/actions/Tickets";
 import WithErrorHandle from "../../hoc/WithErrorHandle";
-import Spinner from "../../components/UI/Spinner/Spinner";
 import axios from "../../axiosInstance/AxiosInstance";
+import Spinner from "../../components/UI/Spinner/Spinner";
 import Pie from "../../components/UI/Charts/PieChart";
 import BarChart from "../../components/UI/Charts/BarChart/BarChart";
 import classes from "./DashBoard.module.css";
 
 class DashBoard extends Component {
-  state = {
-    typeChart: null,
-  };
   componentDidMount() {
     if (!this.props.tickets.length) this.props.fetchTickets();
   }
+
   createStat() {
     if (!this.props.tickets.length) return null;
     const ticketStat = {
@@ -26,24 +24,22 @@ class DashBoard extends Component {
     const projLabels = {};
     const typeLabels = {};
     this.props.tickets.forEach((curr) => {
-      ticketStat["status"][curr.status] =
-        ticketStat["status"][curr.status] || 0;
-      ticketStat["status"][curr.status] += 1;
-
-      ticketStat["type"][curr.ticketType] =
-        ticketStat["type"][curr.ticketType] || 0;
-      ticketStat["type"][curr.ticketType] += 1;
+      const { status, ticketType, ticketPriority, projName } = curr;
+      this.updateStat(ticketStat, "status", status);
+      this.updateStat(ticketStat, "type", ticketType);
+      this.updateStat(ticketStat, "priority", ticketPriority);
+      this.updateStat(ticketStat, "projects", projName);
       typeLabels[curr.ticketType] = null;
-
-      ticketStat["priority"][curr.ticketPriority] =
-        ticketStat["priority"][curr.ticketPriority] || 0;
-      ticketStat["priority"][curr.ticketPriority] += 1;
-
-      ticketStat["projects"][curr.projName] =
-        ticketStat["projects"][curr.projName] || 0;
-      ticketStat["projects"][curr.projName] += 1;
       projLabels[curr.projName] = null;
     });
+    return this.createCharts(ticketStat, typeLabels, projLabels);
+  }
+
+  updateStat(ticketStat, statLabel, labelType) {
+    ticketStat[statLabel][labelType] = ticketStat[statLabel][labelType] || 0;
+    ticketStat[statLabel][labelType] += 1;
+  }
+  createCharts(ticketStat, typeLabels, projLabels) {
     const priorityChart = this.createBarChart(
       ticketStat,
       ["None", "Low", "Medium", "High"],

@@ -39,16 +39,17 @@ class UserList extends Lists {
   };
   componentDidMount() {
     const projid = this.props.match.params.id;
-    if (!this.props.allProjUsers[projid]) this.props.fetchProjUsers(projid);
-    else this.props.getProjUsers(projid);
+    !this.props.allProjUsers[projid]
+      ? this.props.fetchProjUsers(projid)
+      : this.props.getProjUsers(projid);
     if (!this.props.users.length) this.props.fetchAllUsers();
   }
 
   formSubmitHandler = () => {
-    const index = this.props.users.findIndex(
+    const user = this.props.users.find(
       (curr) => curr.email === this.state.form.email.value.trim()
     );
-    this.props.submitUser(this.props.match.params.id, this.props.users[index]);
+    this.props.submitUser(this.props.match.params.id, user);
     this.resetForm();
     this.setState({ newItem: false });
   };
@@ -87,7 +88,6 @@ class UserList extends Lists {
       ));
   }
   removeUserContinue = () => {
-
     const userIndex = this.props.users.findIndex(
       (curr) => curr.key === this.state.deleteItem.key
     );
@@ -180,8 +180,10 @@ const mapDispatchToProps = (dispatch) => ({
   getProjUsers: (id) => dispatch(userActionCreators.getProjUsersCreator(id)),
   submitUser: (id, obj) =>
     dispatch(userActionCreators.postUserCreator(id, obj)),
-  deleteUser: (projectId, userEmail,userKey) =>
-    dispatch(userActionCreators.deleteUserTicketsCreator(projectId,userEmail, userKey)),
+  deleteUser: (projectId, userEmail, userKey) =>
+    dispatch(
+      userActionCreators.deleteUserTicketsCreator(projectId, userEmail, userKey)
+    ),
 });
 
 export default connect(

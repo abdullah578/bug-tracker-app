@@ -8,12 +8,12 @@ import classes from "./ProjectDetails.module.css";
 class ProjectDetails extends Component {
   state = { name: "", desc: "" };
   componentDidMount() {
-    const projIndex = this.props.projects.findIndex(
+    const proj = this.props.projects.find(
       (curr) => curr.key === this.props.match.params.id
     );
-    if (projIndex === -1) return null;
-    const project = this.props.projects[projIndex];
-    this.setState({ name: project.name, description: project.description });
+    if (proj === null) return null;
+
+    this.setState({ name: proj.name, description: proj.description });
   }
   render() {
     const searchStyle = {
