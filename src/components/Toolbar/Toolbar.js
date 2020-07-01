@@ -10,7 +10,7 @@ const Toolbar = (props) => {
     <div className={classes.Toolbar}>
       <div className={styles.join(" ")}>
         <span className={classes.UserInfo}>
-          Logged in as <strong>Abdullah</strong>
+          Logged in as <strong>{props.name}</strong>
         </span>
 
         <div className={classes.UserActions} onClick={props.logout}>
@@ -21,6 +21,7 @@ const Toolbar = (props) => {
     </div>
   );
 };
+
 
 export default Toolbar;
 

@@ -7,6 +7,8 @@ import {
   createDateString,
   mapResponseToName,
 } from "../../../../Utilities/Utilities";
+import axios from '../../../../axiosInstance/AxiosInstance'
+import WithErrorHandler from "../../../../hoc/WithErrorHandle";
 import Lists from "../../Lists";
 import Modal from "../../../../components/UI/Modal/Modal";
 import Input from "../../../../components/UI/Input/Input";
@@ -93,6 +95,11 @@ class TicketForm extends Lists {
   };
   componentDidMount() {
     const { id: projectID, key: ticketKey } = this.props.match.params;
+    if (
+      ticketKey === "new" &&
+      (this.props.role === "developer" || this.props.role === "N/A")
+    )
+      this.props.history.goBack();
     !this.props.allProjUsers[projectID]
       ? this.props.fetchProjUsers(projectID)
       : this.props.getProjUsers(projectID);
@@ -236,6 +243,7 @@ class TicketForm extends Lists {
 const mapStateToProps = (state) => ({
   email: state.auth.email,
   name: state.auth.name,
+  role: state.auth.role,
   projUsers: state.user.projUsers,
   allProjUsers: state.user.allProjUsers,
   userTickets: state.ticket.userTickets,
@@ -251,4 +259,7 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(ticketActionCreators.submitProjTicketsCreator(id, ticket, key)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(TicketForm);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(WithErrorHandler(TicketForm,axios));

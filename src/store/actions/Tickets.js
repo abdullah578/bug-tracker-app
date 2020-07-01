@@ -1,31 +1,32 @@
 import * as actionTypes from "./actionTypes";
+import { parseTicketResponse as parseResponse } from "../Utils/Utils";
 import axios from "../../axiosInstance/AxiosInstance";
 
-const parseResponse = (resp) => {
-  return resp.data
-    ? Object.keys(resp.data).map((key) => {
-        const ticket = resp.data[key];
-        let history = [];
-        let comments = [];
-        if (ticket.history)
-          history = Object.keys(ticket.history).map(
-            (index) => ticket.history[index]
-          );
-        if (ticket.comments)
-          comments = Object.keys(ticket.comments).map(
-            (index) => ticket.comments[index]
-          );
-        return { ...resp.data[key], key, history, comments };
-      })
-    : [];
-};
 const fetchProjTicketsInit = () => ({
   type: actionTypes.FETCH_PROJ_TICKETS_INIT,
 });
-const fetchProjTicketsSuccess = (tickets, projID) => ({
+
+const fetchTicketCreator = (url, id) => (dispatch, getState) => {
+  axios.get(url).then((resp) => {
+    let ticketsArr = parseResponse(resp);
+    const state = getState();
+    const projObj = { ...state.ticket.allProjTickets };
+
+    ticketsArr = ticketsArr.filter(
+      (curr) => !state.ticket.userTickets.find((tick) => tick.key === curr.key)
+    );
+    ticketsArr.forEach((ticket) => {
+      if (!projObj[ticket.projid]) projObj[ticket.projid] = [];
+      projObj[ticket.projid] = projObj[ticket.projid].concat(ticket);
+    });
+    dispatch(fetchProjTicketsSuccess(ticketsArr, id, projObj));
+  });
+};
+const fetchProjTicketsSuccess = (tickets, projID, projObj) => ({
   type: actionTypes.FETCH_PROJ_TICKETS_SUCCESS,
   tickets,
   id: projID,
+  proj: projObj,
 });
 const fetchProjTicketsFailure = (err) => ({
   type: actionTypes.FETCH_PROJ_TICKETS_FAILURE,
@@ -55,15 +56,30 @@ const updateTicket = (tick, projID, ticketKey) => ({
   ticket: { ...tick, key: ticketKey },
 });
 
-export const fetchProjTicketsCreator = (id) => (dispatch) => {
+export const fetchProjTicketsCreator = (id, email, role) => (dispatch) => {
   dispatch(fetchProjTicketsInit());
-  axios
-    .get(`/tickets.json?orderBy="projid"&equalTo="${id}"`)
-    .then((resp) => {
-      const ticketsArr = parseResponse(resp);
-      dispatch(fetchProjTicketsSuccess(ticketsArr, id));
-    })
-    .catch((err) => dispatch(fetchProjTicketsFailure(err)));
+  if (role === "Admin") {
+    axios
+      .get(`/tickets.json?orderBy="projid"&equalTo="${id}"`)
+      .then((resp) => {
+        const ticketsArr = parseResponse(resp);
+        dispatch(fetchProjTicketsSuccess(ticketsArr, id));
+      })
+      .catch((err) => dispatch(fetchProjTicketsFailure(err)));
+  } else {
+    dispatch(
+      fetchTicketCreator(
+        `/tickets.json?orderBy="assignedEmail"&equalTo="${email}"`,
+        id
+      )
+    );
+    dispatch(
+      fetchTicketCreator(
+        `/tickets.json?orderBy="submitterEmail"&equalTo="${email}"`,
+        id
+      )
+    );
+  }
 };
 
 export const getTicketsCreator = (id) => {
@@ -72,15 +88,28 @@ export const getTicketsCreator = (id) => {
     id,
   };
 };
-export const fetchUserTicketsCreator = () => (dispatch) => {
+export const fetchUserTicketsCreator = (email, role) => (dispatch) => {
   dispatch(fetchUserTicketsInit());
-  axios
-    .get(`/tickets.json`)
-    .then((resp) => {
-      const ticketsArr = parseResponse(resp);
-      dispatch(fetchUserTicketsSuccess(ticketsArr));
-    })
-    .catch((err) => dispatch(fetchUserTicketsFailure(err)));
+  if (role === "Admin")
+    axios
+      .get(`/tickets.json`)
+      .then((resp) => {
+        const ticketsArr = parseResponse(resp);
+        dispatch(fetchUserTicketsSuccess(ticketsArr));
+      })
+      .catch((err) => dispatch(fetchUserTicketsFailure(err)));
+  else {
+    dispatch(
+      fetchTicketCreator(
+        `/tickets.json?orderBy="assignedEmail"&equalTo="${email}"`
+      )
+    );
+    dispatch(
+      fetchTicketCreator(
+        `/tickets.json?orderBy="submitterEmail"&equalTo="${email}"`
+      )
+    );
+  }
 };
 export const submitProjTicketsCreator = (id, tick, key) => (dispatch) => {
   if (key === "new")
@@ -102,10 +131,12 @@ export const submitProjTicketsCreator = (id, tick, key) => (dispatch) => {
 export const deleteTicketCreator = (projectID, ticketKey) => (dispatch) => {
   axios
     .delete(`/tickets/${ticketKey}.json`)
-    .then((resp) => dispatch({
-      type: actionTypes.DELETE_TICKET,
-      key:ticketKey,
-      id: projectID,
-    }))
+    .then((resp) =>
+      dispatch({
+        type: actionTypes.DELETE_TICKET,
+        key: ticketKey,
+        id: projectID,
+      })
+    )
     .catch((err) => console.log(err));
 };

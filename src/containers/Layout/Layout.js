@@ -18,19 +18,23 @@ class Layout extends Component {
     );
     return (
       <React.Fragment>
-        <Toolbar logout={this.props.logout} open={this.state.drawerOpen} />
+        <Toolbar logout={this.props.logout} open={this.state.drawerOpen} name={this.props.name}/>
         <SideNavigation
           open={this.state.drawerOpen}
           clickIcon={this.handleToggleSideDrawer}
+          role={this.props.role}
         />
         <main className={styles.join(" ")}>{this.props.children}</main>
       </React.Fragment>
     );
   }
 }
-
+const mapStateToProps = (state) => ({
+  name: state.auth.name,
+  role: state.auth.role,
+});
 const mapDispatchToProps = (dispatch) => ({
   logout: () => dispatch(actionCreators.authLogoutCreator()),
 });
 
-export default connect(null, mapDispatchToProps)(Layout);
+export default connect(mapStateToProps, mapDispatchToProps)(Layout);

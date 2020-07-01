@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import * as ticketActionCreators from "../../store/actions/Tickets";
 import { createDateString } from "../../Utilities/Utilities";
+import axios from "../../axiosInstance/AxiosInstance";
+import WithErrorHandle from "../../hoc/WithErrorHandle";
 import Comments from "../../components/Comments/Comments";
 import Modal from "../../components/UI/Modal/Modal";
 import Table from "../../components/UI/Table/Table";
@@ -75,7 +77,9 @@ class TicketDetails extends Component {
         <p>Ticket Details</p>
         <button onClick={this.editHandler}>Edit Ticket</button>
         <span> / </span>
-        <button onClick={this.deleteHandler}>Delete Ticket</button>
+        {this.props.role === "Admin" || this.props.role === "Submitter" ? (
+          <button onClick={this.deleteHandler}>Delete Ticket</button>
+        ) : null}
       </div>
     );
   }
@@ -217,6 +221,7 @@ class TicketDetails extends Component {
 }
 const mapStateToProps = (state) => ({
   name: state.auth.name,
+  role: state.auth.role,
   userTickets: state.ticket.userTickets,
   allProjTickets: state.ticket.allProjTickets,
 });
@@ -227,4 +232,7 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(ticketActionCreators.deleteTicketCreator(id, key)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(TicketDetails);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(WithErrorHandle(TicketDetails, axios));

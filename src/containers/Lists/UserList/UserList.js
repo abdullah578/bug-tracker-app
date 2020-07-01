@@ -122,12 +122,14 @@ class UserList extends Lists {
           submitForm={this.formSubmitHandler}
           disabled={!this.checkFormValidity(this.state.form)}
         />
-        <DeleteUser
-          type="User"
-          removeItemCancel={this.removeItemCancel}
-          removeItemContinue={this.removeUserContinue}
-          show={this.state.deleteItem.continue}
-        />
+        {this.props.role === "Admin" ? (
+          <DeleteUser
+            type="User"
+            removeItemCancel={this.removeItemCancel}
+            removeItemContinue={this.removeUserContinue}
+            show={this.state.deleteItem.continue}
+          />
+        ) : null}
         {!this.props.remButton ? (
           <Button clicked={this.addItemHandler}>Add New User</Button>
         ) : null}
@@ -168,6 +170,7 @@ class UserList extends Lists {
 const mapStateToProps = (state) => ({
   users: state.user.users,
   projUsers: state.user.projUsers,
+  role: state.auth.role,
   allProjUsers: state.user.allProjUsers,
   dispSpinner: state.user.dispSpinner,
   error: state.user.error,

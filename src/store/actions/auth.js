@@ -82,8 +82,8 @@ const getUser = (token, userid, expiry) => (dispatch) =>
       localStorage.setItem("name", resp.data.name);
       localStorage.setItem("email", resp.data.email);
       localStorage.setItem("role", resp.data.role);
-      localStorage.setItem("token", resp.data.idToken);
-      localStorage.setItem("userid", resp.data.localId);
+      localStorage.setItem("token", token);
+      localStorage.setItem("userid", userid);
       dispatch(
         authSuccessCreator(
           token,

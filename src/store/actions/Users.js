@@ -68,11 +68,14 @@ export const getProjUsersCreator = (id) => ({
   type: actionTypes.GET_PROJ_USERS,
   id,
 });
-export const updateUsersCreator = (key, obj) => (dispatch) => {
+
+export const updateUserRoleCreator = (obj, key) => (dispatch) => {
   axios
     .put(`/allUsers/${key}.json`, obj)
     .then((resp) => dispatch(updateUsers(obj, key)))
     .catch((err) => null);
+};
+export const updateUsersCreator = (key, obj) => (dispatch) => {
   axios
     .get(`/users.json`)
     .then((resp) => {
@@ -80,18 +83,20 @@ export const updateUsersCreator = (key, obj) => (dispatch) => {
       Object.keys(resp.data).forEach((projid) => {
         if (key in resp.data[projid]) projList.push(projid);
       });
-      projList.forEach((projid) => {
-        obj.role !== "N/A"
-          ? axios
-              .put(`/users/${projid}/${key}.json`, obj)
-              .then((resp) => dispatch(updateUserRoles(projid, obj, key)))
-              .catch((err) => console.log(err))
-          : axios
-              .delete(`/users/${projid}/${key}.json`)
-              .then((resp) =>
-                dispatch(deleteUserTicketsCreator(projid, obj.email, key))
-              )
-              .catch((err) => console.log(err));
+      Promise.all(
+        projList.map((projid) =>
+          obj.role !== "N/A"
+            ? axios
+                .put(`/users/${projid}/${key}.json`, obj)
+                .then((resp) => dispatch(updateUserRoles(projid, obj, key)))
+            : axios
+                .delete(`/users/${projid}/${key}.json`)
+                .then((resp) =>
+                  dispatch(deleteUserTicketsCreator(projid, obj.email, key))
+                )
+        )
+      ).then((resp) => {
+        dispatch(updateUserRoleCreator(obj, key));
       });
     })
     .catch((err) => console.log(err));
@@ -124,11 +129,13 @@ export const deleteUserTicketsCreator = (projectID, userEmail, userKey) => (
   axios
     .get(`/tickets.json?orderBy="projid"&equalTo="${projectID}"`)
     .then((resp) => {
-      const filterKeys = Object.keys(resp.data).filter(
-        (key) =>
-          resp.data[key].assignedEmail === userEmail ||
-          resp.data[key].submitterEmail === userEmail
-      );
+      const filterKeys = resp.data
+        ? Object.keys(resp.data).filter(
+            (key) =>
+              resp.data[key].assignedEmail === userEmail ||
+              resp.data[key].submitterEmail === userEmail
+          )
+        : [];
       Promise.all(
         filterKeys.map((key) =>
           axios.delete(`/tickets/${key}.json`).then((resp) =>

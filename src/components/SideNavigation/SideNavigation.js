@@ -12,7 +12,7 @@ const SideNavigation = (props) => {
         ></ion-icon>
       </div>
       <nav className={classes.Items}>
-        <NavigationItems />
+        <NavigationItems role={props.role} />
       </nav>
     </div>
   );

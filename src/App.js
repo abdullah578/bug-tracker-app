@@ -24,7 +24,10 @@ class App extends Component {
       routes = (
         <Layout>
           <Switch>
-          <Route path="/tickets/:id/:name/:key/details" component={TicketDetails} />
+            <Route
+              path="/tickets/:id/:name/:key/details"
+              component={TicketDetails}
+            />
             <Route path="/tickets/:id/:name/:key" component={TicketForm} />
             <Route path="/tickets/:id/:name" component={TicketList} />
             <Route
@@ -33,22 +36,25 @@ class App extends Component {
                 return <TicketList {...props} type="User" />;
               }}
             />
-            <Route path="/users/:id/:name" component={UserList} />
-            <Route path="/users" component={UserRoles} />
+            {this.props.role === "Admin" ? (
+              <Route path="/users/:id/:name" component={UserList} />
+            ) : null}
+            {this.props.role === "Admin" ? (
+              <Route path="/users" component={UserRoles} />
+            ) : null}
             <Route path="/projects/:id/:name" component={ProjectDetails} />
             <Route path="/projects" component={ProjectList} />
             <Route path="/" component={DashBoard} />
           </Switch>
         </Layout>
       );
-    } else {
-      routes = <Route path="/" component={Login} />;
-    }
+    } else routes = <Route path="/" component={Login} />;
     return <div className="App">{routes}</div>;
   }
 }
 const mapStateToprops = (state) => ({
   token: state.auth.token,
+  role: state.auth.role,
 });
 const mapDispatchToprops = (dispatch) => ({
   autoSignIn: () => dispatch(actionCreators.authCheckState()),

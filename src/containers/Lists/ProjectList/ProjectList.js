@@ -44,7 +44,8 @@ class ProjectList extends Lists {
     search: "",
   };
   componentDidMount() {
-    if (!this.props.projects.length) this.props.fetchProjects();
+    if (!this.props.projects.length)
+      this.props.fetchProjects(this.props.role, this.props.userid);
   }
   filterProjects(arr) {
     const filteredArr = arr.filter((curr) =>
@@ -84,12 +85,17 @@ class ProjectList extends Lists {
           <td>{curr.description}</td>
           <td>
             <ul>
-              <li>
-                <NavLink to={`/users/${curr.key}/${curr.name}`} style={styles}>
-                  {" "}
-                  Manage Users
-                </NavLink>
-              </li>
+              {this.props.role === "Admin" ? (
+                <li>
+                  <NavLink
+                    to={`/users/${curr.key}/${curr.name}`}
+                    style={styles}
+                  >
+                    {" "}
+                    Manage Users
+                  </NavLink>
+                </li>
+              ) : null}
               <li>
                 <NavLink
                   to={`/tickets/${curr.key}/${curr.name}`}
@@ -119,15 +125,19 @@ class ProjectList extends Lists {
       <Spinner />
     ) : (
       <div>
-        <NewProject
-          open={newItem}
-          form={form}
-          inputHandler={this.inputHandler}
-          cancelForm={this.formCancelHandler}
-          submitForm={this.formSubmitHandler}
-          disabled={!this.checkFormValidity(this.state.form)}
-        />
-        <Button clicked={this.addItemHandler}>Add New Project</Button>
+        {this.props.role === "Admin" ? (
+          <NewProject
+            open={newItem}
+            form={form}
+            inputHandler={this.inputHandler}
+            cancelForm={this.formCancelHandler}
+            submitForm={this.formSubmitHandler}
+            disabled={!this.checkFormValidity(this.state.form)}
+          />
+        ) : null}
+        {this.props.role === "Admin" ? (
+          <Button clicked={this.addItemHandler}>Add New Project</Button>
+        ) : null}
         <Modal
           header={<p> My projects</p>}
           footer={
@@ -162,10 +172,13 @@ const mapStateToProps = (state) => ({
   projects: state.project.projects,
   dispSpinner: state.project.dispSpinner,
   err: state.project.error,
+  role: state.auth.role,
+  userid: state.auth.id,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  fetchProjects: () => dispatch(actionCreators.fetchProjectsCreator()),
+  fetchProjects: (role, userid) =>
+    dispatch(actionCreators.fetchProjectsCreator(role, userid)),
   submitProject: (obj) => dispatch(actionCreators.postProjectCreator(obj)),
 });
 

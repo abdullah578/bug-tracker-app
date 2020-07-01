@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import axios from "../../axiosInstance/AxiosInstance";
+import WithErrorHandle from "../../hoc/WithErrorHandle";
 import ProjectInfo from "../../components/ProjectInfo/ProjectInfo";
 import UserList from "../../containers/Lists/UserList/UserList";
 import TicketList from "../../containers/Lists/TicketList/TicketList";
@@ -46,6 +48,10 @@ class ProjectDetails extends Component {
 }
 const mapStateToProps = (state) => ({
   projects: state.project.projects,
+  role: state.auth.role,
 });
 
-export default connect(mapStateToProps, null)(ProjectDetails);
+export default connect(
+  mapStateToProps,
+  null
+)(WithErrorHandle(ProjectDetails, axios));

@@ -1,5 +1,5 @@
 import * as actionTypes from "./actionTypes";
-import { parseResponse } from "../Utils/Utils";
+import { parseResponse, parseProjectResponse } from "../Utils/Utils";
 import axios from "../../axiosInstance/AxiosInstance";
 
 const fetchProjectsInit = () => ({
@@ -16,15 +16,25 @@ const postProject = (projObj, key) => ({
   type: actionTypes.UPDATE_PROJECT,
   proj: { ...projObj, key },
 });
-export const fetchProjectsCreator = () => (dispatch) => {
+export const fetchProjectsCreator = (role, userKey) => (dispatch) => {
   dispatch(fetchProjectsInit());
-  axios
-    .get("/projects.json")
-    .then((resp) => {
-      const projArray = parseResponse(resp);
-      dispatch(fetchProjectsSuccess(projArray));
-    })
-    .catch((err) => dispatch(fetchProjectsFailure()));
+  role === "Admin"
+    ? axios
+        .get("/projects.json")
+        .then((resp) => {
+          const projArray = parseResponse(resp);
+          dispatch(fetchProjectsSuccess(projArray));
+        })
+        .catch((err) => dispatch(fetchProjectsFailure()))
+    : axios
+        .get("/projects.json")
+        .then((projects) => {
+          axios.get("/users.json").then((users) => {
+            const userProjects = parseProjectResponse(projects, users, userKey);
+            dispatch(fetchProjectsSuccess(userProjects));
+          });
+        })
+        .catch((err) => fetchProjectsFailure());
 };
 export const postProjectCreator = (obj) => (dispatch) =>
   axios

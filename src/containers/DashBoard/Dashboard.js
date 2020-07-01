@@ -10,7 +10,8 @@ import classes from "./DashBoard.module.css";
 
 class DashBoard extends Component {
   componentDidMount() {
-    if (!this.props.tickets.length) this.props.fetchTickets();
+    if (!this.props.tickets.length)
+      this.props.fetchTickets(this.props.email, this.props.role);
   }
 
   createStat() {
@@ -94,8 +95,10 @@ class DashBoard extends Component {
   }
   render() {
     const chart = this.createStat();
-    if (this.props.error || this.props.tickets.length === 0)
-      return <p style={{fontWeight:300}}>No Tickets Found</p>;
+    if (this.props.role === "N/A")
+      return <p style={{ fontWeight: 300 }}>No Role Assigned</p>;
+    else if (this.props.error || this.props.tickets.length === 0)
+      return <p style={{ fontWeight: 300 }}>No Tickets Found</p>;
     else
       return this.props.dispSpinner ? (
         <Spinner />
@@ -115,11 +118,14 @@ class DashBoard extends Component {
 }
 const mapStateToProps = (state) => ({
   tickets: state.ticket.userTickets,
+  email: state.auth.email,
   dispSpinner: state.ticket.dispSpinner,
+  role: state.auth.role,
   error: state.ticket.error,
 });
 const mapDispatchToProps = (dispatch) => ({
-  fetchTickets: () => dispatch(actionCreators.fetchUserTicketsCreator()),
+  fetchTickets: (email, role) =>
+    dispatch(actionCreators.fetchUserTicketsCreator(email, role)),
 });
 
 export default connect(

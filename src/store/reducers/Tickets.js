@@ -29,15 +29,29 @@ const fetchProjTicketsInit = (state, action) => ({
   error: false,
   tickets: [],
 });
-const fetchProjTicketsSuccess = (state, action) => ({
-  ...state,
-  dispSpinner: false,
-  allProjTickets: {
-    ...state.allProjTickets,
-    [action.id]: action.tickets,
-  },
-  tickets: action.tickets,
-});
+const fetchProjTicketsSuccess = (state, action) => {
+  if (!action.proj)
+    return {
+      ...state,
+      dispSpinner: false,
+      allProjTickets: {
+        ...state.allProjTickets,
+        [action.id]: action.tickets,
+      },
+      tickets: action.tickets,
+    };
+  else {
+    return {
+      ...state,
+      dispSpinner: false,
+      allProjTickets: { ...action.proj },
+      tickets: action.proj[action.id]
+        ? [...action.proj[action.id], ...state.tickets]
+        : [...state.tickets],
+      userTickets: [...state.userTickets, ...action.tickets],
+    };
+  }
+};
 const fetchProjTicketsFailure = (state, action) => ({
   ...state,
   dispSpinner: false,

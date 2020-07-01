@@ -24,12 +24,16 @@ class TicketList extends Lists {
   };
 
   componentDidMount() {
-    if (this.props.type === "User" && !this.props.userTickets.length)
-      this.props.fetchUserTickets();
-    else {
+    if (this.props.type === "User" && !this.props.userTickets.length) {
+      this.props.fetchUserTickets(this.props.email, this.props.role);
+    } else if(this.props.type!=="User") {
       const projectID = this.props.match.params.id;
       !this.props.allProjTickets[projectID]
-        ? this.props.fetchProjTickets(projectID)
+        ? this.props.fetchProjTickets(
+            projectID,
+            this.props.email,
+            this.props.role
+          )
         : this.props.getTickets(projectID);
     }
   }
@@ -95,9 +99,14 @@ class TicketList extends Lists {
   render() {
     const tickets =
       this.props.type === "User" ? this.props.userTickets : this.props.tickets;
+    const addButton =
+      this.props.type !== "User" &&
+      this.props.role !== "Developer" &&
+      this.props.role !== "N/A" &&
+      !this.props.remButton;
     return (
       <div>
-        {!this.props.remButton ? (
+        {addButton ? (
           <Button clicked={this.addTicketHandler}>Add New Ticket</Button>
         ) : null}
         <Modal
@@ -143,6 +152,7 @@ class TicketList extends Lists {
 const mapStateToProps = (state) => ({
   email: state.auth.email,
   name: state.auth.name,
+  role: state.auth.role,
   projUsers: state.user.projUsers,
   dispSpinner: state.ticket.dispSpinner,
   tickets: state.ticket.tickets,
@@ -152,10 +162,10 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  fetchProjTickets: (id) =>
-    dispatch(ticketActionCreators.fetchProjTicketsCreator(id)),
-  fetchUserTickets: (id) =>
-    dispatch(ticketActionCreators.fetchUserTicketsCreator()),
+  fetchProjTickets: (id, email, role) =>
+    dispatch(ticketActionCreators.fetchProjTicketsCreator(id, email, role)),
+  fetchUserTickets: (email, role) =>
+    dispatch(ticketActionCreators.fetchUserTicketsCreator(email, role)),
   getTickets: (id) => dispatch(ticketActionCreators.getTicketsCreator(id)),
   deleteTicket: (id, key) =>
     dispatch(ticketActionCreators.deleteTicketCreator(id, key)),
