@@ -102,6 +102,10 @@ export const submitProjTicketsCreator = (id, tick, key) => (dispatch) => {
 export const deleteTicketCreator = (projectID, ticketKey) => (dispatch) => {
   axios
     .delete(`/tickets/${ticketKey}.json`)
-    .then((resp) => dispatch(fetchProjTicketsCreator(projectID)))
+    .then((resp) => dispatch({
+      type: actionTypes.DELETE_TICKET,
+      key:ticketKey,
+      id: projectID,
+    }))
     .catch((err) => console.log(err));
 };

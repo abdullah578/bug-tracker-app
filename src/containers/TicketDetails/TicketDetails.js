@@ -41,6 +41,11 @@ class TicketDetails extends Component {
     const { key, id, name } = this.props.match.params;
     this.props.history.push(`/tickets/${id}/${name}/${key}`);
   };
+  deleteHandler = () => {
+    const { key, id } = this.props.match.params;
+    this.props.deleteTicket(id, key);
+    this.props.history.goBack();
+  };
   inputChangeHandler = (e) => {
     this.setState({ commentsValue: e.target.value });
   };
@@ -56,6 +61,7 @@ class TicketDetails extends Component {
     comments.unshift(comment);
     const respTicket = { ...ticket, comments };
     this.props.submitTicket(projid, respTicket, key);
+    this.setState({ commentsValue: "" });
   };
   getTicket() {
     const { key, id: projid } = this.props.match.params;
@@ -69,7 +75,7 @@ class TicketDetails extends Component {
         <p>Ticket Details</p>
         <button onClick={this.editHandler}>Edit Ticket</button>
         <span> / </span>
-        <button>Delete Ticket</button>
+        <button onClick={this.deleteHandler}>Delete Ticket</button>
       </div>
     );
   }
@@ -199,6 +205,8 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   submitTicket: (id, ticket, key) =>
     dispatch(ticketActionCreators.submitProjTicketsCreator(id, ticket, key)),
+  deleteTicket: (id, key) =>
+    dispatch(ticketActionCreators.deleteTicketCreator(id, key)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(TicketDetails);

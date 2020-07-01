@@ -77,11 +77,6 @@ export const postUserCreator = (id, obj) => (dispatch) => {
     .catch((err) => console.log(err));
 };
 
-
-
-
-
-
 const deleteUserCreator = (projectID, userKey) => (dispatch) => {
   axios
     .delete(`users/${projectID}/${userKey}.json`)
@@ -106,19 +101,21 @@ export const deleteUserTicketsCreator = (projectID, userEmail, userKey) => (
           resp.data[key].assignedEmail === userEmail ||
           resp.data[key].submitterEmail === userEmail
       );
-      filterKeys.map((key) =>
-        axios
-          .delete(`/tickets/${key}.json`)
-          .then((resp) =>
-            dispatch({
-              type: actionTypes.DELETE_TICKET,
-              key,
-              id: projectID,
-            })
-          )
-          .catch((err) => console.log(err))
-      );
-      dispatch(deleteUserCreator(projectID, userKey));
+      Promise.all(
+        filterKeys.map((key) =>
+          axios
+            .delete(`/tickets/${key}.json`)
+            .then((resp) =>
+              dispatch({
+                type: actionTypes.DELETE_TICKET,
+                key,
+                id: projectID,
+              })
+            )
+        )
+      )
+        .then((resp) => dispatch(deleteUserCreator(projectID, userKey)))
+        .catch((err) => console.log(err));
     })
     .catch((err) => console.log(err));
 };

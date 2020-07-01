@@ -23,6 +23,7 @@ const WithErrorHandle = (Wrapped, axios) => {
           return resp;
         },
         (err) => {
+          console.log("hjelldmcdcndcdcndckdckdmckd");
           this.setState({ error: err.message });
           return Promise.reject(err);
         }
