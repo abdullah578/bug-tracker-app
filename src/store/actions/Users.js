@@ -29,6 +29,12 @@ const updateUsers = (user, key) => ({
   obj: user,
   key,
 });
+const updateUserRoles = (projid, user, key) => ({
+  type: actionTypes.UPDATE_USER_ROLES,
+  id: projid,
+  user,
+  key,
+});
 const postProjUser = (user, projID) => ({
   type: actionTypes.UPDATE_PROJ_USERS,
   obj: user,
@@ -67,6 +73,28 @@ export const updateUsersCreator = (key, obj) => (dispatch) => {
     .put(`/allUsers/${key}.json`, obj)
     .then((resp) => dispatch(updateUsers(obj, key)))
     .catch((err) => null);
+  axios
+    .get(`/users.json`)
+    .then((resp) => {
+      const projList = [];
+      Object.keys(resp.data).forEach((projid) => {
+        if (key in resp.data[projid]) projList.push(projid);
+      });
+      projList.forEach((projid) => {
+        obj.role !== "N/A"
+          ? axios
+              .put(`/users/${projid}/${key}.json`, obj)
+              .then((resp) => dispatch(updateUserRoles(projid, obj, key)))
+              .catch((err) => console.log(err))
+          : axios
+              .delete(`/users/${projid}/${key}.json`)
+              .then((resp) =>
+                dispatch(deleteUserTicketsCreator(projid, obj.email, key))
+              )
+              .catch((err) => console.log(err));
+      });
+    })
+    .catch((err) => console.log(err));
 };
 export const postUserCreator = (id, obj) => (dispatch) => {
   axios
@@ -103,15 +131,13 @@ export const deleteUserTicketsCreator = (projectID, userEmail, userKey) => (
       );
       Promise.all(
         filterKeys.map((key) =>
-          axios
-            .delete(`/tickets/${key}.json`)
-            .then((resp) =>
-              dispatch({
-                type: actionTypes.DELETE_TICKET,
-                key,
-                id: projectID,
-              })
-            )
+          axios.delete(`/tickets/${key}.json`).then((resp) =>
+            dispatch({
+              type: actionTypes.DELETE_TICKET,
+              key,
+              id: projectID,
+            })
+          )
         )
       )
         .then((resp) => dispatch(deleteUserCreator(projectID, userKey)))

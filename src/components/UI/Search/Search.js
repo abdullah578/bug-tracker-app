@@ -2,7 +2,6 @@ import React from "react";
 import classes from "./Search.module.css";
 
 const Search = (props) => {
-  console.log(props);
   return (
     <div className={classes.Input}>
       <div style={props.style}>

@@ -55,6 +55,22 @@ const updateUsers = (state, action) => {
     users: allUsersCopy.filter((curr) => curr.role !== "N/A"),
   };
 };
+const updateUserRoles = (state, action) => {
+  console.log("updateUserRoles -> state", state);
+  if (!state.allProjUsers[action.id]) return state;
+  const userIndex = state.allProjUsers[action.id].findIndex(
+    (curr) => curr.key === action.key
+  );
+  const userCopy = [...state.allProjUsers[action.id]];
+  userCopy[userIndex] = action.user;
+  return {
+    ...state,
+    allProjUsers: {
+      ...state.allProjUsers,
+      [action.id]: userCopy,
+    },
+  };
+};
 const getProjUsers = (state, action) => ({
   ...state,
   projUsers: state.allProjUsers[action.id],
@@ -98,6 +114,9 @@ const userReducer = (state = initialState, action) => {
       return updateUsers(state, action);
     case actionTypes.UPDATE_PROJ_USERS: {
       return updateProjUsers(state, action);
+    }
+    case actionTypes.UPDATE_USER_ROLES: {
+      return updateUserRoles(state, action);
     }
     case actionTypes.DELETE_PROJ_USERS: {
       return deleteProjUsers(state, action);

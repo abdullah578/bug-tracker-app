@@ -95,7 +95,7 @@ class DashBoard extends Component {
   render() {
     const chart = this.createStat();
     if (this.props.error || this.props.tickets.length === 0)
-      return <p>No Tickets Found</p>;
+      return <p style={{fontWeight:300}}>No Tickets Found</p>;
     else
       return this.props.dispSpinner ? (
         <Spinner />

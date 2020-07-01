@@ -94,14 +94,24 @@ class TicketDetails extends Component {
     const numPerPage = this.state.numPerPage.history;
     const startIndex = (currentPage - 1) * numPerPage;
     const endIndex = startIndex + numPerPage;
-    return hist.slice(startIndex, endIndex).map((curr, index) => (
-      <tr key={index}>
-        <td>{curr.property}</td>
-        <td>{curr.oldVal}</td>
-        <td>{curr.newVal}</td>
-        <td>{curr.date}</td>
+    return hist.length ? (
+      hist.slice(startIndex, endIndex).map((curr, index) => (
+        <tr key={index}>
+          <td>{curr.property}</td>
+          <td>{curr.oldVal}</td>
+          <td>{curr.newVal}</td>
+          <td>{curr.date}</td>
+        </tr>
+      ))
+    ) : (
+      <tr key>
+        <td>{"\u00A0"}</td>
+        <td>{"\u00A0"}</td>
+        <td>{"No History Found"}</td>
+        <td>{"\u00A0"}</td>
+        <td>{"\u00A0"}</td>
       </tr>
-    ));
+    );
   }
   createCommentsTableHeader() {
     return (
@@ -112,19 +122,26 @@ class TicketDetails extends Component {
       </tr>
     );
   }
-  createCommentsTableBody() {
-    const ticket = this.getTicket();
+  createCommentsTableBody(comments) {
     const currentPage = this.state.currentPage.comments;
     const numPerPage = this.state.numPerPage.comments;
     const startIndex = (currentPage - 1) * numPerPage;
     const endIndex = startIndex + numPerPage;
-    return ticket.comments.slice(startIndex, endIndex).map((curr, index) => (
-      <tr key={index}>
-        <td>{curr.name}</td>
-        <td>{curr.value}</td>
-        <td>{curr.date}</td>
+    return comments.length ? (
+      comments.slice(startIndex, endIndex).map((curr, index) => (
+        <tr key={index}>
+          <td>{curr.name}</td>
+          <td>{curr.value}</td>
+          <td>{curr.date}</td>
+        </tr>
+      ))
+    ) : (
+      <tr>
+        <td>{"\u00A0"}</td>
+        <td>{"No comment Found"}</td>
+        <td>{"\u00A0"}</td>
       </tr>
-    ));
+    );
   }
   prevPage = (type) => {
     const currCopy = { ...this.state.currentPage };
@@ -138,6 +155,7 @@ class TicketDetails extends Component {
   };
   render() {
     const { details, history } = this.getTicketInfo();
+    const ticket = this.getTicket();
     return (
       <div className={classes.Content}>
         <div className={classes.Details}>
@@ -181,7 +199,7 @@ class TicketDetails extends Component {
               <Pagination
                 currPage={this.state.currentPage.comments}
                 numPerPage={this.state.numPerPage.comments}
-                items={this.getTicket().comments.length}
+                items={ticket.comments.length}
                 prev={() => this.prevPage("comments")}
                 next={() => this.nextPage("comments")}
               />
@@ -189,7 +207,7 @@ class TicketDetails extends Component {
           >
             {" "}
             <Table header={this.createCommentsTableHeader()}>
-              {this.createCommentsTableBody()}
+              {this.createCommentsTableBody(ticket.comments)}
             </Table>
           </Modal>
         </Comments>
