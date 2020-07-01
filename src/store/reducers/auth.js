@@ -24,22 +24,12 @@ const authFailure = (state, action) => ({
   id: null,
   error: action.error,
 });
-const authLogout = (state, action) => ({
-  ...state,
-  token: null,
-  id: null,
-  email: null,
-  name: null,
-});
-
 const authReducer = (state = initialState, action) => {
   switch (action.type) {
     case actionTypes.AUTH_SUCCESS:
       return authSuccess(state, action);
     case actionTypes.AUTH_FAILURE:
       return authFailure(state, action);
-    case actionTypes.AUTH_LOGOUT:
-      return authLogout(state, action);
     default:
       return state;
   }
