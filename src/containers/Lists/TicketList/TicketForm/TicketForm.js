@@ -107,7 +107,7 @@ class TicketForm extends Lists {
     )
       this.props.history.goBack();
     if (!this.props.allProjUsers[projectID])
-      this.props.fetchProjUsers(projectID);
+      this.props.fetchProjUsers(projectID, this.props.token);
 
     if (ticketKey === "new") return null;
     this.populateForm();
@@ -138,7 +138,8 @@ class TicketForm extends Lists {
     this.props.submitTicket(
       this.props.match.params.id,
       { ...ticketObj, history },
-      this.props.match.params.key
+      this.props.match.params.key,
+      this.props.token
     );
     this.props.history.goBack();
   };
@@ -165,8 +166,12 @@ class TicketForm extends Lists {
       assigned: users[devIndex].name,
       projName: this.props.match.params.name,
       assignedEmail: assigned.value.trim().toLowerCase(),
-      submitter: this.props.name,
-      submitterEmail: this.props.email.trim().toLowerCase(),
+      submitter: this.state.ticket
+        ? this.state.ticket.submitter
+        : this.props.name,
+      submitterEmail: this.state.ticket
+        ? this.state.ticket.submitterEmail
+        : this.props.email.trim().toLowerCase(),
       status: ticketStatus.value,
       created: this.state.ticket
         ? this.state.ticket.created
@@ -204,47 +209,68 @@ class TicketForm extends Lists {
           <form onSubmit={(e) => e.preventDefault()}>
             <div className={classes.InputContainer}>
               <div className={classes.InputChilds}>
-                {Object.keys(this.state.form)
-                  .slice(0, 3)
-                  .map((curr) => (
-                    <Input
-                      {...this.state.form[curr]}
-                      key={curr}
-                      inputStyle={{ padding: "5px", borderRadius: "0px" }}
-                      labelStyle={{ color: "#555", fontSize: "80%" }}
-                      containerStyle={{ width: "80%", margin: "auto" }}
-                      inputHandler={(e) =>
-                        this.inputHandler(
-                          e,
-                          curr,
-                          this.props.allProjUsers[this.props.match.params.id] ||
-                            []
-                        )
-                      }
-                    />
-                  ))}
+                {this.props.role !== "Developer" ? (
+                  Object.keys(this.state.form)
+                    .slice(0, 3)
+                    .map((curr) => (
+                      <Input
+                        {...this.state.form[curr]}
+                        key={curr}
+                        inputStyle={{ padding: "5px", borderRadius: "0px" }}
+                        labelStyle={{ color: "#555", fontSize: "80%" }}
+                        containerStyle={{ width: "80%", margin: "auto" }}
+                        inputHandler={(e) =>
+                          this.inputHandler(
+                            e,
+                            curr,
+                            this.props.allProjUsers[
+                              this.props.match.params.id
+                            ] || []
+                          )
+                        }
+                      />
+                    ))
+                ) : (
+                  <Input
+                    {...this.state.form["ticketStatus"]}
+                    inputStyle={{ padding: "5px", borderRadius: "0px" }}
+                    labelStyle={{ color: "#555", fontSize: "80%" }}
+                    containerStyle={{ width: "80%", margin: "auto" }}
+                    inputHandler={(e) =>
+                      this.inputHandler(
+                        e,
+                        "ticketStatus",
+                        this.props.allProjUsers[this.props.match.params.id] ||
+                          []
+                      )
+                    }
+                  />
+                )}
               </div>
-              <div className={classes.InputChilds}>
-                {Object.keys(this.state.form)
-                  .slice(3)
-                  .map((curr) => (
-                    <Input
-                      {...this.state.form[curr]}
-                      key={curr}
-                      inputStyle={{ padding: "5px", borderRadius: "0px" }}
-                      labelStyle={{ color: "#555", fontSize: "80%" }}
-                      containerStyle={{ width: "80%", margin: "auto" }}
-                      inputHandler={(e) =>
-                        this.inputHandler(
-                          e,
-                          curr,
-                          this.props.allProjUsers[this.props.match.params.id] ||
-                            []
-                        )
-                      }
-                    />
-                  ))}
-              </div>
+              {this.props.role !== "Developer" ? (
+                <div className={classes.InputChilds}>
+                  {Object.keys(this.state.form)
+                    .slice(3)
+                    .map((curr) => (
+                      <Input
+                        {...this.state.form[curr]}
+                        key={curr}
+                        inputStyle={{ padding: "5px", borderRadius: "0px" }}
+                        labelStyle={{ color: "#555", fontSize: "80%" }}
+                        containerStyle={{ width: "80%", margin: "auto" }}
+                        inputHandler={(e) =>
+                          this.inputHandler(
+                            e,
+                            curr,
+                            this.props.allProjUsers[
+                              this.props.match.params.id
+                            ] || []
+                          )
+                        }
+                      />
+                    ))}
+                </div>
+              ) : null}
             </div>
             <div className={classes.ButtonDiv}>
               <Button
@@ -264,6 +290,7 @@ const mapStateToProps = (state) => ({
   email: state.auth.email,
   name: state.auth.name,
   role: state.auth.role,
+  token: state.auth.token,
   allProjUsers: state.user.allProjUsers,
   userTickets: state.ticket.userTickets,
   allProjTickets: state.ticket.allProjTickets,
@@ -271,10 +298,12 @@ const mapStateToProps = (state) => ({
   error: state.ticket.error,
 });
 const mapDispatchToProps = (dispatch) => ({
-  fetchProjUsers: (id) =>
-    dispatch(userActionCreators.fetchProjUsersCreator(id)),
-  submitTicket: (id, ticket, key) =>
-    dispatch(ticketActionCreators.submitProjTicketsCreator(id, ticket, key)),
+  fetchProjUsers: (id, token) =>
+    dispatch(userActionCreators.fetchProjUsersCreator(id, token)),
+  submitTicket: (id, ticket, key, token) =>
+    dispatch(
+      ticketActionCreators.submitProjTicketsCreator(id, ticket, key, token)
+    ),
 });
 
 export default connect(

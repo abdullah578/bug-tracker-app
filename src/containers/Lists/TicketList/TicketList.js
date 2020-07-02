@@ -25,14 +25,16 @@ class TicketList extends Lists {
 
   componentDidMount() {
     if (this.props.type === "User" && !this.props.userTickets.length) {
-      this.props.fetchUserTickets(this.props.email, this.props.role);
+      const { email, role, token, userid } = this.props;
+      this.props.fetchUserTickets(email, role, token, userid);
     } else if (this.props.type !== "User") {
       const projectID = this.props.match.params.id;
       if (!this.props.allProjTickets[projectID])
         this.props.fetchProjTickets(
           projectID,
           this.props.email,
-          this.props.role
+          this.props.role,
+          this.props.token
         );
     }
   }
@@ -46,7 +48,7 @@ class TicketList extends Lists {
     ];
     for (let key of keys) {
       let filteredArr = arr.filter((curr) =>
-        curr[key].toLowerCase().startsWith(this.state.search.toLowerCase())
+        curr[key].toLowerCase().startsWith(this.state.search.toLowerCase().trim())
       );
       if (filteredArr.length) return filteredArr;
     }
@@ -109,9 +111,11 @@ class TicketList extends Lists {
     );
   }
   render() {
-    const projid=this.props.match.params.id;
+    const projid = this.props.match.params.id;
     const tickets =
-      this.props.type === "User" ? this.props.userTickets : this.props.allProjTickets[projid]||[];
+      this.props.type === "User"
+        ? this.props.userTickets
+        : this.props.allProjTickets[projid] || [];
     const addButton =
       this.props.type !== "User" &&
       this.props.role !== "Developer" &&
@@ -164,19 +168,23 @@ class TicketList extends Lists {
 const mapStateToProps = (state) => ({
   email: state.auth.email,
   name: state.auth.name,
+  userid: state.auth.id,
   role: state.auth.role,
+  token: state.auth.token,
   dispSpinner: state.ticket.dispSpinner,
   allProjTickets: state.ticket.allProjTickets,
   userTickets: state.ticket.userTickets,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  fetchProjTickets: (id, email, role) =>
-    dispatch(ticketActionCreators.fetchProjTicketsCreator(id, email, role)),
-  fetchUserTickets: (email, role) =>
-    dispatch(ticketActionCreators.fetchUserTicketsCreator(email, role)),
-  deleteTicket: (id, key) =>
-    dispatch(ticketActionCreators.deleteTicketCreator(id, key)),
+  fetchProjTickets: (id, email, role, token) =>
+    dispatch(
+      ticketActionCreators.fetchProjTicketsCreator(id, email, role, token)
+    ),
+  fetchUserTickets: (email, role, token, key) =>
+    dispatch(
+      ticketActionCreators.fetchUserTicketsCreator(email, role, token, key)
+    ),
 });
 
 export default connect(

@@ -11,18 +11,14 @@ const fetchTicketCreator = (url, id) => (dispatch, getState) => {
     let ticketsArr = parseResponse(resp);
     const state = getState();
     const projObj = { ...state.ticket.allProjTickets };
-    if (!ticketsArr.length && !state.ticket.allProjTickets[id])
-      projObj[id] = [];
-    else {
-      ticketsArr = ticketsArr.filter(
-        (curr) =>
-          !state.ticket.userTickets.find((tick) => tick.key === curr.key)
-      );
-      ticketsArr.forEach((ticket) => {
-        if (!projObj[ticket.projid]) projObj[ticket.projid] = [];
-        projObj[ticket.projid] = projObj[ticket.projid].concat(ticket);
-      });
-    }
+    ticketsArr = ticketsArr.filter(
+      (curr) => !state.ticket.userTickets.find((tick) => tick.key === curr.key)
+    );
+    ticketsArr.forEach((ticket) => {
+      if (!projObj[ticket.projid]) projObj[ticket.projid] = [];
+      projObj[ticket.projid] = projObj[ticket.projid].concat(ticket);
+    });
+    if (!projObj[id]) projObj[id] = [];
     dispatch(fetchProjTicketsSuccess(ticketsArr, id, projObj));
   });
 };
@@ -60,11 +56,15 @@ const updateTicket = (tick, projID, ticketKey) => ({
   ticket: { ...tick, key: ticketKey },
 });
 
-export const fetchProjTicketsCreator = (id, email, role) => (dispatch) => {
+//fetch project tickets from API
+
+export const fetchProjTicketsCreator = (id, email, role, token) => (
+  dispatch
+) => {
   dispatch(fetchProjTicketsInit());
-  if (role === "Admin") {
+  if (role === "Admin" || role === "Project Manager") {
     axios
-      .get(`/tickets.json?orderBy="projid"&equalTo="${id}"`)
+      .get(`/tickets.json?auth=${token}&orderBy="projid"&equalTo="${id}"`)
       .then((resp) => {
         const ticketsArr = parseResponse(resp);
         dispatch(fetchProjTicketsSuccess(ticketsArr, id));
@@ -73,63 +73,86 @@ export const fetchProjTicketsCreator = (id, email, role) => (dispatch) => {
   } else {
     dispatch(
       fetchTicketCreator(
-        `/tickets.json?orderBy="assignedEmail"&equalTo="${email}"`,
+        `/tickets.json?auth=${token}&orderBy="assignedEmail"&equalTo="${email}"`,
         id
       )
     );
     dispatch(
       fetchTicketCreator(
-        `/tickets.json?orderBy="submitterEmail"&equalTo="${email}"`,
+        `/tickets.json?auth=${token}&orderBy="submitterEmail"&equalTo="${email}"`,
         id
       )
     );
   }
 };
 
-
-export const fetchUserTicketsCreator = (email, role) => (dispatch) => {
+export const fetchUserTicketsCreator = (email, role, token, key) => (
+  dispatch
+) => {
   dispatch(fetchUserTicketsInit());
   if (role === "Admin")
     axios
-      .get(`/tickets.json`)
+      .get(`/tickets.json?auth=${token}`)
       .then((resp) => {
         const ticketsArr = parseResponse(resp);
         dispatch(fetchUserTicketsSuccess(ticketsArr));
       })
       .catch((err) => dispatch(fetchUserTicketsFailure(err)));
-  else {
+  else if (role === "Project Manager") {
+    axios
+      .get(`/users.json?auth=${token}`)
+      .then((users) => {
+        const projKeys = [];
+        Object.keys(users.data).forEach((id) => {
+          if (key in users.data[id]) projKeys.push(id);
+        });
+        axios.get(`/tickets.json?auth=${token}`).then((tickets) => {
+          const ticketsArr = parseResponse(tickets).filter((curr) =>
+            projKeys.includes(curr.projid)
+          );
+          dispatch(fetchUserTicketsSuccess(ticketsArr));
+        });
+      })
+      .catch((err) => dispatch(fetchUserTicketsFailure(err)));
+  } else {
     dispatch(
       fetchTicketCreator(
-        `/tickets.json?orderBy="assignedEmail"&equalTo="${email}"`
+        `/tickets.json?auth=${token}&orderBy="assignedEmail"&equalTo="${email}"`
       )
     );
     dispatch(
       fetchTicketCreator(
-        `/tickets.json?orderBy="submitterEmail"&equalTo="${email}"`
+        `/tickets.json?auth=${token}&orderBy="submitterEmail"&equalTo="${email}"`
       )
     );
   }
 };
-export const submitProjTicketsCreator = (id, tick, key) => (dispatch) => {
+//save ticket to API
+export const submitProjTicketsCreator = (id, tick, key, token) => (
+  dispatch
+) => {
   if (key === "new")
     axios
-      .post("/tickets.json", tick)
+      .post(`/tickets.json?auth=${token}`, tick)
       .then((resp) => {
         dispatch(addNewTicket(tick, id, resp.data.name));
       })
       .catch((err) => console.log(err));
   else
     axios
-      .put(`/tickets/${key}.json`, { ...tick })
+      .put(`/tickets/${key}.json?auth=${token}`, { ...tick })
       .then((resp) => {
         dispatch(updateTicket(tick, id, key));
       })
       .catch((err) => console.log(err));
 };
 
-export const deleteTicketCreator = (projectID, ticketKey) => (dispatch) => {
+//delete ticket from API
+export const deleteTicketCreator = (projectID, ticketKey, token) => (
+  dispatch
+) => {
   axios
-    .delete(`/tickets/${ticketKey}.json`)
+    .delete(`/tickets/${ticketKey}.json?auth=${token}`)
     .then((resp) =>
       dispatch({
         type: actionTypes.DELETE_TICKET,

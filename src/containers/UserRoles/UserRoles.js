@@ -37,7 +37,7 @@ class UserRoles extends Component {
     selectedUser: null,
   };
   componentDidMount() {
-    if (!this.props.allUsers.length) this.props.fetchAllUsers();
+    if (!this.props.allUsers.length) this.props.fetchAllUsers(this.props.token);
   }
   roleHandler = (e) => {
     const userRoleCopy = { ...this.state.userRole };
@@ -91,14 +91,13 @@ class UserRoles extends Component {
       ...this.props.allUsers[index],
       role: this.state.userRole.value,
     };
-    this.props.updateUser(this.state.selectedUser, obj);
+    this.props.updateUser(this.state.selectedUser, obj, this.props.token);
     this.setState({ selectedUser: null });
   };
   checkValidity() {
-    const p =
-      this.props.allUsers
-        .filter((curr) => curr.key !== this.state.selectedUser)
-        .find((curr) => curr.role === "Admin");
+    const p = this.props.allUsers
+      .filter((curr) => curr.key !== this.state.selectedUser)
+      .find((curr) => curr.role === "Admin");
 
     return p;
   }
@@ -165,14 +164,16 @@ class UserRoles extends Component {
 }
 const mapStateToProps = (state) => ({
   users: state.user.users,
+  token: state.auth.token,
   allUsers: state.user.allUsers,
   dispSpinner: state.user.dispSpinner,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  fetchAllUsers: () => dispatch(actionCreators.fetchAllUsersCreator()),
-  updateUser: (key, obj) =>
-    dispatch(actionCreators.updateUsersCreator(key, obj)),
+  fetchAllUsers: (token) =>
+    dispatch(actionCreators.fetchAllUsersCreator(token)),
+  updateUser: (key, obj, token) =>
+    dispatch(actionCreators.updateUsersCreator(key, obj, token)),
 });
 
 export default connect(

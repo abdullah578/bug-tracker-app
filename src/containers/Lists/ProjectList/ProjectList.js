@@ -46,22 +46,26 @@ class ProjectList extends Lists {
   };
   componentDidMount() {
     //if project data is not present in redux store, fetch from API
+    const { role, userid, token } = this.props;
     if (!this.props.projects.length)
-      this.props.fetchProjects(this.props.role, this.props.userid);
+      this.props.fetchProjects(role, userid, token);
   }
   //This function is used to filter the projects based on the search results
   filterProjects(arr) {
     const filteredArr = arr.filter((curr) =>
-      curr.name.toLowerCase().includes(this.state.search.toLowerCase())
+      curr.name.toLowerCase().includes(this.state.search.toLowerCase().trim())
     );
     return filteredArr.length ? filteredArr : arr;
   }
   formSubmitHandler = () => {
     const { name, description } = this.state.form;
-    this.props.submitProject({
-      name: name.value,
-      description: description.value,
-    });
+    this.props.submitProject(
+      {
+        name: name.value,
+        description: description.value,
+      },
+      this.props.token
+    );
     this.resetForm();
     this.setState({ newItem: false });
   };
@@ -191,12 +195,14 @@ const mapStateToProps = (state) => ({
   dispSpinner: state.project.dispSpinner,
   role: state.auth.role,
   userid: state.auth.id,
+  token: state.auth.token,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  fetchProjects: (role, userid) =>
-    dispatch(actionCreators.fetchProjectsCreator(role, userid)),
-  submitProject: (obj) => dispatch(actionCreators.postProjectCreator(obj)),
+  fetchProjects: (role, userid, token) =>
+    dispatch(actionCreators.fetchProjectsCreator(role, userid, token)),
+  submitProject: (obj, token) =>
+    dispatch(actionCreators.postProjectCreator(obj, token)),
 });
 
 export default connect(

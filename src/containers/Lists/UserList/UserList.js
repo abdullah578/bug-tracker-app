@@ -45,22 +45,23 @@ class UserList extends Lists {
   componentDidMount() {
     //if project users are not present in the redux store,fetch from API
     const projid = this.props.match.params.id;
-    if (!this.props.allProjUsers[projid]) this.props.fetchProjUsers(projid);
-    if (!this.props.users.length) this.props.fetchAllUsers();
+    if (!this.props.allProjUsers[projid])
+      this.props.fetchProjUsers(projid, this.props.token);
+    if (!this.props.users.length) this.props.fetchAllUsers(this.props.token);
   }
 
   formSubmitHandler = () => {
     const user = this.props.users.find(
       (curr) => curr.email === this.state.form.email.value.trim().toLowerCase()
     );
-    this.props.submitUser(this.props.match.params.id, user);
+    this.props.submitUser(this.props.match.params.id, user, this.props.token);
     this.resetForm();
     this.setState({ newItem: false });
   };
   filterUser(arr) {
     //filter the user list based on the search results
     const filterArr = arr.filter((curr) =>
-      curr.name.toLowerCase().startsWith(this.state.search.toLowerCase())
+      curr.name.toLowerCase().startsWith(this.state.search.toLowerCase().trim())
     );
     return filterArr.length ? filterArr : arr;
   }
@@ -112,7 +113,8 @@ class UserList extends Lists {
       this.props.deleteUser(
         this.props.match.params.id,
         this.props.users[userIndex].email,
-        this.state.deleteItem.key
+        this.state.deleteItem.key,
+        this.props.token
       );
     this.setState({
       deleteItem: {
@@ -192,19 +194,26 @@ class UserList extends Lists {
 const mapStateToProps = (state) => ({
   users: state.user.users,
   role: state.auth.role,
+  token: state.auth.token,
   allProjUsers: state.user.allProjUsers,
   dispSpinner: state.user.dispSpinner,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  fetchProjUsers: (id) =>
-    dispatch(userActionCreators.fetchProjUsersCreator(id)),
-  fetchAllUsers: () => dispatch(userActionCreators.fetchAllUsersCreator()),
-  submitUser: (id, obj) =>
-    dispatch(userActionCreators.postUserCreator(id, obj)),
-  deleteUser: (projectId, userEmail, userKey) =>
+  fetchProjUsers: (id, token) =>
+    dispatch(userActionCreators.fetchProjUsersCreator(id, token)),
+  fetchAllUsers: (token) =>
+    dispatch(userActionCreators.fetchAllUsersCreator(token)),
+  submitUser: (id, obj, token) =>
+    dispatch(userActionCreators.postUserCreator(id, obj, token)),
+  deleteUser: (projectId, userEmail, userKey, token) =>
     dispatch(
-      userActionCreators.deleteUserTicketsCreator(projectId, userEmail, userKey)
+      userActionCreators.deleteUserTicketsCreator(
+        projectId,
+        userEmail,
+        userKey,
+        token
+      )
     ),
 });
 

@@ -16,28 +16,32 @@ const postProject = (projObj, key) => ({
   type: actionTypes.UPDATE_PROJECT,
   proj: { ...projObj, key },
 });
-export const fetchProjectsCreator = (role, userKey) => (dispatch) => {
+
+//fetch projects from API
+export const fetchProjectsCreator = (role, userKey,token) => (dispatch) => {
   dispatch(fetchProjectsInit());
   role === "Admin"
     ? axios
-        .get("/projects.json")
+        .get(`/projects.json?auth=${token}`)
         .then((resp) => {
           const projArray = parseResponse(resp);
           dispatch(fetchProjectsSuccess(projArray));
         })
         .catch((err) => dispatch(fetchProjectsFailure()))
     : axios
-        .get("/projects.json")
+        .get(`/projects.json?auth=${token}`)
         .then((projects) => {
-          axios.get("/users.json").then((users) => {
+          axios.get(`/users.json?auth=${token}`).then((users) => {
             const userProjects = parseProjectResponse(projects, users, userKey);
             dispatch(fetchProjectsSuccess(userProjects));
           });
         })
         .catch((err) => fetchProjectsFailure());
 };
-export const postProjectCreator = (obj) => (dispatch) =>
+
+//save project in API
+export const postProjectCreator = (obj,token) => (dispatch) =>
   axios
-    .post("/projects.json", obj)
+    .post(`/projects.json?auth=${token}`, obj)
     .then((resp) => dispatch(postProject(obj, resp.data.name)))
     .catch((err) => console.log(err));

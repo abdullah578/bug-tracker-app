@@ -87,7 +87,6 @@ class Login extends Component {
         };
       else {
         form = {
-          ...this.state.form,
           name: formConfig(
             "Name",
             "Name ...",
@@ -98,6 +97,7 @@ class Login extends Component {
             false,
             false
           ),
+          ...this.state.form,
         };
       }
       return { isSignUp: !prevState.isSignUp, form };
