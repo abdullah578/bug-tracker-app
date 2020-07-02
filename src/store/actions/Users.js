@@ -64,11 +64,6 @@ export const fetchProjUsersCreator = (id) => (dispatch) => {
     .catch((err) => dispatch(fetchProjUsersFailure()));
 };
 
-export const getProjUsersCreator = (id) => ({
-  type: actionTypes.GET_PROJ_USERS,
-  id,
-});
-
 export const updateUserRoleCreator = (obj, key) => (dispatch) => {
   axios
     .put(`/allUsers/${key}.json`, obj)
@@ -80,9 +75,10 @@ export const updateUsersCreator = (key, obj) => (dispatch) => {
     .get(`/users.json`)
     .then((resp) => {
       const projList = [];
-      Object.keys(resp.data).forEach((projid) => {
-        if (key in resp.data[projid]) projList.push(projid);
-      });
+      if (resp.data)
+        Object.keys(resp.data).forEach((projid) => {
+          if (key in resp.data[projid]) projList.push(projid);
+        });
       Promise.all(
         projList.map((projid) =>
           obj.role !== "N/A"

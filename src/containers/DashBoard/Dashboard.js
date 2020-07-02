@@ -7,7 +7,9 @@ import Spinner from "../../components/UI/Spinner/Spinner";
 import Pie from "../../components/UI/Charts/PieChart";
 import BarChart from "../../components/UI/Charts/BarChart/BarChart";
 import classes from "./DashBoard.module.css";
-
+/*This component renders all the ticket information in the form
+of 2 bar charts and 2 pie charts . Ticket Type,Ticket Priority ,Ticket Projects and 
+Ticket Status are displayed */
 class DashBoard extends Component {
   componentDidMount() {
     if (!this.props.tickets.length)

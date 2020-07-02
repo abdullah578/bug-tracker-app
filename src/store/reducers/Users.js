@@ -71,10 +71,6 @@ const updateUserRoles = (state, action) => {
     },
   };
 };
-const getProjUsers = (state, action) => ({
-  ...state,
-  projUsers: state.allProjUsers[action.id],
-});
 const updateProjUsers = (state, action) => ({
   ...state,
   projUsers: state.projUsers.concat(action.obj),
@@ -108,8 +104,6 @@ const userReducer = (state = initialState, action) => {
       return fetchProjUsersSucess(state, action);
     case actionTypes.FETCH_PROJ_USERS_FAILURE:
       return fetchProjUsersFailure(state, action);
-    case actionTypes.GET_PROJ_USERS:
-      return getProjUsers(state, action);
     case actionTypes.UPDATE_USERS:
       return updateUsers(state, action);
     case actionTypes.UPDATE_PROJ_USERS: {

@@ -11,12 +11,18 @@ import Spinner from "../../components/UI/Spinner/Spinner";
 import Pagination from "../../components/UI/Pagination/Pagination";
 import Users from "../../components/UserList/UserList";
 import classes from "./UserRoles.module.css";
-
+/*This component is used to assign roles 
+to registered users. There are 4 significant roles:
+Admin
+Project manager
+Developer
+Submitter */
 class UserRoles extends Component {
   state = {
     userRole: {
       elementConfig: [
         { value: "Admin" },
+        { value: "Project Manager" },
         { value: "Developer" },
         { value: "Submitter" },
         { value: "N/A" },

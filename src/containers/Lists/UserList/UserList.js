@@ -14,6 +14,11 @@ import Search from "../../../components/UI/Search/Search";
 import NewUser from "../../../components/NewItem/NewItem";
 import DeleteUser from "../../../components/DeleteItem/DeleteItem";
 
+/*This componenet a list of users added
+that have been added to the project
+Only admins and project managers can add/delete users from projects
+*/
+
 class UserList extends Lists {
   state = {
     newItem: false,
@@ -31,29 +36,29 @@ class UserList extends Lists {
         "email",
         "",
         "input",
-        { isRequired: true, isArrayPresent: true },
+        { isRequired: true, isArrayPresent: true, isNotArrayPresent: true },
         false,
         false
       ),
     },
   };
   componentDidMount() {
+    //if project users are not present in the redux store,fetch from API
     const projid = this.props.match.params.id;
-    !this.props.allProjUsers[projid]
-      ? this.props.fetchProjUsers(projid)
-      : this.props.getProjUsers(projid);
+    if (!this.props.allProjUsers[projid]) this.props.fetchProjUsers(projid);
     if (!this.props.users.length) this.props.fetchAllUsers();
   }
 
   formSubmitHandler = () => {
     const user = this.props.users.find(
-      (curr) => curr.email === this.state.form.email.value.trim()
+      (curr) => curr.email === this.state.form.email.value.trim().toLowerCase()
     );
     this.props.submitUser(this.props.match.params.id, user);
     this.resetForm();
     this.setState({ newItem: false });
   };
   filterUser(arr) {
+    //filter the user list based on the search results
     const filterArr = arr.filter((curr) =>
       curr.name.toLowerCase().startsWith(this.state.search.toLowerCase())
     );
@@ -61,6 +66,7 @@ class UserList extends Lists {
   }
 
   createTableHeader() {
+    //Table Header
     return (
       <tr>
         <th>User Name</th>
@@ -70,11 +76,14 @@ class UserList extends Lists {
     );
   }
   createTableBody() {
+    //Table Body
     const { currentPage, numPerPage } = this.state;
     const startIndex = (currentPage - 1) * numPerPage;
     const endIndex = startIndex + numPerPage;
-    return this.props.projUsers.length ? (
-      this.filterUser(this.props.projUsers)
+    const projid = this.props.match.params.id;
+    const users = this.props.allProjUsers[projid] || [];
+    return users.length ? (
+      this.filterUser(users)
         .slice(startIndex, endIndex)
         .map((curr) => (
           <tr
@@ -125,12 +134,14 @@ class UserList extends Lists {
           open={this.state.newItem}
           form={this.state.form}
           array={this.props.users}
+          notArray={this.props.allProjUsers[this.props.match.params.id] || []}
           inputHandler={this.inputHandler}
           cancelForm={this.formCancelHandler}
           submitForm={this.formSubmitHandler}
           disabled={!this.checkFormValidity(this.state.form)}
         />
-        {this.props.role === "Admin" ? (
+        {this.props.role === "Admin" ||
+        this.props.role === "Project Manager" ? (
           <DeleteUser
             type="User"
             removeItemCancel={this.removeItemCancel}
@@ -147,7 +158,11 @@ class UserList extends Lists {
             <Pagination
               currPage={this.state.currentPage}
               numPerPage={this.state.numPerPage}
-              items={this.filterUser(this.props.projUsers).length}
+              items={
+                this.filterUser(
+                  this.props.allProjUsers[this.props.match.params.id] || []
+                ).length
+              }
               prev={this.prevPage}
               next={this.nextPage}
             />
@@ -176,7 +191,6 @@ class UserList extends Lists {
 }
 const mapStateToProps = (state) => ({
   users: state.user.users,
-  projUsers: state.user.projUsers,
   role: state.auth.role,
   allProjUsers: state.user.allProjUsers,
   dispSpinner: state.user.dispSpinner,
@@ -186,7 +200,6 @@ const mapDispatchToProps = (dispatch) => ({
   fetchProjUsers: (id) =>
     dispatch(userActionCreators.fetchProjUsersCreator(id)),
   fetchAllUsers: () => dispatch(userActionCreators.fetchAllUsersCreator()),
-  getProjUsers: (id) => dispatch(userActionCreators.getProjUsersCreator(id)),
   submitUser: (id, obj) =>
     dispatch(userActionCreators.postUserCreator(id, obj)),
   deleteUser: (projectId, userEmail, userKey) =>

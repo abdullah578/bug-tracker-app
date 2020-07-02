@@ -5,6 +5,9 @@ import Toolbar from "../../components/Toolbar/Toolbar";
 import SideNavigation from "../../components/SideNavigation/SideNavigation";
 import classes from "./Layout.module.css";
 
+
+/*This component consists of a toolbar and a collpsable side navigation 
+Every page in the application has this component */
 class Layout extends Component {
   state = { drawerOpen: true };
   handleToggleSideDrawer = () =>

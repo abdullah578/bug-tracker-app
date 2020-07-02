@@ -10,6 +10,8 @@ import {
 import Button from "../../components/UI/Button/Add/Add";
 import classes from "./Login.module.css";
 
+/*This compoenent renders the login form */
+
 class Login extends Component {
   state = {
     form: {
@@ -69,7 +71,7 @@ class Login extends Component {
   formSubmitHandler = () => {
     const name = this.state.isSignUp ? this.state.form.name.value : null;
     this.props.authenticate(
-      this.state.form.email.value,
+      this.state.form.email.value.trim().toLowerCase(),
       this.state.form.password.value,
       this.state.isSignUp,
       name
@@ -108,7 +110,9 @@ class Login extends Component {
             <ion-icon name="bug-outline"></ion-icon>
             <span> Bug Tracker Login</span>
           </div>
-          {this.props.error ? <p style={{fontWeight:300}}>{this.props.error}</p> : null}
+          {this.props.error ? (
+            <p style={{ fontWeight: 300 }}>{this.props.error}</p>
+          ) : null}
           {Object.keys(this.state.form).map((curr) => (
             <Input
               {...this.state.form[curr]}

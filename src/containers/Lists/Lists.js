@@ -1,8 +1,15 @@
 import { Component } from "react";
+import {
+  checkValidation as validation,
+  checkFormValidity as formValidation,
+} from "../../Utilities/Utilities";
+
+/*This component serves as a base for the projectList,
+ticketList and userList components that inherit form it */
 
 class Lists extends Component {
   state = { form: {}, newItem: false, currentPage: 1, deleteItem: {} };
-  inputHandler = (e, type, arr) => {
+  inputHandler = (e, type, arr, narr) => {
     let formCopy = { ...this.state.form };
     formCopy = {
       ...formCopy,
@@ -13,7 +20,8 @@ class Lists extends Component {
         isValid: this.checkValidation(
           e.target.value,
           this.state.form[type].validationRequirement,
-          arr
+          arr,
+          narr
         ),
       },
     };
@@ -23,25 +31,11 @@ class Lists extends Component {
     this.setState({ newItem: false });
     this.resetForm();
   };
-  checkValidation = (inputVal, validationRequirement, inputArr) => {
-    let isValid = true;
-    if (!validationRequirement) return true;
-    if (validationRequirement.isRequired)
-      isValid = inputVal.trim().length > 0 && isValid;
-    if (validationRequirement.isArrayPresent) {
-      isValid =
-        isValid &&
-        inputArr.findIndex((curr) => curr.email === inputVal.trim()) !== -1;
-    }
-    return isValid;
+  checkValidation = (inputVal, validationRequirement, inputArr, inputNarr) => {
+    return validation(inputVal, validationRequirement, inputArr, inputNarr);
   };
   checkFormValidity = (form) => {
-    const formCopy = { ...form };
-    let isValid = true;
-    Object.keys(formCopy).forEach(
-      (curr) => (isValid = formCopy[curr].isValid && isValid)
-    );
-    return isValid;
+    return formValidation(form);
   };
   resetForm() {
     const formCopy = {

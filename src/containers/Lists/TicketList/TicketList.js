@@ -9,9 +9,9 @@ import Modal from "../../../components/UI/Modal/Modal";
 import Table from "../../../components/UI/Table/Table";
 import Button from "../../../components/UI/Button/Add/Add";
 import Search from "../../../components/UI/Search/Search";
-//import Spinner from "../../../components/UI/Spinner/Spinner";
 import Pagination from "../../../components/UI/Pagination/Pagination";
-
+/*This component is used to render a list of tickets for each projects and also 
+to render all the tickets assigned to the user based on the props received */
 class TicketList extends Lists {
   state = {
     deleteItem: {
@@ -28,13 +28,12 @@ class TicketList extends Lists {
       this.props.fetchUserTickets(this.props.email, this.props.role);
     } else if (this.props.type !== "User") {
       const projectID = this.props.match.params.id;
-      !this.props.allProjTickets[projectID]
-        ? this.props.fetchProjTickets(
-            projectID,
-            this.props.email,
-            this.props.role
-          )
-        : this.props.getTickets(projectID);
+      if (!this.props.allProjTickets[projectID])
+        this.props.fetchProjTickets(
+          projectID,
+          this.props.email,
+          this.props.role
+        );
     }
   }
   filterTickets = (arr) => {
@@ -74,8 +73,11 @@ class TicketList extends Lists {
     const startIndex = (currentPage - 1) * numPerPage;
     const endIndex = startIndex + numPerPage;
     const styles = { textDecoration: "none", color: "#551A8B" };
+    const projid = this.props.match.params.id;
     const tickets =
-      this.props.type === "User" ? this.props.userTickets : this.props.tickets;
+      this.props.type === "User"
+        ? this.props.userTickets
+        : this.props.allProjTickets[projid] || [];
     return tickets.length ? (
       this.filterTickets(tickets)
         .slice(startIndex, endIndex)
@@ -107,8 +109,9 @@ class TicketList extends Lists {
     );
   }
   render() {
+    const projid=this.props.match.params.id;
     const tickets =
-      this.props.type === "User" ? this.props.userTickets : this.props.tickets;
+      this.props.type === "User" ? this.props.userTickets : this.props.allProjTickets[projid]||[];
     const addButton =
       this.props.type !== "User" &&
       this.props.role !== "Developer" &&
@@ -162,9 +165,7 @@ const mapStateToProps = (state) => ({
   email: state.auth.email,
   name: state.auth.name,
   role: state.auth.role,
-  projUsers: state.user.projUsers,
   dispSpinner: state.ticket.dispSpinner,
-  tickets: state.ticket.tickets,
   allProjTickets: state.ticket.allProjTickets,
   userTickets: state.ticket.userTickets,
 });
@@ -174,7 +175,6 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(ticketActionCreators.fetchProjTicketsCreator(id, email, role)),
   fetchUserTickets: (email, role) =>
     dispatch(ticketActionCreators.fetchUserTicketsCreator(email, role)),
-  getTickets: (id) => dispatch(ticketActionCreators.getTicketsCreator(id)),
   deleteTicket: (id, key) =>
     dispatch(ticketActionCreators.deleteTicketCreator(id, key)),
 });

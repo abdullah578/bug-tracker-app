@@ -1,6 +1,10 @@
 import React, { Component } from "react";
 import BackDrop from "../components/UI/BackDrop/BackDrop";
 import Content from "../components/UI/Content/Content";
+
+/*This component wraps around components and uses axios interceptors
+to intercept request and response erros and display
+a modal to the user with the error message */
 const WithErrorHandle = (Wrapped, axios) => {
   return class extends Component {
     state = {
@@ -23,7 +27,7 @@ const WithErrorHandle = (Wrapped, axios) => {
           return resp;
         },
         (err) => {
-          console.log("hjelldmcdcndcdcndckdckdmckd");
+
           this.setState({ error: err.message });
           return Promise.reject(err);
         }

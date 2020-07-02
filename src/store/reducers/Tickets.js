@@ -1,6 +1,5 @@
 import * as actionTypes from "../actions/actionTypes";
 const initialState = {
-  tickets: [],
   userTickets: [],
   allProjTickets: {},
   dispSpinner: false,
@@ -55,10 +54,6 @@ const fetchProjTicketsFailure = (state, action) => ({
   dispSpinner: false,
   error: true,
 });
-const getTickets = (state, action) => ({
-  ...state,
-  tickets: state.allProjTickets[action.id],
-});
 const addTicket = (state, action) =>
   !state.allProjTickets[action.id]
     ? state
@@ -68,7 +63,6 @@ const addTicket = (state, action) =>
           ...state.allProjTickets,
           [action.id]: state.allProjTickets[action.id].concat(action.ticket),
         },
-        tickets: state.tickets.concat(action.ticket),
         userTickets: state.userTickets.concat(action.ticket),
       };
 const updateTicket = (state, action) => {
@@ -90,7 +84,6 @@ const updateTicket = (state, action) => {
       ...state.allProjTickets,
       [action.id]: projTicketsCopy,
     },
-    tickets: projTicketsCopy,
     userTickets: userTicketsCopy,
   };
 };
@@ -99,13 +92,12 @@ const deleteTicket = (state, action) => {
   if (!state.allProjTickets[action.id])
     return {
       ...state,
-      tickets: state.tickets.filter((curr) => curr.key !== action.key),
+
       userTickets: state.userTickets.filter((curr) => curr.key !== action.key),
     };
   else
     return {
       ...state,
-      tickets: state.tickets.filter((curr) => curr.key !== action.key),
       userTickets: state.userTickets.filter((curr) => curr.key !== action.key),
       allProjTickets: {
         ...state.allProjTickets,
@@ -130,8 +122,6 @@ const ticketsReducer = (state = initialState, action) => {
       return fetchProjTicketsSuccess(state, action);
     case actionTypes.FETCH_PROJ_TICKETS_FAILURE:
       return fetchProjTicketsFailure(state, action);
-    case actionTypes.GET_TICKETS:
-      return getTickets(state, action);
     case actionTypes.ADD_TICKET:
       return addTicket(state, action);
     case actionTypes.UPDATE_TICKET:

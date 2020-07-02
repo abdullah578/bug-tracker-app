@@ -34,17 +34,26 @@ export const mapResponseToName = (property) => {
   };
   return obj[property];
 };
-export const findInArray = (arr, property, value) => {
-  return arr.find((curr) => curr[property] === value);
-};
-export const checkValidation = (inputVal, validationRequirement, inputArr) => {
+
+export const checkValidation = (
+  inputVal,
+  validationRequirement,
+  inputArr,
+  inputNarr
+) => {
   let isValid = true;
+  if(!validationRequirement) return true;
   if (validationRequirement.isRequired)
     isValid = inputVal.trim().length > 0 && isValid;
   if (validationRequirement.isArrayPresent)
     isValid =
       isValid &&
       inputArr.findIndex((curr) => curr.email === inputVal.trim()) !== -1;
+  if (validationRequirement.isNotArrayPresent) {
+    isValid =
+      isValid &&
+      inputNarr.findIndex((curr) => curr.email === inputVal.trim()) === -1;
+  }
   return isValid;
 };
 export const checkFormValidity = (form) => {

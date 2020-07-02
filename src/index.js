@@ -8,6 +8,12 @@ import rootReducer from "./store/reducers/rootReducer";
 import "./index.css";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
+/*
+The code is organized into a components folder 
+consisting of stateless functional components,a
+ containers folder consisting of class components 
+ and a store folder which manages the redux store
+*/
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const store = createStore(

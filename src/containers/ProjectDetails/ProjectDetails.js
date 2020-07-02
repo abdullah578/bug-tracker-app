@@ -6,7 +6,8 @@ import ProjectInfo from "../../components/ProjectInfo/ProjectInfo";
 import UserList from "../../containers/Lists/UserList/UserList";
 import TicketList from "../../containers/Lists/TicketList/TicketList";
 import classes from "./ProjectDetails.module.css";
-
+/*This component renders the project name,decription
+ and a list of users and tickets for the project */
 class ProjectDetails extends Component {
   state = { name: "", desc: "" };
   componentDidMount() {

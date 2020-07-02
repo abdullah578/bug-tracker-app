@@ -13,7 +13,8 @@ import ProjectDetails from "./containers/ProjectDetails/ProjectDetails";
 import TicketDetails from "./containers/TicketDetails/TicketDetails";
 import Login from "./containers/login/Login";
 import "./App.css";
-
+/*This component renders routes based on the user 's role, if the user if not authenticated,
+he is taken to the login page */
 class App extends Component {
   componentDidMount() {
     this.props.autoSignIn();
@@ -36,7 +37,8 @@ class App extends Component {
                 return <TicketList {...props} type="User" />;
               }}
             />
-            {this.props.role === "Admin" ? (
+            {this.props.role === "Admin" ||
+            this.props.role === "Project Manager" ? (
               <Route path="/users/:id/:name" component={UserList} />
             ) : null}
             {this.props.role === "Admin" ? (

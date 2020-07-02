@@ -14,6 +14,7 @@ import Spinner from "../../../components/UI/Spinner/Spinner";
 import Pagination from "../../../components/UI/Pagination/Pagination";
 import NewProject from "../../../components/NewItem/NewItem";
 
+//This component renders a list of the projects along with links to view/manage tickets and users
 class ProjectList extends Lists {
   state = {
     newItem: false,
@@ -44,9 +45,11 @@ class ProjectList extends Lists {
     search: "",
   };
   componentDidMount() {
+    //if project data is not present in redux store, fetch from API
     if (!this.props.projects.length)
       this.props.fetchProjects(this.props.role, this.props.userid);
   }
+  //This function is used to filter the projects based on the search results
   filterProjects(arr) {
     const filteredArr = arr.filter((curr) =>
       curr.name.toLowerCase().includes(this.state.search.toLowerCase())
@@ -63,6 +66,7 @@ class ProjectList extends Lists {
     this.setState({ newItem: false });
   };
   createTableHeader() {
+    //Table Header
     return (
       <tr>
         <th>Project Name</th>
@@ -72,6 +76,7 @@ class ProjectList extends Lists {
     );
   }
   createTableBody() {
+    //Table Body
     const { currentPage, numPerPage } = this.state;
     const startIndex = (currentPage - 1) * numPerPage;
     const endIndex = startIndex + numPerPage;
@@ -90,7 +95,8 @@ class ProjectList extends Lists {
             </td>
             <td>
               <ul>
-                {this.props.role === "Admin" ? (
+                {this.props.role === "Admin" ||
+                this.props.role === "Project Manager" ? (
                   <li>
                     <NavLink
                       to={`/users/${curr.key}/${curr.name}`}
@@ -133,6 +139,7 @@ class ProjectList extends Lists {
   }
   render() {
     const { newItem, form, currentPage, numPerPage } = this.state;
+    //display spinner until the API responds
     return this.props.dispSpinner ? (
       <Spinner />
     ) : (

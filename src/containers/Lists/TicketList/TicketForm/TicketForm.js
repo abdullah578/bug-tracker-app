@@ -7,7 +7,7 @@ import {
   createDateString,
   mapResponseToName,
 } from "../../../../Utilities/Utilities";
-import axios from '../../../../axiosInstance/AxiosInstance'
+import axios from "../../../../axiosInstance/AxiosInstance";
 import WithErrorHandler from "../../../../hoc/WithErrorHandle";
 import Lists from "../../Lists";
 import Modal from "../../../../components/UI/Modal/Modal";
@@ -23,6 +23,10 @@ const obj = {
   description: "description",
   assigned: "assignedEmail",
 };
+
+/*This component is rendered when the user wants
+to add a new ticket or edit and existing ticket.In case of adding a 
+new ticket , the key is set to new .  */
 
 class TicketForm extends Lists {
   state = {
@@ -60,6 +64,7 @@ class TicketForm extends Lists {
       ),
       ticketPriority: {
         elementConfig: [
+          { value: "None" },
           { value: "Low" },
           { value: "Medium" },
           { value: "High" },
@@ -95,14 +100,15 @@ class TicketForm extends Lists {
   };
   componentDidMount() {
     const { id: projectID, key: ticketKey } = this.props.match.params;
+    //Developers are not allowed to add new tickets
     if (
       ticketKey === "new" &&
       (this.props.role === "developer" || this.props.role === "N/A")
     )
       this.props.history.goBack();
-    !this.props.allProjUsers[projectID]
-      ? this.props.fetchProjUsers(projectID)
-      : this.props.getProjUsers(projectID);
+    if (!this.props.allProjUsers[projectID])
+      this.props.fetchProjUsers(projectID);
+
     if (ticketKey === "new") return null;
     this.populateForm();
   }
@@ -110,6 +116,7 @@ class TicketForm extends Lists {
     return obj[name];
   }
   populateForm() {
+    // populate form with existing ticket input field values
     const { id: projectID, key: ticketKey } = this.props.match.params;
     const formCopy = { ...this.state.form };
     const tickets =
@@ -136,7 +143,9 @@ class TicketForm extends Lists {
     this.props.history.goBack();
   };
   createResponseTicket() {
-    const devIndex = this.props.projUsers.findIndex(
+    //This function craetes the response object to be stored in the API
+    const users = this.props.allProjUsers[this.props.match.params.id] || [];
+    const devIndex = users.findIndex(
       (curr) => curr.email === this.state.form.assigned.value
     );
     if (devIndex === -1) return null;
@@ -153,11 +162,11 @@ class TicketForm extends Lists {
       description: description.value,
       ticketPriority: ticketPriority.value,
       ticketType: ticketType.value,
-      assigned: this.props.projUsers[devIndex].name,
+      assigned: users[devIndex].name,
       projName: this.props.match.params.name,
-      assignedEmail: assigned.value.trim(),
+      assignedEmail: assigned.value.trim().toLowerCase(),
       submitter: this.props.name,
-      submitterEmail: this.props.email.trim(),
+      submitterEmail: this.props.email.trim().toLowerCase(),
       status: ticketStatus.value,
       created: this.state.ticket
         ? this.state.ticket.created
@@ -168,6 +177,7 @@ class TicketForm extends Lists {
     return ticketObj;
   }
   createTicketHistory(ticketObj) {
+    //this function keeps track of all changes made on existing tickets
     let history = [];
     if (this.state.ticket) {
       history = [...this.state.ticket.history];
@@ -204,7 +214,12 @@ class TicketForm extends Lists {
                       labelStyle={{ color: "#555", fontSize: "80%" }}
                       containerStyle={{ width: "80%", margin: "auto" }}
                       inputHandler={(e) =>
-                        this.inputHandler(e, curr, this.props.projUsers)
+                        this.inputHandler(
+                          e,
+                          curr,
+                          this.props.allProjUsers[this.props.match.params.id] ||
+                            []
+                        )
                       }
                     />
                   ))}
@@ -220,7 +235,12 @@ class TicketForm extends Lists {
                       labelStyle={{ color: "#555", fontSize: "80%" }}
                       containerStyle={{ width: "80%", margin: "auto" }}
                       inputHandler={(e) =>
-                        this.inputHandler(e, curr, this.props.projUsers)
+                        this.inputHandler(
+                          e,
+                          curr,
+                          this.props.allProjUsers[this.props.match.params.id] ||
+                            []
+                        )
                       }
                     />
                   ))}
@@ -244,7 +264,6 @@ const mapStateToProps = (state) => ({
   email: state.auth.email,
   name: state.auth.name,
   role: state.auth.role,
-  projUsers: state.user.projUsers,
   allProjUsers: state.user.allProjUsers,
   userTickets: state.ticket.userTickets,
   allProjTickets: state.ticket.allProjTickets,
@@ -254,7 +273,6 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   fetchProjUsers: (id) =>
     dispatch(userActionCreators.fetchProjUsersCreator(id)),
-  getProjUsers: (id) => dispatch(userActionCreators.getProjUsersCreator(id)),
   submitTicket: (id, ticket, key) =>
     dispatch(ticketActionCreators.submitProjTicketsCreator(id, ticket, key)),
 });
@@ -262,4 +280,4 @@ const mapDispatchToProps = (dispatch) => ({
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(WithErrorHandler(TicketForm,axios));
+)(WithErrorHandler(TicketForm, axios));

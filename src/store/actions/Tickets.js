@@ -86,12 +86,7 @@ export const fetchProjTicketsCreator = (id, email, role) => (dispatch) => {
   }
 };
 
-export const getTicketsCreator = (id) => {
-  return {
-    type: actionTypes.GET_TICKETS,
-    id,
-  };
-};
+
 export const fetchUserTicketsCreator = (email, role) => (dispatch) => {
   dispatch(fetchUserTicketsInit());
   if (role === "Admin")

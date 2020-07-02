@@ -10,6 +10,9 @@ import Table from "../../components/UI/Table/Table";
 import Pagination from "../../components/UI/Pagination/Pagination";
 import DetailItems from "../../components/TicketDetailsItems/TicketDetailsItems";
 import classes from "./TicketDetails.module.css";
+/*This component is used to render ticket details,ticket history and ticket comments
+This component also allows users to delete and edit tickets  */
+
 const obj = {
   title: "Ticket Title",
   description: "Ticket Description",
@@ -33,6 +36,7 @@ class TicketDetails extends Component {
     },
   };
   getTicketInfo() {
+    //get the ticket history and details
     const ticket = this.getTicket();
     const details = {};
     let history = ticket.history;
@@ -76,10 +80,10 @@ class TicketDetails extends Component {
       <div className={classes.ModalHeader}>
         <p>Ticket Details</p>
         <button onClick={this.editHandler}>Edit Ticket</button>
-        {this.props.role === "Admin" || this.props.role === "Submitter" ? (
+        {this.props.role === "Admin" || this.props.role === "Submitter"|| this.props.role === "Project Manager" ? (
           <span> / </span>
         ) : null}
-        {this.props.role === "Admin" || this.props.role === "Submitter" ? (
+        {this.props.role === "Admin" || this.props.role === "Submitter"||this.props.role === "Project Manager"  ? (
           <button onClick={this.deleteHandler}>Delete Ticket</button>
         ) : null}
       </div>
