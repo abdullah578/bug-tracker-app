@@ -76,7 +76,9 @@ class TicketDetails extends Component {
       <div className={classes.ModalHeader}>
         <p>Ticket Details</p>
         <button onClick={this.editHandler}>Edit Ticket</button>
-        <span> / </span>
+        {this.props.role === "Admin" || this.props.role === "Submitter" ? (
+          <span> / </span>
+        ) : null}
         {this.props.role === "Admin" || this.props.role === "Submitter" ? (
           <button onClick={this.deleteHandler}>Delete Ticket</button>
         ) : null}
@@ -135,7 +137,7 @@ class TicketDetails extends Component {
       comments.slice(startIndex, endIndex).map((curr, index) => (
         <tr key={index}>
           <td>{curr.name}</td>
-          <td>{curr.value}</td>
+          <td style={{ overflowWrap: "break-word",maxWidth:"500px" }}>{curr.value}</td>
           <td>{curr.date}</td>
         </tr>
       ))

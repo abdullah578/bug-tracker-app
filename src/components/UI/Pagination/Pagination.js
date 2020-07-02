@@ -2,9 +2,8 @@ import React from "react";
 import classes from "./Pagination.module.css";
 
 const Pagination = (props) => {
-  
   const numPages = Math.ceil(props.items / props.numPerPage);
-  const lastPageEntries = props.items - (numPages-1) * props.currPage;
+  const lastPageEntries = props.items - (numPages - 1) * props.currPage;
 
   return (
     <div className={classes.Pagination}>
@@ -17,7 +16,10 @@ const Pagination = (props) => {
           Previous
         </button>
         <span>{props.currPage}</span>
-        <button disabled={props.currPage === numPages} onClick={props.next}>
+        <button
+          disabled={props.currPage === numPages || numPages === 0}
+          onClick={props.next}
+        >
           Next
         </button>
       </div>

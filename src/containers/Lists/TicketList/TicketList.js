@@ -26,7 +26,7 @@ class TicketList extends Lists {
   componentDidMount() {
     if (this.props.type === "User" && !this.props.userTickets.length) {
       this.props.fetchUserTickets(this.props.email, this.props.role);
-    } else if(this.props.type!=="User") {
+    } else if (this.props.type !== "User") {
       const projectID = this.props.match.params.id;
       !this.props.allProjTickets[projectID]
         ? this.props.fetchProjTickets(
@@ -76,25 +76,35 @@ class TicketList extends Lists {
     const styles = { textDecoration: "none", color: "#551A8B" };
     const tickets =
       this.props.type === "User" ? this.props.userTickets : this.props.tickets;
-    return this.filterTickets(tickets)
-      .slice(startIndex, endIndex)
-      .map((curr) => (
-        <tr key={curr.key}>
-          <td>{curr.title}</td>
-          <td>{curr.assigned}</td>
-          <td>{curr.submitter}</td>
-          <td>{curr.status}</td>
-          <td>{curr.created}</td>
-          <td>
-            <NavLink
-              to={`/tickets/${curr.projid}/${curr.projName}/${curr.key}/details`}
-              style={styles}
-            >
-              Ticket Details
-            </NavLink>
-          </td>
-        </tr>
-      ));
+    return tickets.length ? (
+      this.filterTickets(tickets)
+        .slice(startIndex, endIndex)
+        .map((curr) => (
+          <tr key={curr.key}>
+            <td>{curr.title}</td>
+            <td>{curr.assigned}</td>
+            <td>{curr.submitter}</td>
+            <td>{curr.status}</td>
+            <td>{curr.created}</td>
+            <td>
+              <NavLink
+                to={`/tickets/${curr.projid}/${curr.projName}/${curr.key}/details`}
+                style={styles}
+              >
+                Ticket Details
+              </NavLink>
+            </td>
+          </tr>
+        ))
+    ) : (
+      <tr>
+        <td>{"\u00A0"}</td>
+        <td>{"\u00A0"}</td>
+        <td>No Tickets Found</td>
+        <td>{"\u00A0"}</td>
+        <td>{"\u00A0"}</td>
+      </tr>
+    );
   }
   render() {
     const tickets =
@@ -135,7 +145,6 @@ class TicketList extends Lists {
               style={this.props.searchStyle}
             />
           }
-          err={this.props.error || tickets.length === 0}
           type="Tickets"
         >
           <Table
@@ -158,7 +167,6 @@ const mapStateToProps = (state) => ({
   tickets: state.ticket.tickets,
   allProjTickets: state.ticket.allProjTickets,
   userTickets: state.ticket.userTickets,
-  error: state.ticket.error,
 });
 
 const mapDispatchToProps = (dispatch) => ({

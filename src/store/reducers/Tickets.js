@@ -45,9 +45,7 @@ const fetchProjTicketsSuccess = (state, action) => {
       ...state,
       dispSpinner: false,
       allProjTickets: { ...action.proj },
-      tickets: action.proj[action.id]
-        ? [...action.proj[action.id], ...state.tickets]
-        : [...state.tickets],
+      tickets: action.proj[action.id] || [],
       userTickets: [...state.userTickets, ...action.tickets],
     };
   }

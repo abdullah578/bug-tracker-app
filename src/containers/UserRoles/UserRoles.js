@@ -54,13 +54,21 @@ class UserRoles extends Component {
     const { numPerPage, currentPage } = this.state;
     const startIndex = (currentPage - 1) * numPerPage;
     const endIndex = startIndex + numPerPage;
-    return this.props.users.slice(startIndex, endIndex).map((curr) => (
-      <tr key={curr.key}>
-        <td>{curr.name}</td>
-        <td>{curr.email}</td>
-        <td>{curr.role}</td>
+    return this.props.users.length ? (
+      this.props.users.slice(startIndex, endIndex).map((curr) => (
+        <tr key={curr.key}>
+          <td>{curr.name}</td>
+          <td>{curr.email}</td>
+          <td>{curr.role}</td>
+        </tr>
+      ))
+    ) : (
+      <tr>
+        <td>{"\u00A0"}</td>
+        <td>No Users Registered</td>
+        <td>{"\u00A0"}</td>
       </tr>
-    ));
+    );
   }
   nextPage = () =>
     this.setState((prevState) => ({ currentPage: prevState.currentPage + 1 }));
@@ -128,7 +136,6 @@ class UserRoles extends Component {
                   next={this.nextPage}
                 />
               }
-              err={this.props.err || this.props.users.length === 0}
               type="Users"
             >
               <Table header={this.createTableHeader()}>
@@ -145,7 +152,6 @@ const mapStateToProps = (state) => ({
   users: state.user.users,
   allUsers: state.user.allUsers,
   dispSpinner: state.user.dispSpinner,
-  error: state.user.error,
 });
 
 const mapDispatchToProps = (dispatch) => ({

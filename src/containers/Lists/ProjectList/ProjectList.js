@@ -77,47 +77,59 @@ class ProjectList extends Lists {
     const endIndex = startIndex + numPerPage;
 
     const styles = { textDecoration: "none", color: "#551A8B" };
-    return this.filterProjects(this.props.projects)
-      .slice(startIndex, endIndex)
-      .map((curr) => (
-        <tr key={curr.key}>
-          <td>{curr.name}</td>
-          <td>{curr.description}</td>
-          <td>
-            <ul>
-              {this.props.role === "Admin" ? (
+    return this.props.projects.length ? (
+      this.filterProjects(this.props.projects)
+        .slice(startIndex, endIndex)
+        .map((curr) => (
+          <tr key={curr.key}>
+            <td>{curr.name}</td>
+            <td>
+              {curr.description.length > 50
+                ? `${curr.description.slice(0, 50)}...`
+                : curr.description}
+            </td>
+            <td>
+              <ul>
+                {this.props.role === "Admin" ? (
+                  <li>
+                    <NavLink
+                      to={`/users/${curr.key}/${curr.name}`}
+                      style={styles}
+                    >
+                      {" "}
+                      Manage Users
+                    </NavLink>
+                  </li>
+                ) : null}
                 <li>
                   <NavLink
-                    to={`/users/${curr.key}/${curr.name}`}
+                    to={`/tickets/${curr.key}/${curr.name}`}
                     style={styles}
                   >
                     {" "}
-                    Manage Users
+                    Manage Tickets
                   </NavLink>
                 </li>
-              ) : null}
-              <li>
-                <NavLink
-                  to={`/tickets/${curr.key}/${curr.name}`}
-                  style={styles}
-                >
-                  {" "}
-                  Manage Tickets
-                </NavLink>
-              </li>
-              <li>
-                <NavLink
-                  to={`/projects/${curr.key}/${curr.name}`}
-                  style={styles}
-                >
-                  {" "}
-                  Details
-                </NavLink>
-              </li>
-            </ul>
-          </td>
-        </tr>
-      ));
+                <li>
+                  <NavLink
+                    to={`/projects/${curr.key}/${curr.name}`}
+                    style={styles}
+                  >
+                    {" "}
+                    Details
+                  </NavLink>
+                </li>
+              </ul>
+            </td>
+          </tr>
+        ))
+    ) : (
+      <tr>
+        <td>{"\u00A0"}</td>
+        <td>No Projects Found</td>
+        <td>{"\u00A0"}</td>
+      </tr>
+    );
   }
   render() {
     const { newItem, form, currentPage, numPerPage } = this.state;
@@ -157,7 +169,6 @@ class ProjectList extends Lists {
               inputSearchHandler={this.searchInputHandler}
             />
           }
-          err={this.props.err || this.props.projects === 0}
           type="Projects"
         >
           <Table header={this.createTableHeader()}>
@@ -171,7 +182,6 @@ class ProjectList extends Lists {
 const mapStateToProps = (state) => ({
   projects: state.project.projects,
   dispSpinner: state.project.dispSpinner,
-  err: state.project.error,
   role: state.auth.role,
   userid: state.auth.id,
 });

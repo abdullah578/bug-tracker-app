@@ -73,19 +73,27 @@ class UserList extends Lists {
     const { currentPage, numPerPage } = this.state;
     const startIndex = (currentPage - 1) * numPerPage;
     const endIndex = startIndex + numPerPage;
-    return this.filterUser(this.props.projUsers)
-      .slice(startIndex, endIndex)
-      .map((curr) => (
-        <tr
-          key={curr.key}
-          onClick={() => this.clickItem(curr.key)}
-          style={{ cursor: "pointer" }}
-        >
-          <td>{curr.name}</td>
-          <td>{curr.email}</td>
-          <td>{curr.role}</td>
-        </tr>
-      ));
+    return this.props.projUsers.length ? (
+      this.filterUser(this.props.projUsers)
+        .slice(startIndex, endIndex)
+        .map((curr) => (
+          <tr
+            key={curr.key}
+            onClick={() => this.clickItem(curr.key)}
+            style={{ cursor: "pointer" }}
+          >
+            <td>{curr.name}</td>
+            <td>{curr.email}</td>
+            <td>{curr.role}</td>
+          </tr>
+        ))
+    ) : (
+      <tr>
+        <td>{"\u00A0"}</td>
+        <td>No Users Found</td>
+        <td>{"\u00A0"}</td>
+      </tr>
+    );
   }
   removeUserContinue = () => {
     const userIndex = this.props.users.findIndex(
@@ -153,7 +161,6 @@ class UserList extends Lists {
               style={this.props.searchStyle}
             />
           }
-          err={this.props.error || this.props.projUsers.length === 0}
           type="Users"
         >
           <Table
@@ -173,7 +180,6 @@ const mapStateToProps = (state) => ({
   role: state.auth.role,
   allProjUsers: state.user.allProjUsers,
   dispSpinner: state.user.dispSpinner,
-  error: state.user.error,
 });
 
 const mapDispatchToProps = (dispatch) => ({

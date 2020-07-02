@@ -11,14 +11,18 @@ const fetchTicketCreator = (url, id) => (dispatch, getState) => {
     let ticketsArr = parseResponse(resp);
     const state = getState();
     const projObj = { ...state.ticket.allProjTickets };
-
-    ticketsArr = ticketsArr.filter(
-      (curr) => !state.ticket.userTickets.find((tick) => tick.key === curr.key)
-    );
-    ticketsArr.forEach((ticket) => {
-      if (!projObj[ticket.projid]) projObj[ticket.projid] = [];
-      projObj[ticket.projid] = projObj[ticket.projid].concat(ticket);
-    });
+    if (!ticketsArr.length && !state.ticket.allProjTickets[id])
+      projObj[id] = [];
+    else {
+      ticketsArr = ticketsArr.filter(
+        (curr) =>
+          !state.ticket.userTickets.find((tick) => tick.key === curr.key)
+      );
+      ticketsArr.forEach((ticket) => {
+        if (!projObj[ticket.projid]) projObj[ticket.projid] = [];
+        projObj[ticket.projid] = projObj[ticket.projid].concat(ticket);
+      });
+    }
     dispatch(fetchProjTicketsSuccess(ticketsArr, id, projObj));
   });
 };
