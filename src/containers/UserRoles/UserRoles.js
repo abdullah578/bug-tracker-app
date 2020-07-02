@@ -82,7 +82,8 @@ class UserRoles extends Component {
     this.setState((prevState) => ({ currentPage: prevState.currentPage - 1 }));
 
   formSubmit = () => {
-    if (!this.state.selectedUser) return null;
+    if (!this.state.selectedUser || !this.checkValidity()) return null;
+
     const index = this.props.allUsers.findIndex(
       (curr) => curr.key === this.state.selectedUser
     );
@@ -93,6 +94,14 @@ class UserRoles extends Component {
     this.props.updateUser(this.state.selectedUser, obj);
     this.setState({ selectedUser: null });
   };
+  checkValidity() {
+    const p =
+      this.props.allUsers
+        .filter((curr) => curr.key !== this.state.selectedUser)
+        .find((curr) => curr.role === "Admin");
+
+    return p;
+  }
   createHeader() {
     const BigStyles = {
       fontSize: "70%",

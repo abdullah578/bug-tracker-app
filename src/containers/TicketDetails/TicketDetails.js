@@ -8,6 +8,7 @@ import Comments from "../../components/Comments/Comments";
 import Modal from "../../components/UI/Modal/Modal";
 import Table from "../../components/UI/Table/Table";
 import Pagination from "../../components/UI/Pagination/Pagination";
+import Search from "../../components/UI/Search/Search";
 import DetailItems from "../../components/TicketDetailsItems/TicketDetailsItems";
 import classes from "./TicketDetails.module.css";
 /*This component is used to render ticket details,ticket history and ticket comments
@@ -25,6 +26,7 @@ const obj = {
 };
 class TicketDetails extends Component {
   state = {
+    search: "",
     commentsValue: "",
     currentPage: {
       history: 1,
@@ -80,10 +82,14 @@ class TicketDetails extends Component {
       <div className={classes.ModalHeader}>
         <p>Ticket Details</p>
         <button onClick={this.editHandler}>Edit Ticket</button>
-        {this.props.role === "Admin" || this.props.role === "Submitter"|| this.props.role === "Project Manager" ? (
+        {this.props.role === "Admin" ||
+        this.props.role === "Submitter" ||
+        this.props.role === "Project Manager" ? (
           <span> / </span>
         ) : null}
-        {this.props.role === "Admin" || this.props.role === "Submitter"||this.props.role === "Project Manager"  ? (
+        {this.props.role === "Admin" ||
+        this.props.role === "Submitter" ||
+        this.props.role === "Project Manager" ? (
           <button onClick={this.deleteHandler}>Delete Ticket</button>
         ) : null}
       </div>
@@ -138,13 +144,17 @@ class TicketDetails extends Component {
     const startIndex = (currentPage - 1) * numPerPage;
     const endIndex = startIndex + numPerPage;
     return comments.length ? (
-      comments.slice(startIndex, endIndex).map((curr, index) => (
-        <tr key={index}>
-          <td>{curr.name}</td>
-          <td style={{ overflowWrap: "break-word",maxWidth:"500px" }}>{curr.value}</td>
-          <td>{curr.date}</td>
-        </tr>
-      ))
+      this.filterComment(comments)
+        .slice(startIndex, endIndex)
+        .map((curr, index) => (
+          <tr key={index}>
+            <td>{curr.name}</td>
+            <td style={{ overflowWrap: "break-word", maxWidth: "500px" }}>
+              {curr.value}
+            </td>
+            <td>{curr.date}</td>
+          </tr>
+        ))
     ) : (
       <tr>
         <td>{"\u00A0"}</td>
@@ -163,6 +173,27 @@ class TicketDetails extends Component {
     currCopy[type] += 1;
     this.setState({ currentPage: currCopy });
   };
+  searchInputHandler = (e) => {
+    this.setState({
+      currentPage: { ...this.state.currentPage, comments: 1 },
+      search: e.target.value,
+    });
+  };
+  numPerPageInputHandler = (e) => {
+    this.setState({
+      numPerPage: {
+        ...this.state.numPerPage,
+        comments: parseInt(e.target.value),
+      },
+      currentPage: { ...this.state.currentPage, comments: 1 },
+    });
+  };
+  filterComment(arr) {
+    const filterArr = arr.filter((curr) =>
+      curr.name.toLowerCase().startsWith(this.state.search.toLowerCase())
+    );
+    return filterArr.length ? filterArr : arr;
+  }
   render() {
     const { details, history } = this.getTicketInfo();
     const ticket = this.getTicket();
@@ -209,9 +240,17 @@ class TicketDetails extends Component {
               <Pagination
                 currPage={this.state.currentPage.comments}
                 numPerPage={this.state.numPerPage.comments}
-                items={ticket.comments.length}
+                items={this.filterComment(ticket.comments).length}
                 prev={() => this.prevPage("comments")}
                 next={() => this.nextPage("comments")}
+              />
+            }
+            search={
+              <Search
+                value={this.state.search}
+                numValue={this.state.numPerPage.comments}
+                inputNumHandler={this.numPerPageInputHandler}
+                inputSearchHandler={this.searchInputHandler}
               />
             }
           >
