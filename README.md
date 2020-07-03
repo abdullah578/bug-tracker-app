@@ -5,21 +5,25 @@ bugs in their projects.Each project in this app is a collection of
 users and tickets.The app keeps track of any chamges made to the ticket
 and users can also add comments to the ticket.
 There are 4 major roles each user can have:
-1) Admin:Can add/remove projects and tickets
-2) Project Manager:Can add/remove users from projects
+1) Admin: Can add/remove projects and tickets
+2) Project Manager: Can add/remove users from projects
 3) Submitter: Can add/remove tickets to the projects and assign them to a user
-4) Developer:Can change the status of a ticket(Open/Resolved)
+4) Developer: Can change the status of a ticket(Open/Resolved)
 
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
+
+First Option:
 ```
 1) Install npm (Node Package Manager)
 2) Clone the git repository
 3) Run 'npm install' and 'npm run start' in a terminal
 4) A live updating (if code changes) version of the app wild now be running in your browser
-```
 
+```
+Second Option:
+Visit https://vocal-raceway-244209.web.app
 
 ## User Interface 
 
@@ -32,10 +36,6 @@ The dashboard displays information regarding the tickets in the form of charts.U
 
 ![Ticket](/docs/tick.png)
 Each ticket consists of details,history and comments
-
-
-
-
 
 ## Built With
 
