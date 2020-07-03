@@ -93,14 +93,14 @@ class UserList extends Lists {
             <tr
               key={curr.key}
               onClick={() =>
-                curr.key === (this.props.userid && curr.role !== "Admin") ||
+                (curr.key === this.props.userid && curr.role !== "Admin") ||
                 notPointer
                   ? null
                   : this.clickItem(curr.key)
               }
               style={{
                 cursor:
-                  curr.key === (this.props.userid && curr.role !== "Admin") ||
+                  (curr.key === this.props.userid && curr.role !== "Admin") ||
                   notPointer
                     ? "auto"
                     : "pointer",

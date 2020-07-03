@@ -16,7 +16,7 @@ class ProjectDetails extends Component {
       <div className={classes.ModalHeader}>
         <p>Project Details</p>
         {this.props.role === "Admin" ? (
-          <button onClick={this.deleteHandler}>Delete Ticket</button>
+          <button onClick={this.deleteHandler}>Delete Project</button>
         ) : null}
       </div>
     );
