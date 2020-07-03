@@ -23,7 +23,9 @@ First Option:
 
 ```
 Second Option:
-Visit https://vocal-raceway-244209.web.app
+
+1) Visit: [vocal-raceway-244209.web.app](https://vocal-raceway-244209.web.app)
+
 
 ## User Interface 
 
