@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import * as actionCreators from "../../store/actions/Projects";
 import axios from "../../axiosInstance/AxiosInstance";
 import WithErrorHandle from "../../hoc/WithErrorHandle";
 import ProjectInfo from "../../components/ProjectInfo/ProjectInfo";
@@ -10,6 +11,20 @@ import classes from "./ProjectDetails.module.css";
  and a list of users and tickets for the project */
 class ProjectDetails extends Component {
   state = { name: "", desc: "" };
+  createDetailsModalHeader() {
+    return (
+      <div className={classes.ModalHeader}>
+        <p>Project Details</p>
+        {this.props.role === "Admin" ? (
+          <button onClick={this.deleteHandler}>Delete Ticket</button>
+        ) : null}
+      </div>
+    );
+  }
+  deleteHandler = () => {
+    this.props.deleteProject(this.props.match.params.id, this.props.token);
+    this.props.history.goBack();
+  };
   componentDidMount() {
     const proj = this.props.projects.find(
       (curr) => curr.key === this.props.match.params.id
@@ -28,6 +43,7 @@ class ProjectDetails extends Component {
         <ProjectInfo
           name={this.state.name}
           description={this.state.description}
+          header={this.createDetailsModalHeader()}
         />
         <div className={classes.Objects}>
           <UserList
@@ -50,9 +66,14 @@ class ProjectDetails extends Component {
 const mapStateToProps = (state) => ({
   projects: state.project.projects,
   role: state.auth.role,
+  token: state.auth.token,
+});
+const mapDispatchToProps = (dispatch) => ({
+  deleteProject: (id, token) =>
+    dispatch(actionCreators.deleteProjectCreator(id, token)),
 });
 
 export default connect(
   mapStateToProps,
-  null
+  mapDispatchToProps
 )(WithErrorHandle(ProjectDetails, axios));

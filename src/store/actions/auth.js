@@ -2,15 +2,19 @@ import * as actionTypes from "./actionTypes";
 import axios from "axios";
 import axiosInst from "../../axiosInstance/AxiosInstance";
 
-
-export const authLogoutCreator = () => {
+export const authLogoutCreator = (timeoutID) => {
   localStorage.clear();
   return {
     type: actionTypes.AUTH_LOGOUT,
+    timeoutID
   };
 };
 const authLogout = (expirationTime) => (dispatch) => {
-  setTimeout(() => dispatch(authLogoutCreator()), expirationTime * 1000);
+  const id = setTimeout(
+    () => dispatch(authLogoutCreator(id)),
+    expirationTime * 1000
+  );
+  dispatch({ type: actionTypes.SET_TIMEOUT_ID, id });
 };
 const authSuccessCreator = (token, userid, name, email, role) => ({
   type: actionTypes.AUTH_SUCCESS,
@@ -39,7 +43,7 @@ export const authenticate = (email, password, isSignUp, name) => (dispatch) => {
         new Date(new Date().getTime() + resp.data.expiresIn * 1000)
       );
       if (isSignUp) {
-        postUsers(email, name, resp.data.localId,resp.data.idToken);
+        postUsers(email, name, resp.data.localId, resp.data.idToken);
         localStorage.setItem("token", resp.data.idToken);
         localStorage.setItem("userid", resp.data.localId);
         localStorage.setItem("name", name);
@@ -69,7 +73,7 @@ export const authenticate = (email, password, isSignUp, name) => (dispatch) => {
 };
 
 //save the user info
-const postUsers = (email, name, key,token) => {
+const postUsers = (email, name, key, token) => {
   axiosInst
     .put(`/allUsers/${key}.json?auth=${token}`, {
       name,

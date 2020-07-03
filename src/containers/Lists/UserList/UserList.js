@@ -86,17 +86,32 @@ class UserList extends Lists {
     return users.length ? (
       this.filterUser(users)
         .slice(startIndex, endIndex)
-        .map((curr) => (
-          <tr
-            key={curr.key}
-            onClick={() => this.clickItem(curr.key)}
-            style={{ cursor: "pointer" }}
-          >
-            <td>{curr.name}</td>
-            <td>{curr.email}</td>
-            <td>{curr.role}</td>
-          </tr>
-        ))
+        .map((curr) => {
+          const notPointer =
+            this.props.role === "Developer" || this.props.role === "Submitter";
+          return (
+            <tr
+              key={curr.key}
+              onClick={() =>
+                curr.key === (this.props.userid && curr.role !== "Admin") ||
+                notPointer
+                  ? null
+                  : this.clickItem(curr.key)
+              }
+              style={{
+                cursor:
+                  curr.key === (this.props.userid && curr.role !== "Admin") ||
+                  notPointer
+                    ? "auto"
+                    : "pointer",
+              }}
+            >
+              <td>{curr.name}</td>
+              <td>{curr.email}</td>
+              <td>{curr.role}</td>
+            </tr>
+          );
+        })
     ) : (
       <tr>
         <td>{"\u00A0"}</td>
@@ -106,16 +121,18 @@ class UserList extends Lists {
     );
   }
   removeUserContinue = () => {
-    const userIndex = this.props.users.findIndex(
+    const user = this.props.users.find(
       (curr) => curr.key === this.state.deleteItem.key
     );
-    if (userIndex !== -1)
+    if (user) {
       this.props.deleteUser(
         this.props.match.params.id,
-        this.props.users[userIndex].email,
+        user.email,
         this.state.deleteItem.key,
         this.props.token
       );
+    }
+
     this.setState({
       deleteItem: {
         key: null,
@@ -126,7 +143,9 @@ class UserList extends Lists {
   removeItemCancel = () =>
     this.setState({ deleteItem: { key: null, continue: false } });
 
-  clickItem = (key) => this.setState({ deleteItem: { key, continue: true } });
+  clickItem = (key) => {
+    this.setState({ deleteItem: { key, continue: true } });
+  };
   render() {
     return this.props.dispSpinner ? (
       <Spinner />
@@ -195,6 +214,7 @@ const mapStateToProps = (state) => ({
   users: state.user.users,
   role: state.auth.role,
   token: state.auth.token,
+  userid: state.auth.id,
   allProjUsers: state.user.allProjUsers,
   dispSpinner: state.user.dispSpinner,
 });

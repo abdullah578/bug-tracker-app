@@ -1,68 +1,59 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Football App
 
-## Available Scripts
+This app uses React ,Redux and Firebase to create a system for teams to keep track of 
+bugs in their projects.Each project in this app is a collection of 
+users and tickets.The app keeps track of any chamges made to the ticket
+and users can also add comments to the ticket.
 
-In the project directory, you can run:
+```
+There are 4 major roles each user can have:
+1) Admin:Can add/remove projects and tickets
+2) Project Manager:Can add/remove users from projects
+3) Submitter: Can add/remove tickets to the projects and assign them to a user
+4) Developer:Can change the status of a ticket(Open/Resolved)
+```
 
-### `yarn start`
+## Getting Started
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
+```
+1) Install npm (Node Package Manager)
+2) Clone the git repository
+3) Run 'npm install' and 'npm run start' in a terminal
+4) A live updating (if code changes) version of the app will now be running in your browser
+```
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
 
-### `yarn test`
+## User Interface 
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+This section will show you some of the features of the app
 
-### `yarn build`
+#### Home Page
+![Home Page]("/docs/dash.png")
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+The dashboard displays information regarding the tickets in the form of charts.Users can then view/edit the projects and tickets assigned to him based on their role.
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+![Ticket]("/docs/tick.png")
+Each ticket consists of details,history and comments
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-### `yarn eject`
+#### Features and App Explanation Video
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+[![Explanation Video](http://img.youtube.com/vi/X_1jWu7ovnc/0.jpg)](https://www.youtube.com/watch?v=X_1jWu7ovnc "Football App Explanation Video")
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+## Built With
 
-## Learn More
+* [React]- The library used to build the front end
+* [Redux] - Used to manage the state of the application
+* [Firebase] - Used the real time database to store application data
+* [npm] - Used to handle packaging and dependencies
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## Authors
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+* **Abdullah Mohammed** - [LinkedIn](https://www.linkedin.com/in/abdullah-mohammed-456290195/)
 
-### Code Splitting
+## License
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `yarn build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details

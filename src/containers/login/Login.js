@@ -77,6 +77,9 @@ class Login extends Component {
       name
     );
   };
+  autoSignIn = () => {
+    this.props.authenticate("demo.admin@gmail.com", "demoproject", false);
+  };
   switchSignUp = () =>
     this.setState((prevState) => {
       let form;
@@ -137,6 +140,14 @@ class Login extends Component {
             {this.state.isSignUp
               ? "Already have an account?"
               : "Create new account"}
+          </button>
+
+          <button
+            className={classes.Button}
+            style={{ marginTop: "8px" }}
+            onClick={this.autoSignIn}
+          >
+            Demo as Admin
           </button>
         </div>
       </div>

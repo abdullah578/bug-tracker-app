@@ -17,12 +17,9 @@ const Search = (props) => {
         entries
       </div>
       <div>
-        <label htmlFor="search" style={props.style}>
-          Search
-        </label>
+        <label style={props.style}>Search</label>
         <input
           type="text"
-          id="search"
           name="search"
           style={props.style}
           value={props.value}

@@ -5,7 +5,6 @@ import Toolbar from "../../components/Toolbar/Toolbar";
 import SideNavigation from "../../components/SideNavigation/SideNavigation";
 import classes from "./Layout.module.css";
 
-
 /*This component consists of a toolbar and a collpsable side navigation 
 Every page in the application has this component */
 class Layout extends Component {
@@ -21,7 +20,11 @@ class Layout extends Component {
     );
     return (
       <React.Fragment>
-        <Toolbar logout={this.props.logout} open={this.state.drawerOpen} name={this.props.name}/>
+        <Toolbar
+          logout={() => this.props.logout(this.props.timeoutID)}
+          open={this.state.drawerOpen}
+          name={this.props.name}
+        />
         <SideNavigation
           open={this.state.drawerOpen}
           clickIcon={this.handleToggleSideDrawer}
@@ -35,9 +38,10 @@ class Layout extends Component {
 const mapStateToProps = (state) => ({
   name: state.auth.name,
   role: state.auth.role,
+  timeoutID: state.auth.timeoutID,
 });
 const mapDispatchToProps = (dispatch) => ({
-  logout: () => dispatch(actionCreators.authLogoutCreator()),
+  logout: (id) => dispatch(actionCreators.authLogoutCreator(id)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Layout);

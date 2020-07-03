@@ -10,6 +10,20 @@
     width: 49%;
     min-height: 80px;
   }
+  .ModalHeader p {
+    font-size: 60%;
+    line-height: 4px;
+  }
+  .ModalHeader button {
+    outline: none;
+    border: none;
+    font-size: 60%;
+    padding: 2px;
+    text-decoration: underline;
+    cursor: pointer;
+    background-color: inherit;
+    color: #fff;
+  }
 
   @media (max-width:900px){
     .Objects {

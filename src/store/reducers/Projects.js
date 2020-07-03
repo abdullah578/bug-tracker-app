@@ -24,6 +24,10 @@ const updateProject = (state, action) => ({
   ...state,
   projects: state.projects.concat(action.proj),
 });
+const deleteProject = (state, action) => ({
+  ...state,
+  projects: state.projects.filter((curr) => curr.key !== action.id),
+});
 
 const projectReducer = (state = initialState, action) => {
   switch (action.type) {
@@ -38,6 +42,8 @@ const projectReducer = (state = initialState, action) => {
 
     case actionTypes.UPDATE_PROJECT:
       return updateProject(state, action);
+    case actionTypes.DELETE_PROJECT:
+      return deleteProject(state, action);
 
     default:
       return state;

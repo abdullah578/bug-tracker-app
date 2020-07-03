@@ -7,6 +7,7 @@ const initialState = {
   email: null,
   name: null,
   role: null,
+  timeoutID: null,
 };
 
 const authSuccess = (state, action) => ({
@@ -24,12 +25,18 @@ const authFailure = (state, action) => ({
   id: null,
   error: action.error,
 });
+const setTimeoutID = (state, action) => ({
+  ...state,
+  timeoutID: action.id,
+});
 const authReducer = (state = initialState, action) => {
   switch (action.type) {
     case actionTypes.AUTH_SUCCESS:
       return authSuccess(state, action);
     case actionTypes.AUTH_FAILURE:
       return authFailure(state, action);
+    case actionTypes.SET_TIMEOUT_ID:
+      return setTimeoutID(state, action);
     default:
       return state;
   }

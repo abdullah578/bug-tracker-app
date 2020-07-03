@@ -4,7 +4,7 @@ import classes from "./ProjectInfo.module.css";
 
 const ProjectInfo = (props) => {
   return (
-    <Modal header={<p>Details for Project </p>}>
+    <Modal header={props.header}>
       <div className={classes.Desc}>
         <div>
           <p className={classes.ParaHeader}>Project Name</p>
