@@ -87,7 +87,7 @@ class ProjectList extends Lists {
 
     const styles = { textDecoration: "none", color: "#551A8B" };
     return this.props.projects.length ? (
-      this.filterProjects(this.props.projects)
+      this.filterProjects([...this.props.projects].reverse())
         .slice(startIndex, endIndex)
         .map((curr) => (
           <tr key={curr.key}>

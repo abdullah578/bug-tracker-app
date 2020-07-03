@@ -48,7 +48,9 @@ class TicketList extends Lists {
     ];
     for (let key of keys) {
       let filteredArr = arr.filter((curr) =>
-        curr[key].toLowerCase().startsWith(this.state.search.toLowerCase().trim())
+        curr[key]
+          .toLowerCase()
+          .startsWith(this.state.search.toLowerCase().trim())
       );
       if (filteredArr.length) return filteredArr;
     }
@@ -81,7 +83,7 @@ class TicketList extends Lists {
         ? this.props.userTickets
         : this.props.allProjTickets[projid] || [];
     return tickets.length ? (
-      this.filterTickets(tickets)
+      this.filterTickets([...tickets].reverse())
         .slice(startIndex, endIndex)
         .map((curr) => (
           <tr key={curr.key}>
