@@ -1,4 +1,4 @@
-# Football App
+# Bug Tracker App
 
 This app uses React ,Redux and Firebase to create a system for teams to keep track of 
 bugs in their projects.Each project in this app is a collection of 
@@ -29,26 +29,23 @@ These instructions will get you a copy of the project up and running on your loc
 This section will show you some of the features of the app
 
 #### Home Page
-![Home Page]("/docs/dash.png")
+![Home Page](/docs/dash.png)
 
 The dashboard displays information regarding the tickets in the form of charts.Users can then view/edit the projects and tickets assigned to him based on their role.
 
-![Ticket]("/docs/tick.png")
+![Ticket](/docs/tick.png)
 Each ticket consists of details,history and comments
 
 
-#### Features and App Explanation Video
-
-[![Explanation Video](http://img.youtube.com/vi/X_1jWu7ovnc/0.jpg)](https://www.youtube.com/watch?v=X_1jWu7ovnc "Football App Explanation Video")
 
 
 
 ## Built With
 
-* [React]- The library used to build the front end
-* [Redux] - Used to manage the state of the application
-* [Firebase] - Used the real time database to store application data
-* [npm] - Used to handle packaging and dependencies
+* React- The library used to build the front end
+* Redux - Used to manage the state of the application
+* Firebase - Used the real time database to store application data
+* npm - Used to handle packaging and dependencies
 
 ## Authors
 
