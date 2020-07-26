@@ -1,7 +1,6 @@
 import axios from "axios";
 
 const myInstance = axios.create({
-  baseURL: "https://vocal-raceway-244209.firebaseio.com/",
+  baseURL: "http://localhost:3000",
 });
-
 export default myInstance;

@@ -42,12 +42,12 @@ const postProjUser = (user, projID) => ({
 });
 
 //fetch users from API
-export const fetchAllUsersCreator = (token) => (dispatch) => {
+export const fetchAllUsersCreator = () => (dispatch) => {
   dispatch(fetchUsersInit());
   axios
-    .get(`/allUsers.json?auth=${token}`)
+    .get(`/users`)
     .then((resp) => {
-      const allUsersArray = parseResponse(resp);
+      const allUsersArray = resp.data;
       const usersArray = allUsersArray.filter((curr) => curr.role !== "N/A");
       dispatch(fetchUsersSuccess(usersArray, allUsersArray));
     })
@@ -55,7 +55,7 @@ export const fetchAllUsersCreator = (token) => (dispatch) => {
 };
 
 //fetch projects users from API
-export const fetchProjUsersCreator = (id,token) => (dispatch) => {
+export const fetchProjUsersCreator = (id, token) => (dispatch) => {
   dispatch(fetchProjUsersInit());
   axios
     .get(`/users/${id}.json?auth=${token}`)
@@ -68,44 +68,46 @@ export const fetchProjUsersCreator = (id,token) => (dispatch) => {
     .catch((err) => dispatch(fetchProjUsersFailure()));
 };
 //update user role in API
-export const updateUserRoleCreator = (obj, key,token) => (dispatch) => {
+export const updateUserRoleCreator = (obj, key) => (dispatch) => {
   axios
-    .put(`/allUsers/${key}.json?auth=${token}`, obj)
+    .put(`/users`, { role: obj.role, key })
     .then((resp) => dispatch(updateUsers(obj, key)))
     .catch((err) => null);
 };
 /*update user role in all projects , if user role is N/A,
 remove the user from project*/
-export const updateUsersCreator = (key, obj,token) => (dispatch) => {
-  axios
-    .get(`/users.json?auth=${token}`)
-    .then((resp) => {
-      const projList = [];
-      if (resp.data)
-        Object.keys(resp.data).forEach((projid) => {
-          if (key in resp.data[projid]) projList.push(projid);
-        });
-      Promise.all(
-        projList.map((projid) =>
-          obj.role !== "N/A"
-            ? axios
-                .put(`/users/${projid}/${key}.json?auth=${token}`, obj)
-                .then((resp) => dispatch(updateUserRoles(projid, obj, key)))
-            : axios
-                .delete(`/users/${projid}/${key}.json?auth=${token}`)
-                .then((resp) =>
-                  dispatch(deleteUserTicketsCreator(projid, obj.email, key,token))
-                )
-        )
-      ).then((resp) => {
-        dispatch(updateUserRoleCreator(obj, key,token));
-      });
-    })
-    .catch((err) => console.log(err));
+export const updateUsersCreator = (key, obj, token) => (dispatch) => {
+  // axios
+  //   .get(`/users.json?auth=${token}`)
+  //   .then((resp) => {
+  // const projList = [];
+  // if (resp.data)
+  //   Object.keys(resp.data).forEach((projid) => {
+  //     if (key in resp.data[projid]) projList.push(projid);
+  //   });
+  // Promise.all(
+  //   projList.map((projid) =>
+  //     obj.role !== "N/A"
+  //       ? axios
+  //           .put(`/users/${projid}/${key}.json?auth=${token}`, obj)
+  //           .then((resp) => dispatch(updateUserRoles(projid, obj, key)))
+  //       : axios
+  //           .delete(`/users/${projid}/${key}.json?auth=${token}`)
+  //           .then((resp) =>
+  //             dispatch(
+  //               deleteUserTicketsCreator(projid, obj.email, key, token)
+  //             )
+  //           )
+  //   )
+  // ).then((resp) => {
+  dispatch(updateUserRoleCreator(obj, key));
+  //   });
+  // })
+  // .catch((err) => console.log(err));
 };
 
 //save user in API
-export const postUserCreator = (id, obj,token) => (dispatch) => {
+export const postUserCreator = (id, obj, token) => (dispatch) => {
   axios
     .put(`/users/${id}/${obj.key}.json?auth=${token}`, obj)
     .then((resp) => {
@@ -114,7 +116,7 @@ export const postUserCreator = (id, obj,token) => (dispatch) => {
     .catch((err) => console.log(err));
 };
 //delete user from API
-const deleteUserCreator = (projectID, userKey,token) => (dispatch) => {
+const deleteUserCreator = (projectID, userKey, token) => (dispatch) => {
   axios
     .delete(`users/${projectID}/${userKey}.json?auth=${token}`)
     .then((resp) =>
@@ -127,9 +129,12 @@ const deleteUserCreator = (projectID, userKey,token) => (dispatch) => {
     .catch((err) => console.log(err));
 };
 //delete all corresponding tickets of user from API
-export const deleteUserTicketsCreator = (projectID, userEmail, userKey,token) => (
-  dispatch
-) => {
+export const deleteUserTicketsCreator = (
+  projectID,
+  userEmail,
+  userKey,
+  token
+) => (dispatch) => {
   axios
     .get(`/tickets.json?auth=${token}&orderBy="projid"&equalTo="${projectID}"`)
     .then((resp) => {
@@ -151,7 +156,7 @@ export const deleteUserTicketsCreator = (projectID, userEmail, userKey,token) =>
           )
         )
       )
-        .then((resp) => dispatch(deleteUserCreator(projectID, userKey,token)))
+        .then((resp) => dispatch(deleteUserCreator(projectID, userKey, token)))
         .catch((err) => console.log(err));
     })
     .catch((err) => console.log(err));
