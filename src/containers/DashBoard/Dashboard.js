@@ -12,8 +12,10 @@ of 2 bar charts and 2 pie charts . Ticket Type,Ticket Priority ,Ticket Projects 
 Ticket Status are displayed */
 class DashBoard extends Component {
   componentDidMount() {
-    const { email, role, token,userid } = this.props;
-    if (!this.props.tickets.length) this.props.fetchTickets(email, role, token,userid);
+    const { email, role, token, userid } = this.props;
+    if (role === "N/A") return null;
+    if (!this.props.tickets.length)
+      this.props.fetchTickets(email, role, token, userid);
   }
 
   createStat() {
@@ -122,14 +124,16 @@ const mapStateToProps = (state) => ({
   tickets: state.ticket.userTickets,
   email: state.auth.email,
   token: state.auth.token,
-  userid:state.auth.id,
+  userid: state.auth.id,
   dispSpinner: state.ticket.dispSpinner,
   role: state.auth.role,
   error: state.ticket.error,
 });
 const mapDispatchToProps = (dispatch) => ({
-  fetchTickets: (email, role, token,userid) =>
-    dispatch(actionCreators.fetchUserTicketsCreator(email, role, token,userid)),
+  fetchTickets: (email, role, token, userid) =>
+    dispatch(
+      actionCreators.fetchUserTicketsCreator(email, role, token, userid)
+    ),
 });
 
 export default connect(

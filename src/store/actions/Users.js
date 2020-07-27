@@ -1,5 +1,4 @@
 import * as actionTypes from "./actionTypes";
-import { parseResponse } from "../Utils/Utils";
 import axios from "../../axiosInstance/AxiosInstance";
 
 const fetchUsersInit = () => ({
@@ -58,11 +57,9 @@ export const fetchAllUsersCreator = () => (dispatch) => {
 export const fetchProjUsersCreator = (id, token) => (dispatch) => {
   dispatch(fetchProjUsersInit());
   axios
-    .get(`/users/${id}.json?auth=${token}`)
+    .get(`/projects/${id}/users`)
     .then((resp) => {
-      const usersArray = parseResponse(resp).filter(
-        (curr) => curr.role !== "N/A"
-      );
+      const usersArray = resp.data.filter((curr) => curr.role !== "N/A");
       dispatch(fetchProjUsersSuccess(usersArray, id));
     })
     .catch((err) => dispatch(fetchProjUsersFailure()));
@@ -76,58 +73,25 @@ export const updateUserRoleCreator = (obj, key) => (dispatch) => {
 };
 /*update user role in all projects , if user role is N/A,
 remove the user from project*/
-export const updateUsersCreator = (key, obj, token) => (dispatch) => {
-  // axios
-  //   .get(`/users.json?auth=${token}`)
-  //   .then((resp) => {
-  // const projList = [];
-  // if (resp.data)
-  //   Object.keys(resp.data).forEach((projid) => {
-  //     if (key in resp.data[projid]) projList.push(projid);
-  //   });
-  // Promise.all(
-  //   projList.map((projid) =>
-  //     obj.role !== "N/A"
-  //       ? axios
-  //           .put(`/users/${projid}/${key}.json?auth=${token}`, obj)
-  //           .then((resp) => dispatch(updateUserRoles(projid, obj, key)))
-  //       : axios
-  //           .delete(`/users/${projid}/${key}.json?auth=${token}`)
-  //           .then((resp) =>
-  //             dispatch(
-  //               deleteUserTicketsCreator(projid, obj.email, key, token)
-  //             )
-  //           )
-  //   )
-  // ).then((resp) => {
+export const updateUsersCreator = (key, obj, token) => (dispatch, getState) => {
+  const state = getState();
+  console.log(Object.keys(state.user.allProjUsers));
+  Object.keys(state.user.allProjUsers).forEach((projKey) =>
+    dispatch(updateUserRoles(projKey, obj, key))
+  );
   dispatch(updateUserRoleCreator(obj, key));
-  //   });
-  // })
-  // .catch((err) => console.log(err));
 };
 
 //save user in API
 export const postUserCreator = (id, obj, token) => (dispatch) => {
   axios
-    .put(`/users/${id}/${obj.key}.json?auth=${token}`, obj)
+    .post(`/projects/${id}/users`, { userid: obj.key })
     .then((resp) => {
       dispatch(postProjUser(obj, id));
     })
     .catch((err) => console.log(err));
 };
 //delete user from API
-const deleteUserCreator = (projectID, userKey, token) => (dispatch) => {
-  axios
-    .delete(`users/${projectID}/${userKey}.json?auth=${token}`)
-    .then((resp) =>
-      dispatch({
-        type: actionTypes.DELETE_PROJ_USERS,
-        id: projectID,
-        key: userKey,
-      })
-    )
-    .catch((err) => console.log(err));
-};
 //delete all corresponding tickets of user from API
 export const deleteUserTicketsCreator = (
   projectID,
@@ -136,28 +100,20 @@ export const deleteUserTicketsCreator = (
   token
 ) => (dispatch) => {
   axios
-    .get(`/tickets.json?auth=${token}&orderBy="projid"&equalTo="${projectID}"`)
+    .delete(`/projects/${projectID}/${userKey}`)
     .then((resp) => {
-      const filterKeys = resp.data
-        ? Object.keys(resp.data).filter(
-            (key) =>
-              resp.data[key].assignedEmail === userEmail ||
-              resp.data[key].submitterEmail === userEmail
-          )
-        : [];
-      Promise.all(
-        filterKeys.map((key) =>
-          axios.delete(`/tickets/${key}.json?auth=${token}`).then((resp) =>
-            dispatch({
-              type: actionTypes.DELETE_TICKET,
-              key,
-              id: projectID,
-            })
-          )
-        )
-      )
-        .then((resp) => dispatch(deleteUserCreator(projectID, userKey, token)))
-        .catch((err) => console.log(err));
+      resp.data.forEach((key) =>
+        dispatch({
+          type: actionTypes.DELETE_TICKET,
+          key,
+          id: projectID,
+        })
+      );
+      dispatch({
+        type: actionTypes.DELETE_PROJ_USERS,
+        id: projectID,
+        key: userKey,
+      });
     })
     .catch((err) => console.log(err));
 };

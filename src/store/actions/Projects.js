@@ -1,6 +1,4 @@
 import * as actionTypes from "./actionTypes";
-import * as userActionCreators from "./Users";
-import { parseResponse, parseProjectResponse } from "../Utils/Utils";
 import axios from "../../axiosInstance/AxiosInstance";
 
 const fetchProjectsInit = () => ({
@@ -26,50 +24,35 @@ export const deleteProject = (projid) => ({
 //fetch projects from API
 export const fetchProjectsCreator = (role, userKey, token) => (dispatch) => {
   dispatch(fetchProjectsInit());
-  role === "Admin"
-    ? axios
-        .get(`/projects.json?auth=${token}`)
-        .then((resp) => {
-          const projArray = parseResponse(resp);
-          dispatch(fetchProjectsSuccess(projArray));
-        })
-        .catch((err) => dispatch(fetchProjectsFailure()))
-    : axios
-        .get(`/projects.json?auth=${token}`)
-        .then((projects) => {
-          axios.get(`/users.json?auth=${token}`).then((users) => {
-            const userProjects = parseProjectResponse(projects, users, userKey);
-            dispatch(fetchProjectsSuccess(userProjects));
-          });
-        })
-        .catch((err) => fetchProjectsFailure());
+
+  axios
+    .get("/projects")
+    .then((resp) => {
+      const projects = resp.data;
+      dispatch(fetchProjectsSuccess(projects));
+    })
+    .catch((err) => fetchProjectsFailure());
 };
 
 //save project in API
 export const postProjectCreator = (obj, token) => (dispatch) =>
   axios
-    .post(`/projects.json?auth=${token}`, obj)
+    .post("/projects", obj)
     .then((resp) => dispatch(postProject(obj, resp.data.name)))
     .catch((err) => console.log(err));
 
 export const deleteProjectCreator = (projID, token) => (dispatch) => {
   axios
-    .get(`/users/${projID}.json?auth=${token}`)
-    .then((users) => {
-      if (users.data)
-        Object.keys(users.data).forEach((key) => {
-          dispatch(
-            userActionCreators.deleteUserTicketsCreator(
-              projID,
-              users.data[key].email,
-              key,
-              token
-            )
-          );
+    .delete(`/projects/${projID}`)
+    .then((resp) => {
+      resp.data.forEach((key) => {
+        dispatch({
+          type: actionTypes.DELETE_TICKET,
+          key,
+          id: projID,
         });
-      axios
-        .delete(`/projects/${projID}.json?auth=${token}`)
-        .then((resp) => dispatch(deleteProject(projID)));
+      });
+      dispatch(deleteProject(projID));
     })
     .catch((err) => console.log(err));
 };

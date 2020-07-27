@@ -61,6 +61,7 @@ const updateUserRoles = (state, action) => {
   const userIndex = state.allProjUsers[action.id].findIndex(
     (curr) => curr.key === action.key
   );
+  if (userIndex === -1) return state;
   const userCopy = [...state.allProjUsers[action.id]];
   userCopy[userIndex] = action.user;
   return {
