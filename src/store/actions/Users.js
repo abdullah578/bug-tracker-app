@@ -75,7 +75,6 @@ export const updateUserRoleCreator = (obj, key) => (dispatch) => {
 remove the user from project*/
 export const updateUsersCreator = (key, obj, token) => (dispatch, getState) => {
   const state = getState();
-  console.log(Object.keys(state.user.allProjUsers));
   Object.keys(state.user.allProjUsers).forEach((projKey) =>
     dispatch(updateUserRoles(projKey, obj, key))
   );

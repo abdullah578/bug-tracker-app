@@ -56,14 +56,14 @@ const updateUsers = (state, action) => {
   };
 };
 const updateUserRoles = (state, action) => {
-  console.log("updateUserRoles -> state", state);
   if (!state.allProjUsers[action.id]) return state;
   const userIndex = state.allProjUsers[action.id].findIndex(
     (curr) => curr.key === action.key
   );
   if (userIndex === -1) return state;
   const userCopy = [...state.allProjUsers[action.id]];
-  userCopy[userIndex] = action.user;
+  if (action.user.role !== "N/A") userCopy[userIndex] = action.user;
+  else userCopy.splice(userIndex, 1);
   return {
     ...state,
     allProjUsers: {
