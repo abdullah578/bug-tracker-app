@@ -68,16 +68,26 @@ export const fetchProjUsersCreator = (id, token) => (dispatch) => {
 export const updateUserRoleCreator = (obj, key) => (dispatch) => {
   axios
     .put(`/users`, { role: obj.role, key })
-    .then((resp) => dispatch(updateUsers(obj, key)))
+    .then((resp) => {
+      dispatch(updateUsers(obj, key));
+      console.log(resp.data);
+      resp.data.forEach((tick) =>
+        dispatch({
+          type: actionTypes.DELETE_TICKET,
+          key: tick.id,
+          id: tick.projid,
+        })
+      );
+    })
     .catch((err) => null);
 };
 /*update user role in all projects , if user role is N/A,
 remove the user from project*/
 export const updateUsersCreator = (key, obj, token) => (dispatch, getState) => {
   const state = getState();
-  Object.keys(state.user.allProjUsers).forEach((projKey) =>
-    dispatch(updateUserRoles(projKey, obj, key))
-  );
+  Object.keys(state.user.allProjUsers).forEach((projKey) => {
+    dispatch(updateUserRoles(projKey, obj, key));
+  });
   dispatch(updateUserRoleCreator(obj, key));
 };
 
