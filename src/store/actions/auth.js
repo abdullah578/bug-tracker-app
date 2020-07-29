@@ -21,6 +21,13 @@ const authLogout = (expirationTime) => (dispatch) => {
   );
   dispatch({ type: actionTypes.SET_TIMEOUT_ID, id });
 };
+
+const authExpireCreator = (token, userid) => (dispatch) => {
+  axiosInst
+    .post(`/users/logout/${token}/${userid}`)
+    .then((resp) => dispatch({ type: actionTypes.AUTH_EXPIRE_CLEAR }))
+    .catch((err) => console.log(err));
+};
 const authSuccessCreator = (token, userid, name, email, role) => ({
   type: actionTypes.AUTH_SUCCESS,
   token,
@@ -35,7 +42,14 @@ const authFailureCreator = (error) => ({
 });
 
 //authenticate the user
-export const authenticate = (email, password, isSignUp, name) => (dispatch) => {
+export const authenticate = (
+  email,
+  password,
+  isSignUp,
+  name,
+  expiryToken,
+  expiryUserid
+) => (dispatch) => {
   const url = isSignUp
     ? `http://localhost:3000/users`
     : `http://localhost:3000/users/login`;
@@ -47,8 +61,8 @@ export const authenticate = (email, password, isSignUp, name) => (dispatch) => {
         new Date(new Date().getTime() + resp.data.expiresIn * 1000)
       );
       localStorage.setItem("token", resp.data.idToken);
+      localStorage.setItem("userid", resp.data.localId);
       const user = jwtDecode(resp.data.idToken);
-      console.log(user);
       axiosInst.defaults.headers.common["auth"] = `Bearer ${resp.data.idToken}`;
       dispatch(
         authSuccessCreator(
@@ -60,6 +74,7 @@ export const authenticate = (email, password, isSignUp, name) => (dispatch) => {
         )
       );
       dispatch(authLogout(resp.data.expiresIn));
+      if (expiryToken) dispatch(authExpireCreator(expiryToken, expiryUserid));
     })
     .catch((err) => {
       dispatch(authFailureCreator("Error"));
@@ -67,7 +82,8 @@ export const authenticate = (email, password, isSignUp, name) => (dispatch) => {
 };
 export const authCheckState = () => (dispatch) => {
   const token = localStorage.getItem("token");
-  if (!token) dispatch(authLogoutCreator());
+  const userid = localStorage.getItem("userid");
+  if (!token) return null;
   else {
     const expirationDate = new Date(localStorage.getItem("expiryTime"));
     if (expirationDate > new Date()) {
@@ -80,7 +96,11 @@ export const authCheckState = () => (dispatch) => {
         authLogout((expirationDate.getTime() - new Date().getTime()) / 1000)
       );
     } else {
-      dispatch(authLogoutCreator());
+      dispatch({
+        type: actionTypes.AUTH_EXPIRE,
+        token,
+        userid,
+      });
     }
   }
 };

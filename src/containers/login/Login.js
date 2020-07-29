@@ -74,7 +74,9 @@ class Login extends Component {
       this.state.form.email.value.trim().toLowerCase(),
       this.state.form.password.value,
       this.state.isSignUp,
-      name
+      name,
+      this.props.expiryToken,
+      this.props.expiryUserid
     );
   };
   autoSignIn = () => {
@@ -156,10 +158,21 @@ class Login extends Component {
 }
 const mapStateToProps = (state) => ({
   error: state.auth.error,
+  expiryToken: state.auth.expiredToken,
+  expiryUserid: state.auth.expiredUserid,
 });
 const mapDispatchToProps = (dispatch) => ({
-  authenticate: (email, password, isSignUp, name) =>
-    dispatch(actions.authenticate(email, password, isSignUp, name)),
+  authenticate: (email, password, isSignUp, name, expiryToken, expiryUserid) =>
+    dispatch(
+      actions.authenticate(
+        email,
+        password,
+        isSignUp,
+        name,
+        expiryToken,
+        expiryUserid
+      )
+    ),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);
