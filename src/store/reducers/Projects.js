@@ -20,10 +20,14 @@ const fetchProjectsFailure = (state, action) => ({
   dispSpinner: false,
   error: true,
 });
-const updateProject = (state, action) => ({
-  ...state,
-  projects: state.projects.concat(action.proj),
-});
+const updateProject = (state, action) => {
+  const projects = [...state.projects];
+  projects.unshift(action.proj);
+  return {
+    ...state,
+    projects,
+  };
+};
 const deleteProject = (state, action) => ({
   ...state,
   projects: state.projects.filter((curr) => curr.key !== action.id),

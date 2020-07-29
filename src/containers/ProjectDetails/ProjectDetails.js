@@ -22,7 +22,7 @@ class ProjectDetails extends Component {
     );
   }
   deleteHandler = () => {
-    this.props.deleteProject(this.props.match.params.id, this.props.token);
+    this.props.deleteProject(this.props.match.params.id);
     this.props.history.goBack();
   };
   componentDidMount() {
@@ -66,11 +66,9 @@ class ProjectDetails extends Component {
 const mapStateToProps = (state) => ({
   projects: state.project.projects,
   role: state.auth.role,
-  token: state.auth.token,
 });
 const mapDispatchToProps = (dispatch) => ({
-  deleteProject: (id, token) =>
-    dispatch(actionCreators.deleteProjectCreator(id, token)),
+  deleteProject: (id) => dispatch(actionCreators.deleteProjectCreator(id)),
 });
 
 export default connect(

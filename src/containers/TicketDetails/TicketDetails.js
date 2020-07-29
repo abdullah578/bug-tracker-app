@@ -51,7 +51,7 @@ class TicketDetails extends Component {
   };
   deleteHandler = () => {
     const { key, id } = this.props.match.params;
-    this.props.deleteTicket(id, key, this.props.token);
+    this.props.deleteTicket(id, key);
     this.props.history.goBack();
   };
   inputChangeHandler = (e) => {
@@ -68,7 +68,7 @@ class TicketDetails extends Component {
     const comments = [...ticket.comments];
     comments.unshift(comment);
     const respTicket = { ...ticket, comments };
-    this.props.submitTicket(projid, respTicket, key, this.props.token);
+    this.props.submitTicket(projid, respTicket, key,this.props.role);
     this.setState({ commentsValue: "" });
   };
   getTicket() {
@@ -267,17 +267,16 @@ class TicketDetails extends Component {
 const mapStateToProps = (state) => ({
   name: state.auth.name,
   role: state.auth.role,
-  token: state.auth.token,
   userTickets: state.ticket.userTickets,
   allProjTickets: state.ticket.allProjTickets,
 });
 const mapDispatchToProps = (dispatch) => ({
-  submitTicket: (id, ticket, key, token) =>
+  submitTicket: (id, ticket, key,role) =>
     dispatch(
-      ticketActionCreators.submitProjTicketsCreator(id, ticket, key, token)
+      ticketActionCreators.submitProjTicketsCreator(id, ticket, key,role)
     ),
-  deleteTicket: (id, key, token) =>
-    dispatch(ticketActionCreators.deleteTicketCreator(id, key, token)),
+  deleteTicket: (id, key) =>
+    dispatch(ticketActionCreators.deleteTicketCreator(id, key)),
 });
 
 export default connect(

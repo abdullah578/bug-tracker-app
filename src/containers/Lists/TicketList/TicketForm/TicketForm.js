@@ -107,7 +107,7 @@ class TicketForm extends Lists {
     )
       this.props.history.goBack();
     if (!this.props.allProjUsers[projectID])
-      this.props.fetchProjUsers(projectID, this.props.token);
+      this.props.fetchProjUsers(projectID);
 
     if (ticketKey === "new") return null;
     this.populateForm();
@@ -139,7 +139,7 @@ class TicketForm extends Lists {
       this.props.match.params.id,
       { ...ticketObj, history },
       this.props.match.params.key,
-      this.props.token
+      this.props.role
     );
     this.props.history.goBack();
   };
@@ -290,7 +290,6 @@ const mapStateToProps = (state) => ({
   email: state.auth.email,
   name: state.auth.name,
   role: state.auth.role,
-  token: state.auth.token,
   allProjUsers: state.user.allProjUsers,
   userTickets: state.ticket.userTickets,
   allProjTickets: state.ticket.allProjTickets,
@@ -298,11 +297,11 @@ const mapStateToProps = (state) => ({
   error: state.ticket.error,
 });
 const mapDispatchToProps = (dispatch) => ({
-  fetchProjUsers: (id, token) =>
-    dispatch(userActionCreators.fetchProjUsersCreator(id, token)),
-  submitTicket: (id, ticket, key, token) =>
+  fetchProjUsers: (id) =>
+    dispatch(userActionCreators.fetchProjUsersCreator(id)),
+  submitTicket: (id, ticket, key, role) =>
     dispatch(
-      ticketActionCreators.submitProjTicketsCreator(id, ticket, key, token)
+      ticketActionCreators.submitProjTicketsCreator(id, ticket, key, role)
     ),
 });
 

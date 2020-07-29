@@ -2,7 +2,6 @@ import * as actionTypes from "../actions/actionTypes";
 const initialState = {
   users: [],
   allUsers: [],
-  projUsers: [],
   allProjUsers: {},
   dispSpinner: false,
   error: false,
@@ -31,12 +30,10 @@ const fetchProjUsersInit = (state, action) => ({
   ...state,
   dispSpinner: true,
   error: false,
-  projUsers: [],
 });
 const fetchProjUsersSucess = (state, action) => ({
   ...state,
   allProjUsers: { ...state.allProjUsers, [action.projid]: action.users },
-  projUsers: action.users,
   dispSpinner: false,
   error: false,
 });
@@ -74,7 +71,6 @@ const updateUserRoles = (state, action) => {
 };
 const updateProjUsers = (state, action) => ({
   ...state,
-  projUsers: state.projUsers.concat(action.obj),
   allProjUsers: {
     ...state.allProjUsers,
     [action.id]: state.allProjUsers[action.id].concat(action.obj),
@@ -82,7 +78,6 @@ const updateProjUsers = (state, action) => ({
 });
 const deleteProjUsers = (state, action) => ({
   ...state,
-  projUsers: state.projUsers.filter((curr) => curr.key !== action.key),
   allProjUsers: {
     ...state.allProjUsers,
     [action.id]: state.allProjUsers[action.id].filter(

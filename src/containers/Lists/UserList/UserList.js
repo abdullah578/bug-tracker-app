@@ -45,16 +45,15 @@ class UserList extends Lists {
   componentDidMount() {
     //if project users are not present in the redux store,fetch from API
     const projid = this.props.match.params.id;
-    if (!this.props.allProjUsers[projid])
-      this.props.fetchProjUsers(projid, this.props.token);
-    if (!this.props.users.length) this.props.fetchAllUsers(this.props.token);
+    if (!this.props.allProjUsers[projid]) this.props.fetchProjUsers(projid);
+    if (!this.props.users.length) this.props.fetchAllUsers();
   }
 
   formSubmitHandler = () => {
     const user = this.props.users.find(
       (curr) => curr.email === this.state.form.email.value.trim().toLowerCase()
     );
-    this.props.submitUser(this.props.match.params.id, user, this.props.token);
+    this.props.submitUser(this.props.match.params.id, user);
     this.resetForm();
     this.setState({ newItem: false });
   };
@@ -127,9 +126,7 @@ class UserList extends Lists {
     if (user) {
       this.props.deleteUser(
         this.props.match.params.id,
-        user.email,
-        this.state.deleteItem.key,
-        this.props.token
+        this.state.deleteItem.key
       );
     }
 
@@ -213,27 +210,20 @@ class UserList extends Lists {
 const mapStateToProps = (state) => ({
   users: state.user.users,
   role: state.auth.role,
-  token: state.auth.token,
   userid: state.auth.id,
   allProjUsers: state.user.allProjUsers,
   dispSpinner: state.user.dispSpinner,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  fetchProjUsers: (id, token) =>
-    dispatch(userActionCreators.fetchProjUsersCreator(id, token)),
-  fetchAllUsers: (token) =>
-    dispatch(userActionCreators.fetchAllUsersCreator(token)),
-  submitUser: (id, obj, token) =>
-    dispatch(userActionCreators.postUserCreator(id, obj, token)),
-  deleteUser: (projectId, userEmail, userKey, token) =>
+  fetchProjUsers: (id) =>
+    dispatch(userActionCreators.fetchProjUsersCreator(id)),
+  fetchAllUsers: () => dispatch(userActionCreators.fetchAllUsersCreator()),
+  submitUser: (id, obj) =>
+    dispatch(userActionCreators.postUserCreator(id, obj)),
+  deleteUser: (projectId,userKey) =>
     dispatch(
-      userActionCreators.deleteUserTicketsCreator(
-        projectId,
-        userEmail,
-        userKey,
-        token
-      )
+      userActionCreators.deleteUserTicketsCreator(projectId,userKey)
     ),
 });
 

@@ -25,17 +25,11 @@ class TicketList extends Lists {
 
   componentDidMount() {
     if (this.props.type === "User" && !this.props.userTickets.length) {
-      const { email, role, token, userid } = this.props;
-      this.props.fetchUserTickets(email, role, token, userid);
+      this.props.fetchUserTickets();
     } else if (this.props.type !== "User") {
       const projectID = this.props.match.params.id;
       if (!this.props.allProjTickets[projectID])
-        this.props.fetchProjTickets(
-          projectID,
-          this.props.email,
-          this.props.role,
-          this.props.token
-        );
+        this.props.fetchProjTickets(projectID);
     }
   }
   filterTickets = (arr) => {
@@ -83,7 +77,7 @@ class TicketList extends Lists {
         ? this.props.userTickets
         : this.props.allProjTickets[projid] || [];
     return tickets.length ? (
-      this.filterTickets([...tickets].reverse())
+      this.filterTickets(tickets)
         .slice(startIndex, endIndex)
         .map((curr) => (
           <tr key={curr.key}>
@@ -168,25 +162,17 @@ class TicketList extends Lists {
   }
 }
 const mapStateToProps = (state) => ({
-  email: state.auth.email,
-  name: state.auth.name,
-  userid: state.auth.id,
   role: state.auth.role,
-  token: state.auth.token,
   dispSpinner: state.ticket.dispSpinner,
   allProjTickets: state.ticket.allProjTickets,
   userTickets: state.ticket.userTickets,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  fetchProjTickets: (id, email, role, token) =>
-    dispatch(
-      ticketActionCreators.fetchProjTicketsCreator(id, email, role, token)
-    ),
-  fetchUserTickets: (email, role, token, key) =>
-    dispatch(
-      ticketActionCreators.fetchUserTicketsCreator(email, role, token, key)
-    ),
+  fetchProjTickets: (id) =>
+    dispatch(ticketActionCreators.fetchProjTicketsCreator(id)),
+  fetchUserTickets: () =>
+    dispatch(ticketActionCreators.fetchUserTicketsCreator()),
 });
 
 export default connect(

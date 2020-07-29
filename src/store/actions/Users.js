@@ -54,7 +54,7 @@ export const fetchAllUsersCreator = () => (dispatch) => {
 };
 
 //fetch projects users from API
-export const fetchProjUsersCreator = (id, token) => (dispatch) => {
+export const fetchProjUsersCreator = (id) => (dispatch) => {
   dispatch(fetchProjUsersInit());
   axios
     .get(`/projects/${id}/users`)
@@ -83,7 +83,7 @@ export const updateUserRoleCreator = (obj, key) => (dispatch) => {
 };
 /*update user role in all projects , if user role is N/A,
 remove the user from project*/
-export const updateUsersCreator = (key, obj, token) => (dispatch, getState) => {
+export const updateUsersCreator = (key, obj) => (dispatch, getState) => {
   const state = getState();
   Object.keys(state.user.allProjUsers).forEach((projKey) => {
     dispatch(updateUserRoles(projKey, obj, key));
@@ -92,7 +92,7 @@ export const updateUsersCreator = (key, obj, token) => (dispatch, getState) => {
 };
 
 //save user in API
-export const postUserCreator = (id, obj, token) => (dispatch) => {
+export const postUserCreator = (id, obj) => (dispatch) => {
   axios
     .post(`/projects/${id}/users`, { userid: obj.key })
     .then((resp) => {
@@ -102,12 +102,7 @@ export const postUserCreator = (id, obj, token) => (dispatch) => {
 };
 //delete user from API
 //delete all corresponding tickets of user from API
-export const deleteUserTicketsCreator = (
-  projectID,
-  userEmail,
-  userKey,
-  token
-) => (dispatch) => {
+export const deleteUserTicketsCreator = (projectID, userKey) => (dispatch) => {
   axios
     .delete(`/projects/${projectID}/${userKey}`)
     .then((resp) => {

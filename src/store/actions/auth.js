@@ -48,6 +48,7 @@ export const authenticate = (email, password, isSignUp, name) => (dispatch) => {
       );
       localStorage.setItem("token", resp.data.idToken);
       const user = jwtDecode(resp.data.idToken);
+      console.log(user);
       axiosInst.defaults.headers.common["auth"] = `Bearer ${resp.data.idToken}`;
       dispatch(
         authSuccessCreator(
@@ -61,10 +62,7 @@ export const authenticate = (email, password, isSignUp, name) => (dispatch) => {
       dispatch(authLogout(resp.data.expiresIn));
     })
     .catch((err) => {
-      let error;
-      console.log(err.error);
-      if (err.response) error = err.response.data.error.message;
-      dispatch(authFailureCreator(error || "Error"));
+      dispatch(authFailureCreator("Error"));
     });
 };
 export const authCheckState = () => (dispatch) => {

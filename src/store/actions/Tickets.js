@@ -40,9 +40,7 @@ const updateTicket = (tick, projID, ticketKey) => ({
 
 //fetch project tickets from API
 
-export const fetchProjTicketsCreator = (id, email, role, token) => (
-  dispatch
-) => {
+export const fetchProjTicketsCreator = (id) => (dispatch) => {
   dispatch(fetchProjTicketsInit());
 
   axios
@@ -54,9 +52,7 @@ export const fetchProjTicketsCreator = (id, email, role, token) => (
     .catch((err) => dispatch(fetchProjTicketsFailure(err)));
 };
 
-export const fetchUserTicketsCreator = (email, role, token, key) => (
-  dispatch
-) => {
+export const fetchUserTicketsCreator = () => (dispatch) => {
   dispatch(fetchUserTicketsInit());
   axios
     .get("/tickets")
@@ -67,9 +63,7 @@ export const fetchUserTicketsCreator = (email, role, token, key) => (
     .catch((err) => dispatch(fetchUserTicketsFailure(err)));
 };
 //save ticket to API
-export const submitProjTicketsCreator = (id, tick, key, token) => (
-  dispatch
-) => {
+export const submitProjTicketsCreator = (id, tick, key, role) => (dispatch) => {
   if (key === "new")
     axios
       .post("/tickets", tick)
@@ -77,19 +71,26 @@ export const submitProjTicketsCreator = (id, tick, key, token) => (
         dispatch(addNewTicket(tick, id, resp.data.name));
       })
       .catch((err) => console.log(err));
-  else
+  else {
+    const { status, history = [], comments = [] } = tick;
+    let requestTicket;
+    if (role === "Developer")
+      requestTicket = {
+        status,
+        history,
+        comments,
+      };
     axios
-      .put(`/tickets/${key}`, { ...tick })
+      .put(`/tickets/${key}`, requestTicket || tick)
       .then((resp) => {
         dispatch(updateTicket(tick, id, key));
       })
       .catch((err) => console.log(err));
+  }
 };
 
 //delete ticket from API
-export const deleteTicketCreator = (projectID, ticketKey, token) => (
-  dispatch
-) => {
+export const deleteTicketCreator = (projectID, ticketKey) => (dispatch) => {
   axios
     .delete(`/tickets/${ticketKey}`)
     .then((resp) =>

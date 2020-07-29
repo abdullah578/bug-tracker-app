@@ -26,7 +26,6 @@ const fetchProjTicketsInit = (state, action) => ({
   ...state,
   dispSpinner: true,
   error: false,
-  tickets: [],
 });
 const fetchProjTicketsSuccess = (state, action) => {
   return {
@@ -36,7 +35,6 @@ const fetchProjTicketsSuccess = (state, action) => {
       ...state.allProjTickets,
       [action.id]: action.tickets,
     },
-    tickets: action.tickets,
   };
 };
 const fetchProjTicketsFailure = (state, action) => ({
@@ -44,17 +42,21 @@ const fetchProjTicketsFailure = (state, action) => ({
   dispSpinner: false,
   error: true,
 });
-const addTicket = (state, action) =>
-  !state.allProjTickets[action.id]
-    ? state
-    : {
-        ...state,
-        allProjTickets: {
-          ...state.allProjTickets,
-          [action.id]: state.allProjTickets[action.id].concat(action.ticket),
-        },
-        userTickets: state.userTickets.concat(action.ticket),
-      };
+const addTicket = (state, action) => {
+  if (!state.allProjTickets[action.id]) return state;
+  const projTickets = [...state.allProjTickets[action.id]];
+  const userTickets = [...state.userTickets];
+  projTickets.unshift(action.ticket);
+  userTickets.unshift(action.ticket);
+  return {
+    ...state,
+    allProjTickets: {
+      ...state.allProjTickets,
+      [action.id]: projTickets,
+    },
+    userTickets,
+  };
+};
 const updateTicket = (state, action) => {
   const userIndex = state.userTickets.findIndex(
     (curr) => curr.key === action.key

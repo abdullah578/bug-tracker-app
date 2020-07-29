@@ -22,7 +22,7 @@ export const deleteProject = (projid) => ({
 });
 
 //fetch projects from API
-export const fetchProjectsCreator = (role, userKey, token) => (dispatch) => {
+export const fetchProjectsCreator = () => (dispatch) => {
   dispatch(fetchProjectsInit());
 
   axios
@@ -35,13 +35,13 @@ export const fetchProjectsCreator = (role, userKey, token) => (dispatch) => {
 };
 
 //save project in API
-export const postProjectCreator = (obj, token) => (dispatch) =>
+export const postProjectCreator = (obj) => (dispatch) =>
   axios
     .post("/projects", obj)
     .then((resp) => dispatch(postProject(obj, resp.data.name)))
     .catch((err) => console.log(err));
 
-export const deleteProjectCreator = (projID, token) => (dispatch) => {
+export const deleteProjectCreator = (projID) => (dispatch) => {
   axios
     .delete(`/projects/${projID}`)
     .then((resp) => {
