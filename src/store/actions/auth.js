@@ -51,8 +51,8 @@ export const authenticate = (
   expiryUserid
 ) => (dispatch) => {
   const url = isSignUp
-    ? `http://localhost:3000/users`
-    : `http://localhost:3000/users/login`;
+    ? `${process.env.REACT_APP_API_URL}/users`
+    : `${process.env.REACT_APP_API_URL}/users/login`;
   axios
     .post(url, { email, password, name })
     .then((resp) => {
