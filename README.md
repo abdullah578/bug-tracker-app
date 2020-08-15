@@ -2,7 +2,7 @@
 
 This app uses the MERN stack to create a system for teams to keep track of
 bugs in their projects.Each project in this app is a collection of
-users and tickets.The app keeps track of any chamges made to the ticket
+users and tickets.The app keeps track of any changes made to the ticket
 and users can also add comments to the ticket.
 There are 4 major roles each user can have:
 
